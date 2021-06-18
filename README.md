@@ -2,7 +2,7 @@
 
 ### What the program does
 
-This program verifies python or java programs submitted by students. The program does basic verification by simply running the submitted student's .py or .java program and comparing the output of the student's program to a teacher provided expected "golden" output. If the outputs don't match, the program shows the highlighted differences. More advanced verification is possible in JAVA by enabling a student to submit multiple .java files (in a .zip file) which are then verified by a teacher provided TESTER program . The TESTER program not only enables verification of multiple classes, but also enables using techniques like JAVA reflection to inspect student's code (e.g. demo\ASSIGNMENT_GROUPS\first6weeksAssignments\Collatz\CollatzTester.java).
+This program verifies student submitted python or java programs. The program does basic verification by simply running the submitted student's .py or .java program and comparing the programs's printed output to a teacher supplied expected "gold" output file. If the two don't match, the program shows the highlighted differences. More advanced verification is possible in JAVA by enabling a student to a single .java file as well as multiple .java files (in a .zip file) which are then verified by a teacher provided TESTER program. The TESTER program enables verification of multiple classes as well as sing techniques like JAVA reflection to inspect student's code (see Collatz in Demo below).
 
 ### Required Python packages
   * pip install pyperclip
