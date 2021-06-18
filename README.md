@@ -14,9 +14,9 @@ This program verifies student submitted python or java programs. The program doe
 * unzip demo.zip to a folder on your hard drive (i.e. C:/YourPathToDemoDir/demo)
   * ASSIGNMENT_GROUPS folder
     * assignment Group folders
-        * assignment folders (the name of the assignment folder **is** the **assignment name**)
+        * assignment folders  - the name of the assignment folder **is** the **assignment name** (assignment names must be unique)
            * gold.txt  (the teacher provided golden output for the program)
-           * ?Tester.java, where ? is the **assignment name** (assignment names must be unique)
+           * ?Tester.java, where ? is the **assignment name** 
     * periods.txt (indicates which class periods are doing this assignment Group)
     * comments.txt  (global comments)
   * 1,4,5 a folder for each class period
