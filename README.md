@@ -10,7 +10,7 @@ This program verifies python or java programs submitted by students. The program
 ### Other Requirements
   * download & install tkdiff (https://sourceforge.net/projects/tkdiff/)
 
-### Demo
+### Demo Setup
 * unzip demo.zip to a folder on your hard drive (i.e. C:/YourPathToDemoDir/demo)
   * ASSIGNMENT_GROUPS folder
     * assignment Group folders
@@ -27,10 +27,11 @@ This program verifies python or java programs submitted by students. The program
   * set the **tkdiffLoc** variable to the location of the **tkdiff.exe** executable.
   * set the **pythonIdeLoc** variable to the location of the Python IDE (e.g. IDLE) executable.
   * set the **javaIdeLoc** variable to the location of the JAVA IDE (e.g. jGrasp) executable.
+### Run the Demo
 * run CSassignmentChecker.py
-  * since this is the first the program has been run, the program creates some required directories.
+  * since this is the first time the program has been run, the program creates some required directories.
   * You should now see the main menu\
-    **(1 4 5) manual (a)utojudge (l)og e(x)it (<ENTER>=check)?**\
+    **(1 4 5) manual (a)utojudge (l)og e(x)it (ENTER=check)?**\
   **Answer 4** to have the program enter the manual mode for class period 4. For now the program continually checks for new submissions to the class period folder /demo/4/. 
   When there is no submission to process, the program will print a period every 2 seconds to let you know it is alive. Leave the program running (and printing periods) for now.
 * A student interacts with this program by submitting a file to a class period folder.
@@ -40,9 +41,16 @@ This program verifies python or java programs submitted by students. The program
   * Ideally students students have a way to "submit" a file directly to a class period folder on the teacher's hard drive in real time.
   This can be achieved by having students submit to an online folder that is automatically synched to the teacher's PC using 
   something like the Dropbox File Request feature.
-* For this demo, instead of students submitting files to the class period folder, **we will simply copy example files from demo/sampleSubmissions/*
-* To demo the basic verification of a student program, copy /demo/sampleSubmissions/studentProblems/4ShotwellGwynne4381_encryption.py to the class period 4 folder /demo/4/. The program will detect this file and run the program. Since the student program works as expected the program reports *** CORRECT ***.  
-   * This particular student program when run with the teacher supplied input file /demo/ASSIGNMENT_GROUPS/pythonAssignments/encryption/encryption.dat is expected to print out exactly what's found in /demo/ASSIGNMENT_GROUPS/pythonAssignments/encryption/gold.txt. 
+* For this demo, instead of students submitting files to the class period folder, *we will simply copy example files from /demo/sampleSubmissions/*
+* To demo the basic verification of a student program, copy /demo/sampleSubmissions/studentProblems/4ShotwellGwynne4381_encryption.py to the class period 4 folder /demo/4/. The program will detect this file and run the program. 
+   * Since this initial student program has an error, the program will use tkdiff to display the differences between the students program output and the expected "gold" output.
+   * After you close the tkdiff window, the program displays the assignment menu **y/n \[i a o c e s f l](r){x} h=help?**
+     * **Answer i** to display the program in the Python IDE.
+     * **Answer n** to judge the program as incorrect (student's program status is save in /demo/scoreboard/).
+   * copy /demo/sampleSubmissions/studentProblems/4ShotwellGwynne4381_encryption.py to the class period 4 folder /demo/4/ but now fix the error line 21 (changing thing[1] to thing[0])
+    * Since the student now program works as expected the program reports *** CORRECT ***. 
+     * **Answer y** to judge the program as correct.
+   * NOTE: This particular student program when run with the teacher supplied input file /demo/ASSIGNMENT_GROUPS/pythonAssignments/encryption/encryption.dat is expected to print out exactly what's found in /demo/ASSIGNMENT_GROUPS/pythonAssignments/encryption/gold.txt. 
 * prints the assignment menu.
     **y/n \[i a o c e s f l](r){x} h=help?**
 * Each student should be registered with the program. To register two example students copy the two files in demo/sampleSubmissions/studentRegistrations/ to /demo/1/ 
