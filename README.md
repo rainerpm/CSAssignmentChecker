@@ -21,8 +21,9 @@ This program verifies student submitted python or java programs. The program doe
     * comments.txt  (global comments)
   * 1,4,5 a folder for each class period
 * set the following directory variables
-  * set the **rootDir** variable to the location of the unzipped demo folder - C:/YourPathToDemoDir/demo (hereafter abbreviated /demo)
-  * set the **scoreboardDir** variable to /demo/scoreboard
+  * set the **rootDir** variable to the location of the unzipped demo folder - C:/YourPathToDemoDir/demo 
+  * set the **scoreboardDir** variable to C:/YourPathToDemoDir/demo/scoreboard
+  * hereafter C:/YourPathToDemoDir/demo is abbreviated /demo.
 * set the following executable variables
   * set the **tkdiffLoc** variable to the location of the **tkdiff.exe** executable.
   * set the **pythonIdeLoc** variable to the location of the Python IDE (e.g. IDLE) executable.
