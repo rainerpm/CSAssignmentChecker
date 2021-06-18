@@ -51,17 +51,14 @@ This program verifies python or java programs submitted by students. The program
     * Since the student now program works as expected the program reports *** CORRECT ***. 
      * **Answer y** to judge the program as correct.
    * NOTE: This particular student program when run with the teacher supplied input file /demo/ASSIGNMENT_GROUPS/pythonAssignments/encryption/encryption.dat is expected to print out exactly what's found in /demo/ASSIGNMENT_GROUPS/pythonAssignments/encryption/gold.txt. 
-* prints the assignment menu.
-    **y/n \[i a o c e s f l](r){x} h=help?**
+* The program should now be in the mode of continually checking for new submissions to the class period folder /demo/4/. 
+  * Use Ctrl-C to go back to the main menu.
 * Each student should be registered with the program. To register two example students copy the two files in demo/sampleSubmissions/studentRegistrations/ to /demo/1/ 
-  (NOTE: That for registration purposes the assignment name part of the file name must be the word "register").
-  The program, which was still printing periods, detects these files in demo/1/ and registers the students by creating/updating a file called REGISTER.txt and then deletes the files.
-  For the demo the directories /demo/5/ and /demo/6/ already have predefined registrations in a REGISTER.txt file.
-* To demo the more advanced verification of a JAVA program using a teacher provided TESTER program, copy demo/sampleSubmissions/studentProblems/1LovelaceAda1234_Collatz.java to  to the class period 1 folder /demo/1/.
-  This represents the student's code for an assignment named "Collatz". assignment collatz and compares it to the expected output stored in the test's gold.txt file
-  (/demo/ASSIGNMENT_GROUPS/first6weeksAssignments/collatz/gold.txt). In this case the program will report *** CORRECT *** and
+  (NOTE: For registration purposes the assignment name part of the file name must be the word "register").
+  **Answer 1** in the main menu.  The program detects the registration files in /demo/1/ and registers the 2 students by creating/updating a file called REGISTER.txt (and then deleting the files).
+  For the demo the directories /demo/5/ and /demo/6/ already had predefined student registrations in a REGISTER.txt file.
+* To demo the more advanced verification of a JAVA program using a teacher provided TESTER program, copy the student program /demo/sampleSubmissions/studentProblems/1LovelaceAda1234_Collatz.java to the class period 1 folder /demo/1/.
+  This represents the student's code for an assignment named "Collatz". In addition to the expected output file gold.txt, the teacher has also supplied a specific test program called CollatzTester.java in the directory /demo/ASSIGNMENT_GROUPS/first6weeksAssignments/collatz/. The program runs the CollatzTester program and should report *** CORRECT *** since the program's output matches the expected output (NOTE: the program ignores any whitespace at the end of a line or the end of the output when comparing the student's output to the expected output in the assignment's gold.txt file).
  
-  Here
-  
-* To associate an email address with a student manually edit the demo/1/REGISTER.txt file and enter
-  a student email as a 4th field for the student.
+### Sending Emails (or using the Clipboard)  
+* To associate an email address with a student manually edit the REGISTER.txt file in the class period folder and enter a student email as a 4th field for the student.
