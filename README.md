@@ -43,7 +43,7 @@ This program verifies student submitted python or java programs. The program doe
   This can be achieved by having students submit to an online folder that is automatically synched to the teacher's PC using 
   something like the Dropbox File Request feature.
 * For this demo, instead of students submitting files to the class period folder, *we will simply copy example files from /demo/sampleSubmissions/*
-* To demo the basic verification of a student program, copy /demo/sampleSubmissions/studentProblems/4ShotwellGwynne4381_encryption.py to the class period 4 folder /demo/4/. The program will detect this file and run the program. 
+* To demo the basic verification of a student program, copy /demo/sampleSubmissions/studentProblems/4ShotwellGwynne4381_encryption.py to the class period 4 folder /demo/4/. This file is Period 4's student Gwynne Shotwell's submission of the encryption assignment. The program (which up to now had been printing periods) will detect this file and run the program. 
    * Since this initial student program has an error, the program will use tkdiff to display the differences between the students program output and the expected "gold" output.
    * After you close the tkdiff window, the program displays the assignment menu **y/n \[i a o c e s f l](r){x} h=help?**
      * **Answer i** to display the program in the Python IDE.
