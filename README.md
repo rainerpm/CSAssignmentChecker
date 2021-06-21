@@ -69,6 +69,7 @@ has the following options
 * **(a)utojuge** Checks all class period folders and will process any current (and future) program submissions. If program output is not correct, the submission is counted as incorrect. The Assignment Menu is not displayed.
 * **(l)og** Program displays the last 20 lines of logGlobal.txt in **rootDir** 
 * **e(x)it** Exits the program
+* **ENTER** Pressing the *Enter* key causes the program to check all class periods for submissions and then returns to the Main Menu.
 
 ### Assignment Menu
 In manual mode
