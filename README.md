@@ -18,8 +18,8 @@ This program verifies student submitted python or java programs. The program doe
            * gold.txt  (the teacher provided golden output for the program)
            * ?Tester.java, where ? is the **assignment name** 
     * periods.txt (indicates which class periods are doing this assignment Group)
-    * comments.txt  (global comments)
-  * 1,4,5 a folder for each class period
+    * comments.txt  (global comments - used in student emails or clipboard)
+  * 1,4,5 class period folders for the demo
 * set the following directory variables
   * set the **rootDir** variable to the location of the unzipped demo folder - C:/YourPathToDemoDir/demo 
   * set the **scoreboardDir** variable to C:/YourPathToDemoDir/demo/scoreboard
@@ -33,13 +33,13 @@ This program verifies student submitted python or java programs. The program doe
   * since this is the first time the program has been run, the program creates some required directories.
   * You should now see the main menu\
     **(1 4 5) manual (a)utojudge (l)og e(x)it (ENTER=check)?**\
-  **Answer 4** to have the program enter the manual mode for class period 4. For now the program continually checks for new submissions to the class period folder /demo/4/. 
+  **Answer 4** to have the program enter the manual mode for class period 4. In this mode, the program continually checks for new submissions to the class period folder /demo/4/. 
   When there is no submission to process, the program will print a period every 2 seconds to let you know it is alive. Leave the program running (and printing periods) for now.
 * A student interacts with this program by submitting a file to a class period folder.
   The file name submitted must be named\
     **#LastFirst?_@.$**\
   where # is the student's class period, ? is a student number, @ is the assignment name (or "register"), $ is the file extension: py, java, or zip.
-  * Ideally students students have a way to "submit" a file directly to a class period folder on the teacher's hard drive in real time.
+  * Ideally students students have a way to submit a file directly to a class period folder on the teacher's hard drive in real time.
   This can be achieved by having students submit to an online folder that is automatically synched to the teacher's PC using 
   something like the Dropbox File Request feature.
 * For this demo, instead of students submitting files to the class period folder, *we will simply copy example files from /demo/sampleSubmissions/*
