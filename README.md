@@ -13,7 +13,7 @@ This program verifies student submitted python or java programs. The program doe
 ### Demo Setup
 * unzip demo.zip to a folder on your hard drive (i.e. C:/YourPathToDemoDir/demo)
   * ASSIGNMENT_GROUPS folder
-    * assignment Group folders
+    * assignment group folders
         * assignment folders  - the name of the assignment folder **is** the **assignment name** (assignment names must be unique)
            * gold.txt  (the teacher provided golden output for the program)
            * ?Tester.java, where ? is the **assignment name** 
@@ -92,4 +92,5 @@ is displayed with the following options
  
 ### Sending Emails or using the Clipboard 
 * To associate an email address with a student manually edit the REGISTER.txt file in the class period folder and enter a student email as a 4th field for the student.
-* The program will give you options to use 
+* The program will give you options to use a saved set of comments or enter a new comment to be used in the mail or put on the clipboard. You can chooose from preset assignment specific comments (stored in the comments.txt file in the assignments folder) or global comments (stored in ASSIGNMENT_GROUPS/comments.txt)
+
