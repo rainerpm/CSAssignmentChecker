@@ -29,6 +29,7 @@ This program verifies student submitted python or java programs. The program doe
   * set the **tkdiffLoc** variable to the location of the **tkdiff.exe** executable.
   * set the **pythonIdeLoc** variable to the location of the Python IDE (e.g. IDLE) executable.
   * set the **javaIdeLoc** variable to the location of the JAVA IDE (e.g. jGrasp) executable.
+  * set the **textEditorLoc** variable to the location of a text editor (e.g. Notepad++) executable.
 ### Run the Demo
 * run CSassignmentChecker.py
   * since this is the first time the program has been run, the program creates some required directories.
