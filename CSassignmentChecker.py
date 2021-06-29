@@ -1,10 +1,3 @@
-# SUBMITTING (STUDENT)
-#  Submitted programs must be named ^^(\d+)([a-zA-Z-]+)(\d+)_(.+)\. (e.g. 1LovelaceAda5678_collatz.py)
-#   * (\d+) = class ID
-#   * ([a-zA-Z-]+) = student name
-#   * (\d+) = student code
-#   * (.+) = assignment name (all characters between _ and last .
-
 # TODO/IMPROVEMENTS
 #   * add a 'g' option for grading.  Enter absolute grade or a deduction (how to handle multiple deductions).
 #   * multiple tests per assignment (e.g. easy, medium, hard tests)
@@ -432,7 +425,8 @@ def runProgram(submission, classRootDir):
         with open("CompilerError.txt", "w") as ferr:
             result = subprocess.run(compileCmd, stdout=fout, stderr=ferr)  #COMPILE PROGRAM
     errorCompile = checkErrorFileForErrors("CompilerError.txt", "  COMPILE ERROR")
-    bringUpIDE = '\n:choice\nset /P c=Bring up IDE [y]? \nif /I "%c%" EQU "Y" goto :ide\ngoto :end\n:ide\n' + bringUpProgramInIDE(submission,False) + '\n:end'
+    #bringUpIDE = '\n:choice\nset /P c=Bring up IDE [y]? \nif /I "%c%" EQU "Y" goto :ide\ngoto :end\n:ide\n' + bringUpProgramInIDE(submission,False) + '\n:end'
+    bringUpIDEorDataFile = '\nset /P c=Bring up IDE [y]? \nif /I "%c%" EQU "Y" goto :ide\ngoto :next\n:ide\n' + bringUpProgramInIDE(submission,False) + '\n:next\nset /P c=Bring up input data file [y]? \nif /I "%c%" EQU "Y" goto :idf\ngoto :end\n:idf\n' + '"' + textEditorLoc + '"' + " -multiInst -nosession " + submission["dataInputFileName"] + '\n:end'
     if errorCompile:
         copyfile("CompilerError.txt", os.path.join(submission["classDir"],submission["studentName"] + "_compileError.txt"))  # copy compile error file to class directory
         copyfile("CompilerError.txt", os.path.join(submission["studentDir"],submission["compileErrFileName"]))  # copy output file to data directory
@@ -453,7 +447,7 @@ def runProgram(submission, classRootDir):
                 os.remove(os.path.join(classRootDir,submission["studentName"] + ".bat"))
             with open(os.path.join(classRootDir,submission["studentName"] + ".bat"), "w") as fbatch:
                 fbatch.write('"' + textEditorLoc + '"' + " -multiInst -nosession " + os.path.join(submission["studentDir"],submission["runErrFileName"]))              
-                fbatch.write(bringUpIDE)
+                fbatch.write(bringUpIDEorDataFile)
             copyfile(submission["errorFileName"], os.path.join(submission["classDir"],submission["studentName"] + "_runTimeError.txt"))  # copy compile error file to class directory
             copyfile(submission["errorFileName"], os.path.join(submission["studentDir"],submission["runErrFileName"]))  # copy output file to data directory
             if "partnerName" in submission:
@@ -480,7 +474,7 @@ def runProgram(submission, classRootDir):
                 os.remove(os.path.join(classRootDir,submission["studentName"] + ".bat"))
             with open(os.path.join(classRootDir,submission["studentName"] + ".bat"), "w") as fbatch:
                 fbatch.write('"' + tkdiffLoc + '"' + " " + os.path.join(submission["studentPgmRunDir"],submission["outFileName"]) + " " + os.path.join(submission["goldenAssignmentDir"], "gold.txt"))
-                fbatch.write(bringUpIDE)             
+                fbatch.write(bringUpIDEorDataFile)             
     os.chdir(classRootDir)
     return correct, error
 
