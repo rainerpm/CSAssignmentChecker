@@ -68,7 +68,7 @@ This program verifies student submitted python or java programs. The program doe
 The program's Main Menu\
 **(? ? ?)manual (a)utojudge (l)og e(x)it (ENTER=check)?**\
 has the following options
-* **(? ? ?)** A choice of class period numbers which cause the program to enter manual mode and monitor that class period's folder.  The program processes any current (and future) program submissions to that class period's folder - oldest submission is processed first. Incorrect output differences will be shown in **tkdiff** after which the **Assignment Menu** is displayed.
+* **(? ? ?)** A choice of class period numbers which cause the program to enter manual mode and monitor that class period's folder for student program submissions.  The program processes any current (and future) program submissions to that class period's folder - oldest submission is processed first. Incorrect output differences will be shown in **tkdiff** after which the **Assignment Menu** is displayed.
 * **(a)utojuge** Brings up the Autojudge Menu **(? ? ?)autojudge (m)ultiple (<ENTER>=all periods)?**. Specified class period folders are checked and any current (and future) program submissions are processed and automatically judged - if program output is not correct, the submission is counted as incorrect. 
 * **(l)og** Program displays the last 20 lines of logGlobal.txt in **rootDir** 
 * **e(x)it** Exits the program
