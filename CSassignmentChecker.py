@@ -32,6 +32,7 @@ from   email.mime.base      import MIMEBase      # for outlook
 from   email                import encoders      # for outlook
 import pyperclip        # allows python to add things to the clipboard (so it can be quickly pasted)
 #from icecream import ic
+import webbrowser
 
 # class periods
 validClassPeriods = ["1","4","5"]         # my java and python class periods
@@ -558,12 +559,12 @@ def main():
         lCount = 0
         while not(inputContinue or not autoJudgingFirstTime):
             check4Activity()
-            response = input("\n" + validClassPeriodsString + " manual (a)utojudge (l)og e(x)it (<ENTER>=check)? ")
+            response = input("\n" + validClassPeriodsString + "manual (a)utojudge (l)og e(x)it (<ENTER>=check)? ")
             inputContinue = (response == 'x') or (response in validClassPeriods)
             if response in validClassPeriods:
                 classPeriod = response
             elif response == "a":
-                response2 = input(validClassPeriodsString + " autojudge (m)ultiple (<ENTER>=all periods)? ")
+                response2 = input(validClassPeriodsString + "autojudge (m)ultiple (<ENTER>=all periods)? ")
                 autoJudging = True
                 autoJudgingFirstTime = False
                 if response2 in validClassPeriods:
@@ -753,31 +754,32 @@ def main():
                         print("exiting program")
                         sys.exit()
                     elif answer == "h":
-                        if submission["valid"]:
-                            print("  'y' submission correct. UPDATE scoreboard, CONTINUE to next submission.")
-                            print("  'n' submission incorrect. UPDATE scoreboard, CONTINUE to next submission.")
-                        print("  'i' show the program in IDE.")
-                        print("  'o' print output with newline replaced by ↵")
-                        if submission["valid"]:                        
-                            print("  'a' run the program again.")
-                        else:
-                            print("  'c' change name of the submitted file.")
-                        print("  'e' email student (to avoid having to enter student's email add email after class number in REGISTER.txt file).")
-                        print("  'c' copy information to clipboard (in case email is blocked).")
-                        print("  'r' remove submitted file. CONTINUE to next submission.")
-                        print("  's' save submission in 00SAVE directory.")
-                        if submission["valid"]:
-                             print("  'f' print files in student directory.")
-                        print("  'l' print class log file (chosing l again will get the next earlier set of lines)")
-                        print("  'x' exit this program (does not remove submitted file).")
-                        print("  'h' help for menu choices.")
+                        webbrowser.open("https://github.com/rainerpm/CSAssignmentChecker#assignment-menu")
+##                        if submission["valid"]:
+##                            print("  'y' submission correct. UPDATE scoreboard, CONTINUE to next submission.")
+##                            print("  'n' submission incorrect. UPDATE scoreboard, CONTINUE to next submission.")
+##                        print("  'i' show the program in IDE.")
+##                        print("  'o' print output with newline replaced by ↵")
+##                        if submission["valid"]:                        
+##                            print("  'a' run the program again.")
+##                        else:
+##                            print("  'c' change name of the submitted file.")
+##                        print("  'e' email student (to avoid having to enter student's email add email after class number in REGISTER.txt file).")
+##                        print("  'c' copy information to clipboard (in case email is blocked).")
+##                        print("  'r' remove submitted file. CONTINUE to next submission.")
+##                        print("  's' save submission in 00SAVE directory.")
+##                        if submission["valid"]:
+##                             print("  'f' print files in student directory.")
+##                        print("  'l' print class log file (chosing l again will get the next earlier set of lines)")
+##                        print("  'x' exit this program (does not remove submitted file).")
+##                        print("  'h' help for menu choices.")
                     elif answer == "t":   # temporary functionality
                         if "studentCode" in submission and submission["studentCode"] in classRegistration:
                             if len(classRegistration[submission["studentCode"]]) > 2:  # email address was manually added to REGISTER.txt
                                 receiverEmailAddress = classRegistration[submission["studentCode"]][2]
                     else:
                         if submission["valid"]:
-                            print("  Please answer with y/n [i a t d g o e c s f l](r){x} h=help?")
+                            print("  Please answer with y/n [i a t d o e c s f l](r){x} h=help?")
                         else:
                             print("  Please answer with c [i e s l](r){x} h=help? ")
                              
