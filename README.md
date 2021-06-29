@@ -92,7 +92,7 @@ is displayed with the following options
 * **l** print the last 20 lines of the logGlobal.txt file.
 * **r** remove the program from the class period directory (enabling the program to process the next submission).
 * **x** exit the program.
-* **h** print out help on the Assignment Menu options
+* **h** open web browser showing this page
  
 ### Sending Emails or using the Clipboard 
 * To associate an email address with a student manually edit the REGISTER.txt file in the class period folder and enter a student email as a 4th field for the student.
