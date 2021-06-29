@@ -12,13 +12,14 @@ This program verifies student submitted python or java programs. The program doe
 
 ### Demo Setup
 * unzip demo.zip to a folder on your hard drive (i.e. C:/YourPathToDemoDir/demo)
-  * ASSIGNMENT_GROUPS folder
-    * assignment group folders
-        * assignment folders  - the name of the assignment folder **is** the **assignment name** (assignment names must be unique)
-           * gold.txt  (the teacher provided golden output for the program)
-           * ?Tester.java, where ? is the **assignment name** 
-    * periods.txt (indicates which class periods are doing this assignment Group)
-    * comments.txt  (global comments - used in student emails or clipboard)
+  * **ASSIGNMENT_GROUPS** folder
+    * assignment group folder
+      * assignment folder  - the name of the assignment folder **is** the **assignment name** (assignment names must be unique)
+         * **gold.txt** is the teacher provided golden output for the assignment.
+         * **?.dat** is the teacher provided input data file for the assignment (? is the **assignment name**). Typically this file contains more/harder test data then what's been given to the students.
+         * **?Tester.java** is an optional test program (? is the **assignment name**)
+      * **periods.txt** indicates which class periods this assignment group is assigned to
+    * **comments.txt** contains the global comments used in student emails or clipboard
   * 1,4,5 class period folders for the demo
 * set the following folder (aka directory) variables
   * set the **rootDir** variable to the location of the unzipped demo folder - C:/YourPathToDemoDir/demo 
@@ -45,7 +46,7 @@ This program verifies student submitted python or java programs. The program doe
 * For this demo, instead of students submitting files to the class period folder, *we will simply copy example files from /demo/sampleSubmissions/*
 * To demo the basic verification of a student program, copy /demo/sampleSubmissions/studentProblems/4ShotwellGwynne4381_encryption.py to the class period 4 folder /demo/4/. This file is Period 4's student Gwynne Shotwell's submission of the encryption assignment. The program (which up to now had been printing periods) will detect this file and run the program. 
    * Since this initial student program has an error, the program will use tkdiff to display the differences between the students program output and the expected "gold" output.
-   * After you close the tkdiff window, the program displays the Assignment Menu **y/n \[i a o e c s f l](r){x} h=help?**
+   * After you close the tkdiff window, the program displays the Assignment Menu **y/n \[i a t d o e c s f l](r){x} h=help?**
      * **Answer i** to display the program in the Python IDE.
      * **Answer n** to judge the program as incorrect. The student's program status is reflected in /demo/scoreboard/ (one file with the student's name and one that is annoymized using the student's 4 digit code that can be made accessible to the class).
    * Since the output was incorrect, the program also created a file (ShotwellGwynne_tkdiff.bat) in the class period folder that enables the teacher to easily run tkdiff for the student's last incorrect submission.
@@ -74,12 +75,14 @@ has the following options
 
 ### Assignment Menu
 In manual mode after a student's program submission has been run and either the program was correct or the program was incorrect and the **tkdiff** window has been closed, the Assignment Menu\
-**y/n \[i a o e c s f l](r){x} h=help?**\
+**y/n \[i a t d o e c s f l](r){x} h=help?**\
 is displayed with the following options
 * **y** judge the student's program as correct and update the program's status in /demo/scoreboard/. The teacher can choose to ignore inconsequential differences in the output shown in the **tkdiff** window and still count the program correct.
 * **n** judge the student's program as incorrect and update the program's status in /demo/scoreboard/.
 * **i** show the student's program submission in the IDE.
 * **a** run the program again
+* **t** run tkdiff again
+* **d** show the data input file for the assignment (?.dat file in assignment folder - ? is the **assignment name**) 
 * **o** print the student's output (newline's are shown as ↵)
 * **e** email the student with information regarding the assignment status.
 * **c** copy information about the assignment status to the Clipboard (requires Windows 10’s October 2018 Update which provided a Clipboard History enabling multiple items to be saved on the clipboard). This option is provided, since emailing directly from the program may not be allowed by the school network.
