@@ -34,7 +34,7 @@ This program verifies student submitted python or java programs. The program doe
 * run CSassignmentChecker.py
   * since this is the first time the program has been run, the program creates some required directories.
   * You should now see the Main Menu\
-    **(1 4 5) manual (a)utojudge (l)og e(x)it (ENTER=check)?**\
+    **(1 4 5)manual (a)utojudge (l)og e(x)it (ENTER=check)?**\
   **Answer 4** to have the program enter the manual mode for class period 4. In this mode, the program continually checks for new submissions to the class period folder /demo/4/. The program creates the directories for the two students have been registered with this class period.
   When there is no submission to process, the program will print a period every 2 seconds to let you know it is alive. Leave the program running (and printing periods) for now.
 * A student interacts with this program by submitting a file to a class period folder.
@@ -66,10 +66,10 @@ This program verifies student submitted python or java programs. The program doe
   
 ### Main Menu  
 The program's Main Menu\
-**(? ? ?) manual (a)utojudge (l)og e(x)it (ENTER=check)?**\
+**(? ? ?)manual (a)utojudge (l)og e(x)it (ENTER=check)?**\
 has the following options
 * **(? ? ?)** A choice of class period numbers which cause the program to enter manual mode and monitor that class period's folder.  The program processes any current (and future) program submissions to that class period's folder - oldest submission is processed first. Incorrect output differences will be shown in **tkdiff** after which the **Assignment Menu** is displayed.
-* **(a)utojuge** Checks all class period folders and will process any current (and future) program submissions. If program output is not correct, the submission is counted as incorrect. The Assignment Menu is not displayed.
+* **(a)utojuge** Brings up the Autojudge Menu **(? ? ?)autojudge (m)ultiple (<ENTER>=all periods)?**. Specified class period folders are checked and any current (and future) program submissions are processed and automatically judged - if program output is not correct, the submission is counted as incorrect. 
 * **(l)og** Program displays the last 20 lines of logGlobal.txt in **rootDir** 
 * **e(x)it** Exits the program
 * **ENTER** Pressing the *Enter* key causes the program to check all class periods for submissions and then returns to the Main Menu.
