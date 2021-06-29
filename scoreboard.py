@@ -21,10 +21,6 @@ def updateScoreboard(scoreboardDir,contestDataDir,assignmentGroupId,classId,list
    if not os.path.isdir(scoreboardDir + '/withNames/'):
       os.mkdir(scoreboardDir + '/withNames/')
    scoreboardFileWithNames = scoreboardDir + '/withNames/' + 'Period' + classId + "_" + assignmentGroupId + '.txt'
-   scoreboardBackupDir = scoreboardDir + '/backup/'
-   scoreboardBackupFile =  scoreboardBackupDir + 'Period' + classId + "_" + assignmentGroupId + '_' + currentDate + '.txt'
-   if not os.path.isdir(scoreboardBackupDir):
-      os.mkdir(scoreboardBackupDir)
    for includeNames in [True,False]:
       if includeNames:
         fscoreboard  = open(scoreboardFileWithNames,'w')
@@ -115,9 +111,7 @@ def updateScoreboard(scoreboardDir,contestDataDir,assignmentGroupId,classId,list
       fscoreboard.write("Er  = latest submission had a run-time (e.g. div by 0, index out range) error.\n")
       fscoreboard.write("C#  = test ran successfully (# = number of incorrect submissions).\n")
       fscoreboard.write("#x  = test never ran successfully, submitted # times.")
-      fscoreboard.close()
-      copyfile(scoreboardFileWithNames,scoreboardBackupFile)   # backup scoreboard file
-      
+      fscoreboard.close()  
 
 
 def getListOfStudentDirectories(contestDataDir):

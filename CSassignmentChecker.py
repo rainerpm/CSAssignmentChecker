@@ -1,92 +1,3 @@
-# prerequisite
-#   > pip install pyperclip
-#   > download & install tkdiff (https://sourceforge.net/projects/tkdiff/)
-#
-# Demo
-#  * unzip demo.zip in a folder on your hard drive
-#    - ASSIGNMENT_GROUPS folder
-#      > assignment Group folders
-#          assignment folders
-#             gold.txt
-#             ?????Tester.java (optional)  ???? = assignment name
-#          periods.txt
-#      > comments.txt  (global comments)
-#    - 1,4,5 a folder for each class period
-#  * set the rootDir variable to the location of the unzipped demo folder
-#  * set the validClassPeriods & validClassPeriodsString variables to indicate the class periods
-#    you will use this program for (for the demo the class periods are 1,4,5)
-#  * run CSassignmentChecker.py
-#    - since this is the first time running, the program creates some required directories
-#  * You should now see the main menu
-#      (1 4 5) manual (a)utojudge (l)og e(x)it (<ENTER>=check)?
-#    Enter 1 to have the program enter a mode in which it continually checks for activity for class Period 1
-#    (as there is no activity currently, the program will print a . every 2 seconds to let you know it is alive)
-#  * A student registers by submitting a file.
-#    The file name must conform to the following naming convention - the contents of the file do not matter.
-#      #LastFirst????_register.$$
-#    where # is the student's class period, ???? is a unique 4 digit code for the student, $$ is either py, java, or zip.
-#
-#    Ideally students students have a way to "submit" a file directly to a class period folder on your hard drive.
-#    This can be achieved by having them submit to an online folder that is automatically synched on your PC -
-#    something like the Dropbox File Request feature. However, for this demo instead of students submitting a file to
-#    the class Period directory demo/1/ folder, we will instead copy the two files in
-#    demo/sampleSubmissions/studentRegistrations/ to demo/1/.  The program
-#    (which is still waiting for activity in this directory) detects the two files and
-#    registers the students (by creating/updating a file called REGISTER.txt).
-#    NOTE:  The demo/5/ and demo/6/ already come with a REGISTER.txt file in the demo.
-#  * A student submits their code for an assignment in the same way they register except the "register" in the file name is
-#    replaced by the assignment name. The assignment name must match one of the name of one of the
-#    assignment folders inside one of the assignment group folders in the ASSIGNMENT_GROUPS folder.
-#    Again for the demo, we'll just copy the file demo/sampleSubmissions/studentProblems/1LovelaceAda1234_Collatz.java to demo/1/.
-#    This represents the students solution to the collatz assignment. The program tests the student's code for the assignment collatz and compares it to the expected output stored in the test's gold.txt file
-#    (demo\ASSIGNMENT_GROUPS\first6weeksAssignments\collatz\gold.txt). In this case the program will report *** CORRECT *** and
-#    then bring you to the assignment menu.
-#
-#       y/n [i a o c e s f l](r){x} h=help?
-#
-#    Here
-#    
-#  * To associate an email address with a student manually edit the demo/1/REGISTER.txt file and enter
-#    a student email as a 4th field for the student.
-#      
-#
-#
-#
-# Run & judge all student assignment that are in a directory for their class on your computer.
-# Each assignment is part of an assignment group, that has its own PC2 like scoreboard.
-# Currently supports python submissions (.py extension) as well as java (.java,.zip extensions)
-
-# SETUP
-#  * set pythonIdeLoc,javaIdeLoc,tkdiffLoc variables below.
-#  * Create the main directory for this program and set the rootDir variable to the path of this directory
-#  * Set the validclassPeriods variable below to a list of your class periods
-#  * Inside the root directory create a class directory for each of your classes in the validclassPeriods variable
-#  * Inside each class directory create an assignmentGroup directory named ##_????? (## unique two digit number, ???? = name of assignmentGroup)
-#  * Inside each assignmentGroup directory
-#    - Create a directory named 00GOLDEN. Inside 00GOLDEN create a directory for each assignment with the name of that assignment.
-#      Inside each assigment directory create a file named gold.txt (aka the judge's output file). The student's program output for
-#      an assignment will be compared to this gold.txt file using tkdiff.  Also put any input file(s) (aka the judge's data files)
-#      that will be read by the student's program into this assignment directory.
-#    - For a java assignment create a directory named 00TESTER and put the JAVA test program named TESTER?????.
-#      (where ????? is the assignment name). This is the program that will be run to test a student's program.
-#  * Create a directory for the scoreboard files and set the scoreboardDir variable to the path of this directory
-# RUNNING (TEACHER)
-#  Program is run in a timed stamped assignment folder for the student that is inside the assignmentGroup directory in a folder
-#  named for the student.
-#  After the program runs (or has an error) teacher is prompted with   y/n [i a e s f l](r){x} h=help?
-#   'y' submission correct. UPDATE scoreboard, CONTINUE to next submission.
-#   'n' submission incorrect. UPDATE scoreboard, CONTINUE to next submission.
-#   'i' show the program in IDE.
-#   'a' run the program again.
-#   'o' print output to screen with \n replaced by ↵
-#   'c' copy information to clipboard (in case email is blocked).
-#   'e' email student.
-#   'r' remove submitted file. CONTINUE to next submission.
-#   's' save submission in 00SAVE directory.
-#   'f' print files in student directory.
-#   'l' print class log file (chosing l again will get the next earlier set of lines)
-#   'x' exit this program (does not remove submitted file).
-#   'h' help for menu choices.
 # SUBMITTING (STUDENT)
 #  Submitted programs must be named ^^(\d+)([a-zA-Z-]+)(\d+)_(.+)\. (e.g. 1LovelaceAda5678_collatz.py)
 #   * (\d+) = class ID
@@ -95,9 +6,6 @@
 #   * (.+) = assignment name (all characters between _ and last .
 
 # TODO/IMPROVEMENTS
-#   * extract the latest submission from each student into an "assignment directory"
-#   * (optionally) sort the program output (for random order JUNIT tests)
-#   * (optionally) sort dictionaries
 #   * add a 'g' option for grading.  Enter absolute grade or a deduction (how to handle multiple deductions).
 #   * multiple tests per assignment (e.g. easy, medium, hard tests)
 
@@ -123,21 +31,23 @@ from   email.mime.multipart import MIMEMultipart # for outlook
 from   email.mime.base      import MIMEBase      # for outlook 
 from   email                import encoders      # for outlook
 import pyperclip        # allows python to add things to the clipboard (so it can be quickly pasted)
+#from icecream import ic
 
-
-
-rootDir = r'C:/Users/E151509/Dropbox/Apps/StudentFiles/'  # root directory containing the class directories
-rootDir = r'C:/Users/E151509/Google Drive/My LASA/misc/tools/CSAssignmentChecker/demo1/'
-
+# class periods
 validClassPeriods = ["1","4","5"]         # my java and python class periods
 validClassPeriodsString = "(1 4 5)"       # used in MAIN menu
-
-# rootDir = r'C:/Users/E151509/Downloads/testDir/'  # root directory containing the class directories
+# root & scoreboard directories (can use either / or \)
+rootDir = r'C:/Users/E151509/Dropbox/Apps/StudentFiles'  # root directory containing the class directories
+#rootDir = r'C:/Users/E151509/Google Drive/My LASA/misc/tools/CSAssignmentChecker/demo1'
+#rootDir = r'C:\Users\E151509\Downloads\CSAssignmentChecker-main\CSAssignmentChecker-main\demo\demo'
 scoreboardDir = r'C:/Users/E151509/Google Drive/Course Materials/Introduction to Computer Science/10.Python/scoreboard'
+#scoreboardDir = r'C:/Users/E151509/Google Drive/My LASA/misc/tools/CSAssignmentChecker/demo1/scoreboard'
+#scoreboardDir = r'C:\Users\E151509\Downloads\CSAssignmentChecker-main\CSAssignmentChecker-main\demo\demo\scoreboard'
 # scoreboardDir = r'C:/Users/E151509/Downloads/testDir/scoreboards/'
-pythonIdeLoc = r'C:\Users\E151509\AppData\Local\Programs\Python\Python310\Lib\idlelib\idle.pyw'
+pythonIdeLoc = r'C:/Users/E151509/AppData/Local/Programs/Python/Python310/Lib/idlelib/idle.pyw'
 javaIdeLoc = r'c:/Program Files (x86)/jGRASP/bin/jgrasp.exe'              # location of JAVA IDE   executable
 tkdiffLoc = r'c:/Program Files/TkDiff/tkdiff.exe'                         # location of tkdiff     executable
+textEditorLoc = r'c:/Program Files (x86)/Notepad++/notepad++.exe'
 #################### OBFUSCATE IF SHARING PROGRAM ###################
 emailSendFromAddress = "rainer.mueller@austinisd.org"
 emailSendFromPassword = "farGoMcm97"
@@ -221,11 +131,9 @@ def setup():
             if not os.path.isdir(plagiarismDir):
                 os.mkdir(plagiarismDir)
                 print("Created directory",plagiarismDir)
-            testersDir = os.path.join(classAssignmentGroupDir,"00TESTERS")
             assignmentGroup = {}  # create content dict, then add to it
             assignmentGroup["assignmentGroupDir"] = classAssignmentGroupDir
             assignmentGroup["goldenDir"] = globalAssignmentGroupDir   # this is in the GLOBAL assignment group directory
-            assignmentGroup["testersDir"] = testersDir
             assignmentGroup["saveDir"] = saveDir
             assignmentGroup["plagiarismDir"] = plagiarismDir        
 
@@ -441,7 +349,8 @@ def processCurrentSubmission(currentSubmission, assignmentGroups, assignments,cl
                 submission["goldenDir"] = assignmentGroup["goldenDir"]
                 submission["goldenAssignmentDir"] = os.path.join(assignmentGroup["goldenDir"], submission["Assignment"])
                 submission["goldFile"] = os.path.join(submission["goldenAssignmentDir"], "gold.txt")
-                submission["testersDir"] = assignmentGroup["testersDir"]
+                submission["dataInputFileExists"] = os.path.exists(os.path.join(submission["goldenAssignmentDir"],submission["Assignment"]+".dat"))
+                submission["dataInputFileName"] = os.path.join(submission["goldenAssignmentDir"],submission["Assignment"]+".dat")
                 submission["saveDir"] = assignmentGroup["saveDir"]
                 submission["plagiarismAssignmentDir"] = os.path.join(assignmentGroup["plagiarismDir"],submission["Assignment"])
                 ## FIX Creating a plagiarism directory for each assignment should be done when setting up the class
@@ -522,6 +431,7 @@ def runProgram(submission, classRootDir):
         with open("CompilerError.txt", "w") as ferr:
             result = subprocess.run(compileCmd, stdout=fout, stderr=ferr)  #COMPILE PROGRAM
     errorCompile = checkErrorFileForErrors("CompilerError.txt", "  COMPILE ERROR")
+    bringUpIDE = '\n:choice\nset /P c=Bring up IDE [y]? \nif /I "%c%" EQU "Y" goto :ide\ngoto :end\n:ide\n' + bringUpProgramInIDE(submission,False) + '\n:end'
     if errorCompile:
         copyfile("CompilerError.txt", os.path.join(submission["classDir"],submission["studentName"] + "_compileError.txt"))  # copy compile error file to class directory
         copyfile("CompilerError.txt", os.path.join(submission["studentDir"],submission["compileErrFileName"]))  # copy output file to data directory
@@ -538,6 +448,11 @@ def runProgram(submission, classRootDir):
         if errorRun:
             if os.path.exists(submission["outFileName"]):
                 os.remove(submission["outFileName"])
+            if os.path.exists(os.path.join(classRootDir,submission["studentName"] + ".bat")):
+                os.remove(os.path.join(classRootDir,submission["studentName"] + ".bat"))
+            with open(os.path.join(classRootDir,submission["studentName"] + ".bat"), "w") as fbatch:
+                fbatch.write('"' + textEditorLoc + '"' + " -multiInst -nosession " + os.path.join(submission["studentDir"],submission["runErrFileName"]))              
+                fbatch.write(bringUpIDE)
             copyfile(submission["errorFileName"], os.path.join(submission["classDir"],submission["studentName"] + "_runTimeError.txt"))  # copy compile error file to class directory
             copyfile(submission["errorFileName"], os.path.join(submission["studentDir"],submission["runErrFileName"]))  # copy output file to data directory
             if "partnerName" in submission:
@@ -560,10 +475,11 @@ def runProgram(submission, classRootDir):
             with open(os.path.join(submission["studentPgmRunDir"], "tkdiff.bat"), "w") as ftkdiff:  
                 ftkdiff.write('"' + tkdiffLoc + '"' + " " + submission["outFileName"] + " " + os.path.join(submission["goldenAssignmentDir"], "gold.txt"))
             # also write tkdiff batch file to class directory (for quick access to each student's last run results)
-            if os.path.exists(os.path.join(classRootDir,submission["studentName"] + "_tkdiff" + ".bat")):
-                os.remove(os.path.join(classRootDir,submission["studentName"] + "_tkdiff" + ".bat"))
-            with open(os.path.join(classRootDir,submission["studentName"] + "_tkdiff" + ".bat"), "w") as ftkdiff:
-                ftkdiff.write('"' + tkdiffLoc + '"' + " " + os.path.join(submission["studentPgmRunDir"],submission["outFileName"]) + " " + os.path.join(submission["goldenAssignmentDir"], "gold.txt"))
+            if os.path.exists(os.path.join(classRootDir,submission["studentName"] + ".bat")):
+                os.remove(os.path.join(classRootDir,submission["studentName"] + ".bat"))
+            with open(os.path.join(classRootDir,submission["studentName"] + ".bat"), "w") as fbatch:
+                fbatch.write('"' + tkdiffLoc + '"' + " " + os.path.join(submission["studentPgmRunDir"],submission["outFileName"]) + " " + os.path.join(submission["goldenAssignmentDir"], "gold.txt"))
+                fbatch.write(bringUpIDE)             
     os.chdir(classRootDir)
     return correct, error
 
@@ -609,6 +525,23 @@ def submissionIncorrect(submission):
         updateLogFile(submission, "  >>> INVALID SUBMISSION <<< ")        
     os.remove(submission["FileName"])
 
+def bringUpProgramInIDE(submission, run=True):
+    global pythonIdeLoc,pythonIdeCmd,javaIdeLoc,javaIdeCmd
+    if submission["language"] == "python":
+        if os.path.exists(pythonIdeLoc):
+            ideCmd = [pythonIdeLoc,submission["FileName"]]
+        else:
+            print("Did not find IDE executable at " + pythonIdeLoc + "\nSet pythonIdeLoc variable in program to correct IDE location")
+    elif submission["language"] == "java":
+        if os.path.exists(javaIdeLoc):
+            ideCmd = [javaIdeLoc,submission["Assignment"] + ".java"]
+        else:
+            print("Did not find IDE executable at " + javaIdeLoc + "\nSet javaIdeLoc variable in program to correct IDE location")
+    if run:
+        result = subprocess.run(ideCmd, shell=True)
+    ideCmdString = ideCmd[0] + ' ' + submission["studentPgmRunDir"] + '\\' + ideCmd[1]
+    #print(f'{ideCmdString=}')
+    return ideCmdString
             
 ### MAIN PROGRAM ###
 def main():
@@ -732,7 +665,7 @@ def main():
                         submissionIncorrect(submission)                         
                 while not autoJudging:    # loop until a valid response
                     if submission["valid"]:
-                        answer = input("  y/n [i a o c e s f l](r){x} h=help? ")
+                        answer = input("  y/n [i a t d o e c s f l](r){x} h=help? ")
                     else:
                         answer = input("  Invalid submission c [i e s](r){x} h=help? ")
                     if submission["valid"] and answer == "y":  # submission correct. UPDATE scoreboard, CONTINUE to next submission.
@@ -744,17 +677,19 @@ def main():
                     elif answer == "i":  # open program in IDE
                         if submission["valid"]:
                             os.chdir(submission["studentPgmRunDir"])
-                        if submission["language"] == "python":
-                            if os.path.exists(pythonIdeLoc):
-                                pythonIdeCmd = [pythonIdeLoc,submission["FileName"]]
-                                result = subprocess.run(pythonIdeCmd, shell=True)
-                            else:
-                                print("Did not find IDE executable at " + pythonIdeLoc + "\nSet pythonIdeLoc variable in program to correct IDE location")
-                        elif submission["language"] == "java":
-                            javaIdeCmd = [javaIdeLoc,submission["Assignment"] + ".java"]
-                            result = subprocess.run(javaIdeCmd, shell=True)
+                        bringUpProgramInIDE(submission)
                         os.chdir(classRootDir)
-                    elif answer == "o":   # open program in Notepad++
+                    elif answer == "t":
+                        tkdiffCmd = [tkdiffLoc,os.path.join(submission["studentPgmRunDir"],submission["outputFile"]),os.path.join(submission["goldenAssignmentDir"], "gold.txt")]
+                        result = subprocess.run(tkdiffCmd, shell=True)     # run tkdiff                        
+                    elif answer == "d":
+                        if submission["dataInputFileExists"]:
+                           dataCmdFile = [textEditorLoc,"-multiInst","-nosession",submission["dataInputFileName"]]
+                           result = subprocess.run(dataCmdFile, shell=True)   # bring up input data file in text editor
+                        else:
+                           print("  Assignment does not have a data input file named")
+                           print("  " + submission["dataInputFile"])
+                    elif answer == "o":   # print program output (making newline character visible)
                         outfile = os.path.join(submission["studentPgmRunDir"],submission["outFileName"])
                         with open(outfile,'r') as outf:
                            for line in outf:
@@ -827,8 +762,8 @@ def main():
                             print("  'a' run the program again.")
                         else:
                             print("  'c' change name of the submitted file.")
-                        print("  'c' copy information to clipboard (in case email is blocked).")
                         print("  'e' email student (to avoid having to enter student's email add email after class number in REGISTER.txt file).")
+                        print("  'c' copy information to clipboard (in case email is blocked).")
                         print("  'r' remove submitted file. CONTINUE to next submission.")
                         print("  's' save submission in 00SAVE directory.")
                         if submission["valid"]:
@@ -842,7 +777,7 @@ def main():
                                 receiverEmailAddress = classRegistration[submission["studentCode"]][2]
                     else:
                         if submission["valid"]:
-                            print("  Please answer with y/n [i a e s f l](r){x} h=help?")
+                            print("  Please answer with y/n [i a t d g o e c s f l](r){x} h=help?")
                         else:
                             print("  Please answer with c [i e s l](r){x} h=help? ")
                              
