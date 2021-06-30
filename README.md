@@ -98,3 +98,5 @@ is displayed with the following options
 * To associate an email address with a student manually edit the REGISTER.txt file in the class period folder and enter a student email as a 4th field for the student.
 * The program will give you options to use a saved set of comments or enter a new comment to be used in the mail or put on the clipboard. You can chooose from preset assignment specific comments (stored in the comments.txt file in the assignments folder) or global comments (stored in ASSIGNMENT_GROUPS/comments.txt)
 
+### Batch Files
+The class directory will contain a batch file for each student's last submission. If the submission compiled & ran the batch file will run tkdiff and then offer to open the IDE and input data files. If the submission did not compile or run, instead of running tkdiff, the batch file will open the error file.
