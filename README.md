@@ -10,7 +10,7 @@ This program verifies student submitted python or java programs. The program doe
 ### Other Requirements
   * download & install tkdiff (https://sourceforge.net/projects/tkdiff/)
 
-### Demo Setup
+### Program (and Demo) Setup
 * unzip demo.zip to a folder on your hard drive (i.e. C:/YourPathToDemoDir/demo)
   * **ASSIGNMENT_GROUPS** folder
     * assignment group folder
@@ -31,6 +31,7 @@ This program verifies student submitted python or java programs. The program doe
   * set the **javaIdeLoc** variable to the location of the JAVA IDE (e.g. jGrasp) executable.
   * set the **textEditorLoc** variable to the location of a text editor (e.g. Notepad++) executable.
 ### Run the Demo
+The demo verifies two student assignments (1) [encryption](https://drive.google.com/drive/folders/1OtwHDHMFygYS7y7Wm82YN24YwWlmzkMc?usp=sharing) (2) [Collatz](https://docs.google.com/document/d/1TKC45I9ZGvg82XGRzkpnoEnlxtC9xXnPdiv9Qmajf9g/edit?usp=sharing)
 * run CSassignmentChecker.py
   * since this is the first time the program has been run, the program creates some required directories.
   * You should now see the Main Menu\
