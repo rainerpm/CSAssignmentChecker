@@ -24,10 +24,10 @@ def updateScoreboard(scoreboardDir,contestDataDir,assignmentGroupId,classId,list
    for includeNames in [True,False]:
       if includeNames:
         fscoreboard  = open(scoreboardFileWithNames,'w')
-        spaces = 12 * ' '
+        spaces = 13 * ' '
       else:
         fscoreboard = open(scoreboardFile,'w')
-        spaces = ''
+        spaces = ' '
       fscoreboard.write(datetime.now().strftime("%c") + '  Period ' + classId + '  ' + assignmentGroupId)
       fscoreboard.write('\n')
       i = 0
@@ -41,31 +41,32 @@ def updateScoreboard(scoreboardDir,contestDataDir,assignmentGroupId,classId,list
         fscoreboard.write('TOTALS Code  ')      
       while j < i:
          j += 1
-         fscoreboard.write(f' ({j:>2}) ')
+         fscoreboard.write(f'({j:>2})')
       if includeNames:
-         fscoreboard.write('\n')
+         fscoreboard.write(' POINTS\n')
       else:
-         fscoreboard.write('  TOTALS\n')
+         fscoreboard.write(' TOTALS POINTS\n')
       listOfStudentDirectories = getListOfStudentDirectories(contestDataDir)
       if not includeNames:
          listOfStudentDirectories.sort(key = lambda x: int(x.split('_')[1]))  # https://stackoverflow.com/questions/31306951/how-to-sort-a-list-by-last-character-of-string
       testsCorrect = {}
       for studentDirectory in listOfStudentDirectories:
-        nameNum = studentDirectory.split('_')
-        name = nameNum[0]
-        num  = nameNum[1]
+        nameCode = studentDirectory.split('_')
+        name = nameCode[0]
+        code  = nameCode[1]
         studentResult = ''
         correctCount = 0
         countTestsInRow = 1
+        points = 0
         for test in listOfTestNames:
            listOfStudentDataFiles = glob.glob(contestDataDir + '/' + studentDirectory + '/' + test + r'_*.txt')
            newestTestDataFile = ""
            if len(listOfStudentDataFiles) > 0:
               newestTestDataFile = max(listOfStudentDataFiles, key=os.path.getmtime)
            if newestTestDataFile.endswith("compileErr.txt"):
-              result = "Ec "
+              result = "Ec"
            elif newestTestDataFile.endswith("runErr.txt"):
-              result = "Er "
+              result = "Er"
            else:
               count = 0
               correctFound = False
@@ -78,38 +79,40 @@ def updateScoreboard(scoreboardDir,contestDataDir,assignmentGroupId,classId,list
                  correctCount = correctCount + 1
                  testsCorrect[test] = testsCorrect.get(test,0) + 1
                  if count == 0:
-                    result = "C  "
+                    result = "C"
+                    points = points + 60
                  else:
-                    result = "C" + str(count) + " "
+                    result = "C" + str(count)
+                    points = points + (60 - (count*5))
               else:
-                 result = str(count) + 'x '
-           studentResult = studentResult + result + '   '
+                 result = str(count) + 'x'
+           studentResult = studentResult + f'{result:<2s}' + '  '
            countTestsInRow += 1
         if includeNames:
-           fscoreboard.write(f'{name:20s} {correctCount:2d}  {num}    {studentResult}' + '\n')
+           fscoreboard.write(f'{name:20s} {correctCount:>2d}   {code}   {studentResult} {points:>4d}' + '\n')
         else:
-           fscoreboard.write(f'{num}    {studentResult}   {correctCount}' + '\n')
+           fscoreboard.write(f'{code}    {studentResult}  {correctCount:>2d}    {points:>4d}' + '\n')
       totals = ''
       sumTotals = 0
       for test in listOfTestNames:
         testCorrectStr = "   "
         if test in testsCorrect:
           testCorrectStr = str(testsCorrect[test])
-          totals = f'{totals}{testCorrectStr:>4}  '
+          totals = f'{totals}{testCorrectStr:>2}  '
           sumTotals = sumTotals + int(testCorrectStr)
         else:
           #totals = f'{totals}  0 '
           testCorrectStr = "0"
-          totals = f'{totals}{testCorrectStr:>4}  '
+          totals = f'{totals}{testCorrectStr:>2}  '
 
       if includeNames:
-         fscoreboard.write('TOTALS             ' + f'{sumTotals:>4}' + '        ' + totals + '\n\n')
+         fscoreboard.write('TOTALS             ' + f'{sumTotals:>4d}' + '          ' + totals + '\n\n')
       else:
-         fscoreboard.write('TOTALS' + totals + '  ' + f'{sumTotals:>4}' + '\n\n')
+         fscoreboard.write('TOTALS  ' + totals + f'{sumTotals:>4d}' + '\n\n')
         
-      fscoreboard.write("Ec  = latest submission had a compile (i.e. syntax) error.\n")
-      fscoreboard.write("Er  = latest submission had a run-time (e.g. div by 0, index out range) error.\n")
-      fscoreboard.write("C#  = test ran successfully (# = number of incorrect submissions).\n")
+      fscoreboard.write("Ec  = latest submission had a compile or syntax error.\n")
+      fscoreboard.write("Er  = latest submission had a run-time error - e.g. div by 0, index out range.\n")
+      fscoreboard.write("C#  = test ran successfully, had # of incorrect submissions.\n")
       fscoreboard.write("#x  = test never ran successfully, submitted # times.")
       fscoreboard.close()  
 
@@ -126,9 +129,9 @@ def getListOfStudentDirectories(contestDataDir):
 def getListOfStudentNamesFromStudentDirectories(contestDataDir):
    listOfStudentNames = []
    for studentDirectory in getListOfStudentDirectories(contestDataDir):
-     nameNum = studentDirectory.split('_')
-     name = nameNum[0]
-     num  = nameNum[1]
+     nameCode = studentDirectory.split('_')
+     name = nameCode[0]
+     code  = nameCode[1]
      listOfStudentNames.append(name)
    return listOfStudentNames
 

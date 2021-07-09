@@ -28,8 +28,8 @@ import pyperclip        # allows python to add things to the clipboard (so it ca
 import webbrowser
 
 # class periods
-validClassPeriods = ["1","4","5"]         # my java and python class periods
-validClassPeriodsString = "(1 4 5)"       # used in MAIN menu
+validClassPeriods = ["1","4","5","6","9"]       # my java and python class periods
+validClassPeriodsString = "(1 4 5 6 9)"       # used in MAIN menu
 # root & scoreboard directories (can use either / or \)
 rootDir = r'C:/Users/E151509/Dropbox/Apps/StudentFiles'  # root directory containing the class directories
 #rootDir = r'C:/Users/E151509/Google Drive/My LASA/misc/tools/CSAssignmentChecker/demo1'
@@ -112,6 +112,10 @@ def setup():
         with open(classesFile, "r") as cfile:
             classPeriods = cfile.read().replace("\n"," ").split()
         for classPeriod in classPeriods:
+            classPeriodsDir = os.path.join(rootDir,classPeriod)
+            if not os.path.isdir(classPeriodsDir):
+               os.mkdir(classPeriodsDir)
+               print("Created directory",classPeriodsDir)
             classAssignmentGroupDir = os.path.join(rootDir,classPeriod,globalAssignmentGroupDirOnly)
             if not os.path.isdir(classAssignmentGroupDir):
                 os.mkdir(classAssignmentGroupDir)
@@ -502,6 +506,8 @@ def updateLogFile(submission, logMessage, alsoPrint = False):
 def submissionCorrect(submission):
     if not os.path.exists(os.path.join(submission["plagiarismAssignmentDir"],submission["submittedFileNameWithDate"])):
         os.rename(submission["FileName"], os.path.join(submission["plagiarismAssignmentDir"],submission["submittedFileNameWithDate"]))  # move pgm to PLAGIARISM directory
+    else:
+       os.remove(submission["FileName"])       # remove submission file
     copyfile(os.path.join(submission["studentPgmRunDir"],submission["outFileName"]), os.path.join(submission["studentDir"],submission["outCorrectFileName"]))  # copy output file to data directory
     if "partnerName" in submission:
         copyfile(os.path.join(submission["studentPgmRunDir"],submission["outFileName"]), os.path.join(submission["partnerDir"],submission["outCorrectFileName"]))  # copy output file to partner's data directory
