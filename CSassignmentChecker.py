@@ -505,12 +505,12 @@ def updateLogFile(submission, logMessage, alsoPrint = False):
 
 def submissionCorrect(submission):
     if not os.path.exists(os.path.join(submission["plagiarismAssignmentDir"],submission["submittedFileNameWithDate"])):
-        os.rename(submission["FileName"], os.path.join(submission["plagiarismAssignmentDir"],submission["submittedFileNameWithDate"]))  # move pgm to PLAGIARISM directory
+       os.rename(submission["FileName"], os.path.join(submission["plagiarismAssignmentDir"],submission["submittedFileNameWithDate"]))  # move pgm to PLAGIARISM directory
     else:
-       os.remove(submission["FileName"])       # remove submission file
+       os.remove(submission["FileName"])       # remove submission file (this only happens if the same file with the same time stamp is copied into class directory)
     copyfile(os.path.join(submission["studentPgmRunDir"],submission["outFileName"]), os.path.join(submission["studentDir"],submission["outCorrectFileName"]))  # copy output file to data directory
     if "partnerName" in submission:
-        copyfile(os.path.join(submission["studentPgmRunDir"],submission["outFileName"]), os.path.join(submission["partnerDir"],submission["outCorrectFileName"]))  # copy output file to partner's data directory
+       copyfile(os.path.join(submission["studentPgmRunDir"],submission["outFileName"]), os.path.join(submission["partnerDir"],submission["outCorrectFileName"]))  # copy output file to partner's data directory
     scoreboard.updateScoreboard(scoreboardDir,submission["assignmentGroupDir"],submission["assignmentGroupId"],submission["classPeriod"],submission["listOfAssignments"])
     updateLogFile(submission, "  *** CORRECT *** ")
 
