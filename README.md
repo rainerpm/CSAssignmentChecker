@@ -79,8 +79,8 @@ has the following options
 In manual mode after a student's program submission has been run and either the program was correct or the program was incorrect and the **tkdiff** window has been closed, the Assignment Menu\
 **y/n \[i a t d o e c s f l](r){x} h=help?**\
 is displayed with the following options
-* **y** judge the student's program as correct and update the program's status in /demo/scoreboard/. The teacher can choose to ignore inconsequential differences in the output shown in the **tkdiff** window and still count the program correct.
-* **n** judge the student's program as incorrect and update the program's status in /demo/scoreboard/.
+* **y** judge the student's program as correct and update the program's status in /demo/scoreboard/. Move on to the next submission (if any). The teacher can choose to ignore inconsequential differences in the output shown in the **tkdiff** window and still count the program correct.
+* **n** judge the student's program as incorrect and update the program's status in /demo/scoreboard/. Move on to the next submission (if any).
 * **i** show the student's program submission in the IDE.
 * **a** run the program again
 * **t** run tkdiff again
