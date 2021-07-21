@@ -1,2 +1,2 @@
-emailSendFromAddress = "rainer.mueller@austinisd.org"
-emailSendFromPassword = "farGoMcm97"
+emailSendFromAddress = "YourEmailAddress@email.com"
+emailSendFromPassword = "YourEmailPassword"
