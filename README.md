@@ -8,7 +8,9 @@ This program verifies student submitted python or java programs. The program doe
   * pip install pyperclip
   
 ### Other Requirements
-  * download & install tkdiff (https://sourceforge.net/projects/tkdiff/)
+  * download & install a diff program (either of the below is fine).
+    * tkdiff (https://sourceforge.net/projects/tkdiff/) - this one can be tricky to install.
+    * k3diff (http://kdiff3.sourceforge.net/)
 
 ### Program (and Demo) Setup
 * unzip demo.zip to a folder on your hard drive (i.e. C:/YourPathToDemoDir/demo)
@@ -21,12 +23,14 @@ This program verifies student submitted python or java programs. The program doe
       * **periods.txt** indicates which class periods this assignment group is assigned to
     * **comments.txt** contains the global comments used in student emails or clipboard
   * 1,4,5 class period folders for the demo
-* set the following folder (aka directory) variables
+* set the following folder (aka directory) variables in customize.py
   * set the **rootDir** variable to the location of the unzipped demo folder - C:/YourPathToDemoDir/demo 
   * set the **scoreboardDir** variable to C:/YourPathToDemoDir/demo/scoreboard
   * hereafter C:/YourPathToDemoDir/demo is abbreviated /demo.
 * set the following executable variables
-  * set the **tkdiffLoc** variable to the location of the **tkdiff.exe** executable.
+  * set either of the following for the location of the diff program
+    * set the **tkdiffLoc** variable to the location of the **tkdiff.exe** executable.
+    *  set the **kdiff3Loc** variable to the location of the **kdiff3.exe** executable.
   * set the **pythonIdeLoc** variable to the location of the Python IDE (e.g. IDLE) executable.
   * set the **javaIdeLoc** variable to the location of the JAVA IDE (e.g. jGrasp) executable.
   * set the **textEditorLoc** variable to the location of a text editor (e.g. Notepad++) executable.
@@ -47,12 +51,12 @@ The demo verifies two student assignments (1) [encryption](https://drive.google.
   something like the Dropbox File Request feature.
 * For this demo, instead of students submitting files to the class period folder, *we will simply copy example files from /demo/sampleSubmissions/*
 * To demo the basic verification of a student program, copy /demo/sampleSubmissions/studentProblems/4ShotwellGwynne4381_encryption.py to the class period 4 folder /demo/4/. This file is Period 4's student Gwynne Shotwell's submission of the encryption assignment. The program (which up to now had been printing periods) will detect this file and run the program. 
-   * Since this initial student program has an error, the program will use tkdiff to display the differences between the students program output and the expected "gold" output.
-   * After you close the tkdiff window, the program displays the Assignment Menu **y/n \[i a t d o e c s f l](r){x} h=help?**
+   * Since this initial student program has an error, the program will use diff program to display the differences between the students program output and the expected "gold" output.
+   * After you close the diff window, the program displays the Assignment Menu **y/n \[i a t d o e c s f l](r){x} h=help?**
      * **Answer i** to display the program in the Python IDE.
      * **Answer n** to judge the program as incorrect. The student's program status is reflected in /demo/scoreboard/ (one file with the student's name and one that is annoymized using the student's 4 digit code that can be made accessible to the class).
-   * Since the output was incorrect, the program also created a file (ShotwellGwynne_tkdiff.bat) in the class period folder that enables the teacher to easily run tkdiff for the student's last incorrect submission.
-   * copy /demo/sampleSubmissions/studentProblems/4ShotwellGwynne4381_encryption.py to the class period 4 folder /demo/4/ but now fix the error line 21 (changing thing[1] to thing[0])
+   * Since the output was incorrect, the program also created a file (ShotwellGwynne.bat) in the class period folder that enables the teacher to easily run diff program for the student's last incorrect submission and optionally bring up the program in the IDE or look at the data input file in the text editor.
+   * fix the error on line 21 (changing thing[1] to thing[0]) in /demo/sampleSubmissions/studentProblems/4ShotwellGwynne4381_encryption.py and then once again copy the file to the class period 4 folder /demo/4/. 
     * Since the student now program works as expected the program reports *** CORRECT ***. NOTE: The program ignores any whitespace at the end of a line or the end of the output when comparing the student's output to the expected output in the assignment's gold.txt file.
      * **Answer y** to judge the program as correct and update the program's status in /demo/scoreboard/.
    * NOTE: This particular student program when run with the teacher supplied input file /demo/ASSIGNMENT_GROUPS/pythonAssignments/encryption/encryption.dat is expected to print out exactly what's found in /demo/ASSIGNMENT_GROUPS/pythonAssignments/encryption/gold.txt. 
@@ -60,7 +64,7 @@ The demo verifies two student assignments (1) [encryption](https://drive.google.
   * Use Ctrl-C to go back to the Main Menu.
 * Each student should be registered with the program. To register two example students copy the two files in demo/sampleSubmissions/studentRegistrations/ to /demo/1/ 
   (NOTE: For registration purposes the assignment name part of the file name must be the word "register").
-  **Answer 1** in the Main Menu.  The program detects the registration files in /demo/1/ and registers the 2 students by creating/updating a file called REGISTER.txt (and then deleting the files).
+  **Answer 1** in the Main Menu.  The program detects the registration files in /demo/1/ and registers the 2 students by creating/updating a file called REGISTER.txt (and then deleting the registration files).
   For the demo the directories /demo/5/ and /demo/6/ already had predefined student registrations in a REGISTER.txt file.
 * To demo the more advanced verification of a JAVA program using a teacher provided TESTER program, copy the student program /demo/sampleSubmissions/studentProblems/1LovelaceAda1234_Collatz.java to the class period 1 folder /demo/1/.
   This represents the student's code for an assignment named "Collatz". In addition to the expected output file gold.txt, the teacher has also supplied a specific test program called CollatzTester.java in the folder /demo/ASSIGNMENT_GROUPS/first6weeksAssignments/collatz/. The program runs the CollatzTester program and should report *** CORRECT *** since the program's output matches the expected output.
@@ -69,21 +73,21 @@ The demo verifies two student assignments (1) [encryption](https://drive.google.
 The program's Main Menu\
 **(? ? ?)manual (a)utojudge (l)og e(x)it (ENTER=check)?**\
 has the following options
-* **(? ? ?)** A choice of class period numbers which cause the program to enter manual mode and monitor that class period's folder for student program submissions.  The program processes any current (and future) program submissions to that class period's folder - oldest submission is processed first. Incorrect output differences will be shown in **tkdiff** after which the **Assignment Menu** is displayed.
+* **(? ? ?)** A choice of class period numbers which cause the program to enter manual mode and monitor that class period's folder for student program submissions.  The program processes any current (and future) program submissions to that class period's folder - oldest submission is processed first. Incorrect output differences will be shown in **diff window** after which the **Assignment Menu** is displayed.
 * **(a)utojuge** Brings up the Autojudge Menu **(? ? ?)autojudge (m)ultiple (<ENTER>=all periods)?**. Specified class period folders are checked and any current (and future) program submissions are processed and automatically judged - if program output is not correct, the submission is counted as incorrect. 
 * **(l)og** Program displays the last 20 lines of logGlobal.txt in **rootDir** 
 * **e(x)it** Exits the program
 * **ENTER** Pressing the *Enter* key causes the program to check all class periods for submissions and then returns to the Main Menu.
 
 ### Assignment Menu
-In manual mode after a student's program submission has been run and either the program was correct or the program was incorrect and the **tkdiff** window has been closed, the Assignment Menu\
+In manual mode after a student's program submission has been run and either the program was correct or the program was incorrect and the **diff window** has been closed, the Assignment Menu\
 **y/n \[i a t d o e c s f l](r){x} h=help?**\
 is displayed with the following options
-* **y** judge the student's program as correct and update the program's status in /demo/scoreboard/. The teacher can choose to ignore inconsequential differences in the output shown in the **tkdiff** window and still count the program correct.
-* **n** judge the student's program as incorrect and update the program's status in /demo/scoreboard/.
+* **y** judge the student's program as correct and update the program's status in /demo/scoreboard/. Move on to the next submission (if any). The teacher can choose to ignore inconsequential differences in the output shown in the **diff window** and still count the program correct.
+* **n** judge the student's program as incorrect and update the program's status in /demo/scoreboard/. Move on to the next submission (if any).
 * **i** show the student's program submission in the IDE.
 * **a** run the program again
-* **t** run tkdiff again
+* **t** run diff program again
 * **d** show the data input file for the assignment (?.dat file in assignment folder - ? is the **assignment name**) 
 * **o** print the student's output (newline's are shown as ↵)
 * **e** email the student with information regarding the assignment status.
@@ -100,4 +104,4 @@ is displayed with the following options
 * The program will give you options to use a saved set of comments or enter a new comment to be used in the mail or put on the clipboard. You can chooose from preset assignment specific comments (stored in the comments.txt file in the assignments folder) or global comments (stored in ASSIGNMENT_GROUPS/comments.txt)
 
 ### Batch Files
-The class directory will contain a batch file for each student's last submission. If the submission compiled & ran the batch file will run tkdiff and then offer to open the IDE and input data files. If the submission did not compile or run, instead of running tkdiff, the batch file will open the error file.
+The class directory will contain a batch file for each student's last submission. If the submission compiled & ran the batch file will run diff and then offer to open the IDE and input data files. If the submission did not compile or run, instead of running diff, the batch file will open the error file.
