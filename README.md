@@ -52,7 +52,7 @@ The demo verifies two student assignments (1) [encryption](https://drive.google.
      * **Answer i** to display the program in the Python IDE.
      * **Answer n** to judge the program as incorrect. The student's program status is reflected in /demo/scoreboard/ (one file with the student's name and one that is annoymized using the student's 4 digit code that can be made accessible to the class).
    * Since the output was incorrect, the program also created a file (ShotwellGwynne_tkdiff.bat) in the class period folder that enables the teacher to easily run tkdiff for the student's last incorrect submission.
-   * copy /demo/sampleSubmissions/studentProblems/4ShotwellGwynne4381_encryption.py to the class period 4 folder /demo/4/ but now fix the error line 21 (changing thing[1] to thing[0])
+   * fix the error on line 21 (changing thing[1] to thing[0]) in /demo/sampleSubmissions/studentProblems/4ShotwellGwynne4381_encryption.py and then once again copy the file to the class period 4 folder /demo/4/. 
     * Since the student now program works as expected the program reports *** CORRECT ***. NOTE: The program ignores any whitespace at the end of a line or the end of the output when comparing the student's output to the expected output in the assignment's gold.txt file.
      * **Answer y** to judge the program as correct and update the program's status in /demo/scoreboard/.
    * NOTE: This particular student program when run with the teacher supplied input file /demo/ASSIGNMENT_GROUPS/pythonAssignments/encryption/encryption.dat is expected to print out exactly what's found in /demo/ASSIGNMENT_GROUPS/pythonAssignments/encryption/gold.txt. 
