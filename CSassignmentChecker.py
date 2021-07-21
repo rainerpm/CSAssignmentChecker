@@ -3,6 +3,8 @@
 #   * multiple tests per assignment (e.g. easy, medium, hard tests)
 
 import scoreboard  # import the associated scoreboard.py which creates the scoreboard files
+from login import emailSendFromAddress, emailSendFromPassword
+from customize import validClassPeriods,rootDir,scoreboardDir,pythonIdeLoc,javaIdeLoc,tkdiffLoc,kdiff3Loc,textEditorLoc,emailSignature,emailAttachmentDir
 
 # import standard python libraries (might need to be installed on your computer using 'pip install')
 import os
@@ -27,29 +29,46 @@ import pyperclip        # allows python to add things to the clipboard (so it ca
 #from icecream import ic
 import webbrowser
 
-# class periods
-validClassPeriods = ["1","4","5","6","9"]       # my java and python class periods
-validClassPeriodsString = "(1 4 5 6 9)"       # used in MAIN menu
-# root & scoreboard directories (can use either / or \)
-rootDir = r'C:/Users/E151509/Dropbox/Apps/StudentFiles'  # root directory containing the class directories
-#rootDir = r'C:/Users/E151509/Google Drive/My LASA/misc/tools/CSAssignmentChecker/demo1'
-#rootDir = r'C:\Users\E151509\Downloads\CSAssignmentChecker-main\CSAssignmentChecker-main\demo\demo'
-scoreboardDir = r'C:/Users/E151509/Google Drive/Course Materials/Introduction to Computer Science/10.Python/scoreboard'
-#scoreboardDir = r'C:/Users/E151509/Google Drive/My LASA/misc/tools/CSAssignmentChecker/demo1/scoreboard'
-#scoreboardDir = r'C:\Users\E151509\Downloads\CSAssignmentChecker-main\CSAssignmentChecker-main\demo\demo\scoreboard'
-# scoreboardDir = r'C:/Users/E151509/Downloads/testDir/scoreboards/'
-pythonIdeLoc = r'C:/Users/E151509/AppData/Local/Programs/Python/Python310/Lib/idlelib/idle.pyw'
-javaIdeLoc = r'c:/Program Files (x86)/jGRASP/bin/jgrasp.exe'              # location of JAVA IDE   executable
-tkdiffLoc = r'c:/Program Files/TkDiff/tkdiff.exe'                         # location of tkdiff     executable
-textEditorLoc = r'c:/Program Files (x86)/Notepad++/notepad++.exe'
-#################### OBFUSCATE IF SHARING PROGRAM ###################
-emailSendFromAddress = "rainer.mueller@austinisd.org"
-emailSendFromPassword = "farGoMcm97"
-emailSignature = "\n\nMr. Mueller\n\n"
-emailAttachmentDir = r"C:/Users/E151509/Downloads/StudentAttachment/"  # use newest file in this dir as email attachment
-#################### OBFUSCATE IF SHARING PROGRAM ###################
-
 validFileExtensions = [".py",".java",".zip"]  # .py for python, .java/.zip for java
+
+# Check variables set in customize.py
+initError = False
+
+if not os.path.exists(os.path.join(rootDir)):
+    initError = True
+    print("ERROR!!! root directory does not exist (" + rootDir + ")")
+else: 
+    if not os.path.exists(os.path.join(rootDir,"ASSIGNMENT_GROUPS")):
+        initError = True
+        print("ERROR!!! ASSIGNMENT_GROUPS directory does not exist in " + rootDir)
+
+if not os.path.exists(os.path.join(scoreboardDir)):
+    initError = True
+    print("ERROR!!! scoreboard directory does not exist (" + scoreboarDir + ")")
+
+if not os.path.exists(os.path.join(pythonIdeLoc)):
+    initError = True
+    print("ERROR!!! Python IDE not found @ " + pythonIdeLoc)
+
+if not os.path.exists(os.path.join(javaIdeLoc)):
+    initError = True
+    print("ERROR!!! JAVA IDE not found @ " + javaIdeLoc)
+
+if not os.path.exists(os.path.join(textEditorLoc)):
+    initError = True
+    print("ERROR!!! TextEditor not found @ " + textEditorLoc)    
+    
+if os.path.exists(os.path.join(tkdiffLoc)):
+    diffLoc = tkdiffLoc
+elif os.path.exists(os.path.join(kdiff3Loc)):
+    diffLoc = kdiff3Loc
+else:
+    initError = True
+    print("ERROR!!! Diff program not found")
+
+if initError:
+    exit()
+
 
 ### REGISTRATION
 registrationRequired = True
@@ -102,7 +121,7 @@ def loadRegisteredStudents(assignmentGroups):
                         print("  Created student dir", studentDir)
     return classRegistration
 
-def setup():    
+def setup():
     listOfGlobalAssignmentGroupDirectories = [f.name for f in os.scandir(os.path.join(rootDir,"ASSIGNMENT_GROUPS")) if f.is_dir()]  # https://stackoverflow.com/questions/973473/getting-a-list-of-all-subdirectories-in-the-current-directory
     allAssignmentGroups = {}
     allAssignments = {}
@@ -416,7 +435,7 @@ def runProgram(submission, classRootDir):
         #for file in glob.glob(os.path.join(submission["testersDir"],submission["Assignment"] + "Tester.java")):  # copy TESTERS program to student directory
         #   copy(file, os.path.join(submission["studentPgmRunDir"],"."))
         if os.path.exists(os.path.join(submission["Assignment"] + "Tester.java")):
-            javaPgmName = submission["Assignment"] + "Tester.java"
+            javaPgmName = submission["Assignment"] + "Tester"
         else:
             javaPgmName = submission["assignmentFileName"]
         compileCmd = ["javac", "*.java"]
@@ -429,7 +448,6 @@ def runProgram(submission, classRootDir):
         with open("CompilerError.txt", "w") as ferr:
             result = subprocess.run(compileCmd, stdout=fout, stderr=ferr)  #COMPILE PROGRAM
     errorCompile = checkErrorFileForErrors("CompilerError.txt", "  COMPILE ERROR")
-    #bringUpIDE = '\n:choice\nset /P c=Bring up IDE [y]? \nif /I "%c%" EQU "Y" goto :ide\ngoto :end\n:ide\n' + bringUpProgramInIDE(submission,False) + '\n:end'
     bringUpIDEorDataFile = '\nset /P c=Bring up IDE [y]? \nif /I "%c%" EQU "Y" goto :ide\ngoto :next\n:ide\n' + bringUpProgramInIDE(submission,False) + '\n:next\nset /P c=Bring up input data file [y]? \nif /I "%c%" EQU "Y" goto :idf\ngoto :end\n:idf\n' + '"' + textEditorLoc + '"' + " -multiInst -nosession " + submission["dataInputFileName"] + '\n:end'
     if errorCompile:
         copyfile("CompilerError.txt", os.path.join(submission["classDir"],submission["studentName"] + "_compileError.txt"))  # copy compile error file to class directory
@@ -442,6 +460,9 @@ def runProgram(submission, classRootDir):
             os.remove(os.path.join(submission["classDir"],submission["studentName"] + "_compileError.txt"))
         with open(submission["outFileName"], "w") as fout:
             with open(submission["errorFileName"], "w") as ferr:
+                print(runCmd)
+                print(os.getcwd())
+                print(submission["errorFileName"])
                 result = subprocess.run(runCmd, stdout=fout, stderr=ferr)   # RUN PROGRAM
         errorRun = checkErrorFileForErrors(submission["errorFileName"], "  RUNTIME ERROR")            
         if errorRun:
@@ -469,15 +490,15 @@ def runProgram(submission, classRootDir):
             if autoJudging:
                 print("  INCORRECT (autojudged)")
             else:
-                tkdiffCmd = [tkdiffLoc,submission["outputFile"],submission["goldFile"]]
-                result = subprocess.run(tkdiffCmd, shell=True)     # TKDIFF
+                diffCmd = [diffLoc,submission["outputFile"],submission["goldFile"]]
+                result = subprocess.run(diffCmd, shell=True)     # run diff program
             with open(os.path.join(submission["studentPgmRunDir"], "tkdiff.bat"), "w") as ftkdiff:  
-                ftkdiff.write('"' + tkdiffLoc + '"' + " " + submission["outFileName"] + " " + os.path.join(submission["goldenAssignmentDir"], "gold.txt"))
+                ftkdiff.write('"' + diffLoc + '"' + " " + submission["outFileName"] + " " + os.path.join(submission["goldenAssignmentDir"], "gold.txt"))
             # also write tkdiff batch file to class directory (for quick access to each student's last run results)
             if os.path.exists(os.path.join(classRootDir,submission["studentName"] + ".bat")):
                 os.remove(os.path.join(classRootDir,submission["studentName"] + ".bat"))
             with open(os.path.join(classRootDir,submission["studentName"] + ".bat"), "w") as fbatch:
-                fbatch.write('"' + tkdiffLoc + '"' + " " + os.path.join(submission["studentPgmRunDir"],submission["outFileName"]) + " " + os.path.join(submission["goldenAssignmentDir"], "gold.txt"))
+                fbatch.write('"' + diffLoc + '"' + " " + os.path.join(submission["studentPgmRunDir"],submission["outFileName"]) + " " + os.path.join(submission["goldenAssignmentDir"], "gold.txt"))
                 fbatch.write(bringUpIDEorDataFile)             
     os.chdir(classRootDir)
     return correct, error
@@ -528,16 +549,17 @@ def submissionIncorrect(submission):
 
 def bringUpProgramInIDE(submission, run=True):
     global pythonIdeLoc,pythonIdeCmd,javaIdeLoc,javaIdeCmd
+    ideCmd = ['none','none']
     if submission["language"] == "python":
         if os.path.exists(pythonIdeLoc):
             ideCmd = [pythonIdeLoc,submission["FileName"]]
         else:
-            print("Did not find IDE executable at " + pythonIdeLoc + "\nSet pythonIdeLoc variable in program to correct IDE location")
+            print("Error!!! Did not find IDE executable at " + pythonIdeLoc + "\nSet pythonIdeLoc variable in program to correct IDE location")
     elif submission["language"] == "java":
         if os.path.exists(javaIdeLoc):
             ideCmd = [javaIdeLoc,submission["Assignment"] + ".java"]
         else:
-            print("Did not find IDE executable at " + javaIdeLoc + "\nSet javaIdeLoc variable in program to correct IDE location")
+            print("Error!!! Did not find IDE executable at " + javaIdeLoc + "\nSet javaIdeLoc variable in program to correct IDE location")
     if run:
         result = subprocess.run(ideCmd, shell=True)
     ideCmdString = ideCmd[0] + ' ' + submission["studentPgmRunDir"] + '\\' + ideCmd[1]
@@ -559,12 +581,16 @@ def main():
         lCount = 0
         while not(inputContinue or not autoJudgingFirstTime):
             check4Activity()
-            response = input("\n" + validClassPeriodsString + "manual (a)utojudge (l)og e(x)it (<ENTER>=check)? ")
+            validClassPeriodsString = ""
+            for classPeriod in validClassPeriods:
+              validClassPeriodsString = validClassPeriodsString + classPeriod + " "
+            validClassPeriodsString = validClassPeriodsString.rstrip()
+            response = input("\n" + "("+ validClassPeriodsString + ")manual (a)utojudge (l)og e(x)it (<ENTER>=check)? ")
             inputContinue = (response == 'x') or (response in validClassPeriods)
             if response in validClassPeriods:
                 classPeriod = response
             elif response == "a":
-                response2 = input(validClassPeriodsString + "autojudge (m)ultiple (<ENTER>=all periods)? ")
+                response2 = input("(" + validClassPeriodsString + ")autojudge (m)ultiple (<ENTER>=all periods)? ")
                 autoJudging = True
                 autoJudgingFirstTime = False
                 if response2 in validClassPeriods:
@@ -681,8 +707,8 @@ def main():
                         bringUpProgramInIDE(submission)
                         os.chdir(classRootDir)
                     elif answer == "t":
-                        tkdiffCmd = [tkdiffLoc,os.path.join(submission["studentPgmRunDir"],submission["outputFile"]),os.path.join(submission["goldenAssignmentDir"], "gold.txt")]
-                        result = subprocess.run(tkdiffCmd, shell=True)     # run tkdiff                        
+                        diffCmd = [diffLoc,os.path.join(submission["studentPgmRunDir"],submission["outputFile"]),os.path.join(submission["goldenAssignmentDir"], "gold.txt")]
+                        result = subprocess.run(diffCmd, shell=True)     # run diff program                      
                     elif answer == "d":
                         if submission["dataInputFileExists"]:
                            dataCmdFile = [textEditorLoc,"-multiInst","-nosession",submission["dataInputFileName"]]
