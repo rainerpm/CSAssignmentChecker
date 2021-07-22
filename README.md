@@ -33,6 +33,7 @@ This program verifies student submitted python or java programs. The program doe
     *  set the **kdiff3Loc** variable to the location of the **kdiff3.exe** executable.
   * set the **pythonIdeLoc** variable to the location of the Python IDE (e.g. IDLE) executable.
   * set the **javaIdeLoc** variable to the location of the JAVA IDE (e.g. jGrasp) executable.
+    * NOTE: The program uses -parameters compile option to ensure that JAVA reflection reflects parameter types instead of just using arg0
   * set the **textEditorLoc** variable to the location of a text editor (e.g. Notepad++) executable.
 ### Run the Demo
 The demo verifies two student assignments (1) [encryption](https://drive.google.com/drive/folders/1OtwHDHMFygYS7y7Wm82YN24YwWlmzkMc?usp=sharing) (2) [Collatz](https://docs.google.com/document/d/1TKC45I9ZGvg82XGRzkpnoEnlxtC9xXnPdiv9Qmajf9g/edit?usp=sharing)
