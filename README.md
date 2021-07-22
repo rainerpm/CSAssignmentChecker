@@ -33,7 +33,7 @@ This program verifies student submitted python or java programs. The program doe
     *  set the **kdiff3Loc** variable to the location of the **kdiff3.exe** executable.
   * set the **pythonIdeLoc** variable to the location of the Python IDE (e.g. IDLE) executable.
   * set the **javaIdeLoc** variable to the location of the JAVA IDE (e.g. jGrasp) executable.
-    * NOTE: The program uses -parameters compile option to ensure that JAVA reflection reflects parameter types instead of just using arg0
+    * NOTE: The program uses *-parameters* compile option to ensure that JAVA reflection reflects parameter types instead of just using arg0
   * set the **textEditorLoc** variable to the location of a text editor (e.g. Notepad++) executable.
 ### Run the Demo
 The demo verifies two student assignments (1) [encryption](https://drive.google.com/drive/folders/1OtwHDHMFygYS7y7Wm82YN24YwWlmzkMc?usp=sharing) (2) [Collatz](https://docs.google.com/document/d/1TKC45I9ZGvg82XGRzkpnoEnlxtC9xXnPdiv9Qmajf9g/edit?usp=sharing)
@@ -84,8 +84,8 @@ has the following options
 In manual mode after a student's program submission has been run and either the program was correct or the program was incorrect and the **diff window** has been closed, the Assignment Menu\
 **y/n \[i a t d o e c s f l](r){x} h=help?**\
 is displayed with the following options
-* **y** judge the student's program as correct and update the program's status in /demo/scoreboard/. Move on to the next submission (if any). The teacher can choose to ignore inconsequential differences in the output shown in the **diff window** and still count the program correct.
-* **n** judge the student's program as incorrect and update the program's status in /demo/scoreboard/. Move on to the next submission (if any).
+* **y** judge the student's program as correct, update the program's status in /demo/scoreboard/, and then move on to the next studet's submission. The teacher can choose to ignore inconsequential differences in the output shown in the **diff window** and still count the program correct.
+* **n** judge the student's program as incorrect, update the program's status in /demo/scoreboard/, and then move on to the next studet's submission.
 * **i** show the student's program submission in the IDE.
 * **a** run the program again
 * **t** run diff program again
