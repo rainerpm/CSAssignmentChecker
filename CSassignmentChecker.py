@@ -22,7 +22,7 @@ import ssl     # for gmail
 import smtplib # for gmail & outlook
 from   email.mime.text      import MIMEText      # for outlook
 from   email.mime.multipart import MIMEMultipart # for outlook
-from   email.mime.base      import MIMEBase      # for outlook 
+from   email.mime.base      import MIMEBase      # for outlook
 from   email                import encoders      # for outlook
 import pyperclip        # allows python to add things to the clipboard (so it can be quickly pasted)
 #from icecream import ic
@@ -36,7 +36,7 @@ initError = False
 if not os.path.exists(os.path.join(rootDir)):
     initError = True
     print("ERROR!!! root directory does not exist (" + rootDir + ")")
-else: 
+else:
     if not os.path.exists(os.path.join(rootDir,"ASSIGNMENT_GROUPS")):
         initError = True
         print("ERROR!!! ASSIGNMENT_GROUPS directory does not exist in " + rootDir)
@@ -55,8 +55,8 @@ if not os.path.exists(os.path.join(javaIdeLoc)):
 
 if not os.path.exists(os.path.join(textEditorLoc)):
     initError = True
-    print("ERROR!!! TextEditor not found @ " + textEditorLoc)    
-    
+    print("ERROR!!! TextEditor not found @ " + textEditorLoc)
+
 if os.path.exists(os.path.join(tkdiffLoc)):
     diffLoc = tkdiffLoc
 elif os.path.exists(os.path.join(kdiff3Loc)):
@@ -132,8 +132,8 @@ def setup():
         for classPeriod in classPeriods:
             classPeriodsDir = os.path.join(rootDir,classPeriod)
             if not os.path.isdir(classPeriodsDir):
-               os.mkdir(classPeriodsDir)
-               print("Created directory",classPeriodsDir)
+                os.mkdir(classPeriodsDir)
+                print("Created directory",classPeriodsDir)
             classAssignmentGroupDir = os.path.join(rootDir,classPeriod,globalAssignmentGroupDirOnly)
             if not os.path.isdir(classAssignmentGroupDir):
                 os.mkdir(classAssignmentGroupDir)
@@ -151,7 +151,7 @@ def setup():
             assignmentGroup["assignmentGroupDir"] = classAssignmentGroupDir
             assignmentGroup["goldenDir"] = globalAssignmentGroupDir   # this is in the GLOBAL assignment group directory
             assignmentGroup["saveDir"] = saveDir
-            assignmentGroup["plagiarismDir"] = plagiarismDir        
+            assignmentGroup["plagiarismDir"] = plagiarismDir
 
             assignments = {}
             assignmentGroups = {}
@@ -169,7 +169,7 @@ def setup():
                 allAssignments[classPeriod].update(assignments)
             else:
                 allAssignments[classPeriod] = assignments
-    return allAssignmentGroups, allAssignments 
+    return allAssignmentGroups, allAssignments
 
 def emailStudent(submission, classRegistration):
     receiverEmailAddress = ""
@@ -178,7 +178,7 @@ def emailStudent(submission, classRegistration):
             receiverEmailAddress = classRegistration[submission["studentCode"]][2]
     if not receiverEmailAddress:  # student is in classRegistration dictionary but email is blank OR student is not in dictionary
         receiverEmailAddress = input("  enter student's email address -> ")
-    if "Assignment" in submission: 
+    if "Assignment" in submission:
         subject = "P"+ submission["classPeriod"] + "StudentDrop (" + submission["Assignment"] + ")"
     else:
         subject = "StudentDrop Error"
@@ -186,7 +186,7 @@ def emailStudent(submission, classRegistration):
     comment = commentFromFile(submission)
     response = ""
     if comment:
-       response = input("  attachment (y)? ")
+        response = input("  attachment (y)? ")
     attachment = ""
     if response == "y":
         listOfFiles = glob.glob(os.path.join(emailAttachmentDir,r"*"))
@@ -276,11 +276,11 @@ def commentFromFile(submission):
                 response = input("  add comment to assignment's comments.txt file (y)? ")
                 if response == 'y':
                     with open(os.path.join(submission["goldenAssignmentDir"],"comments.txt"),"a") as commentFile:
-                        commentFile.write(comment + '\n')                       
+                        commentFile.write(comment + '\n')
             else:
                 comment = lines[response-1]
             break
-    return comment    
+    return comment
 
 def checkErrorFileForErrors(errFile, errorType):
     errorFileSize = Path(errFile).stat().st_size
@@ -412,7 +412,7 @@ def filesMatch(outputFile,goldenFile):
             if golden[i].rstrip() != output[i].rstrip():
                 match = False
                 break
-    return match   
+    return match
 
 def runProgram(submission, classRootDir):
     correct = False
@@ -421,7 +421,7 @@ def runProgram(submission, classRootDir):
     if submission["FileExtension"] == ".java":
         copyfile(os.path.join(classRootDir,submission["FileName"]),os.path.join(submission["studentPgmRunDir"],submission["assignmentFileName"]))  # filename has to match assignment name for java
     else:  # .zip files or Python .py files
-        copyfile(os.path.join(classRootDir,submission["FileName"]),os.path.join(submission["studentPgmRunDir"],submission["FileName"])) 
+        copyfile(os.path.join(classRootDir,submission["FileName"]),os.path.join(submission["studentPgmRunDir"],submission["FileName"]))
     copyFromGolden(submission["goldenAssignmentDir"], submission["studentPgmRunDir"])
     os.chdir(submission["studentPgmRunDir"])
     if submission["language"] == "python":
@@ -443,7 +443,7 @@ def runProgram(submission, classRootDir):
         print("ERROR!!! Unsupported language")
         sys.exit()
     # language independant code
-    with open("CompilerOutput.txt", "w") as fout:      
+    with open("CompilerOutput.txt", "w") as fout:
         with open("CompilerError.txt", "w") as ferr:
             result = subprocess.run(compileCmd, stdout=fout, stderr=ferr)  #COMPILE PROGRAM
     errorCompile = checkErrorFileForErrors("CompilerError.txt", "  COMPILE ERROR")
@@ -453,27 +453,27 @@ def runProgram(submission, classRootDir):
         copyfile("CompilerError.txt", os.path.join(submission["studentDir"],submission["compileErrFileName"]))  # copy output file to data directory
         if "partnerName" in submission:
             copyfile("CompilerError.txt",os.path.join(submission["partnerDir"],submission["compileErrFileName"]))  # copy output file to partner's data directory
-        updateLogFile(submission, "  ERROR!!! " + submission["FileName"] + " had a compile time error.",False)        
+        updateLogFile(submission, "  ERROR!!! " + submission["FileName"] + " had a compile time error.",False)
     else:
         if os.path.exists(os.path.join(submission["classDir"],submission["studentName"] + "_compileError.txt")):
             os.remove(os.path.join(submission["classDir"],submission["studentName"] + "_compileError.txt"))
         with open(submission["outFileName"], "w") as fout:
             with open(submission["errorFileName"], "w") as ferr:
                 result = subprocess.run(runCmd, stdout=fout, stderr=ferr)   # RUN PROGRAM
-        errorRun = checkErrorFileForErrors(submission["errorFileName"], "  RUNTIME ERROR")            
+        errorRun = checkErrorFileForErrors(submission["errorFileName"], "  RUNTIME ERROR")
         if errorRun:
             if os.path.exists(submission["outFileName"]):
                 os.remove(submission["outFileName"])
             if os.path.exists(os.path.join(classRootDir,submission["studentName"] + ".bat")):
                 os.remove(os.path.join(classRootDir,submission["studentName"] + ".bat"))
             with open(os.path.join(classRootDir,submission["studentName"] + ".bat"), "w") as fbatch:
-                fbatch.write('"' + textEditorLoc + '"' + " -multiInst -nosession " + os.path.join(submission["studentDir"],submission["runErrFileName"]))              
+                fbatch.write('"' + textEditorLoc + '"' + " -multiInst -nosession " + os.path.join(submission["studentDir"],submission["runErrFileName"]))
                 fbatch.write(bringUpIDEorDataFile)
             copyfile(submission["errorFileName"], os.path.join(submission["classDir"],submission["studentName"] + "_runTimeError.txt"))  # copy compile error file to class directory
             copyfile(submission["errorFileName"], os.path.join(submission["studentDir"],submission["runErrFileName"]))  # copy output file to data directory
             if "partnerName" in submission:
                 copyfile(submission["errorFileName"],os.path.join(submission["partnerDir"],submission["runErrFileName"]))  # copy output file to partner's data directory
-            updateLogFile(submission, "  ERROR!!! " + submission["FileName"] + " had a run time error.",False)        
+            updateLogFile(submission, "  ERROR!!! " + submission["FileName"] + " had a run time error.",False)
         else:
             if os.path.exists(os.path.join(submission["classDir"],submission["studentName"] + "_runTimeError.txt")):
                 os.remove(os.path.join(submission["classDir"],submission["studentName"] + "_runTimeError.txt"))
@@ -488,21 +488,21 @@ def runProgram(submission, classRootDir):
             else:
                 diffCmd = [diffLoc,submission["outputFile"],submission["goldFile"]]
                 result = subprocess.run(diffCmd, shell=True)     # run diff program
-            with open(os.path.join(submission["studentPgmRunDir"], "tkdiff.bat"), "w") as ftkdiff:  
+            with open(os.path.join(submission["studentPgmRunDir"], "tkdiff.bat"), "w") as ftkdiff:
                 ftkdiff.write('"' + diffLoc + '"' + " " + submission["outFileName"] + " " + os.path.join(submission["goldenAssignmentDir"], "gold.txt"))
             # also write tkdiff batch file to class directory (for quick access to each student's last run results)
             if os.path.exists(os.path.join(classRootDir,submission["studentName"] + ".bat")):
                 os.remove(os.path.join(classRootDir,submission["studentName"] + ".bat"))
             with open(os.path.join(classRootDir,submission["studentName"] + ".bat"), "w") as fbatch:
                 fbatch.write('"' + diffLoc + '"' + " " + os.path.join(submission["studentPgmRunDir"],submission["outFileName"]) + " " + os.path.join(submission["goldenAssignmentDir"], "gold.txt"))
-                fbatch.write(bringUpIDEorDataFile)             
+                fbatch.write(bringUpIDEorDataFile)
     os.chdir(classRootDir)
     return correct, error
 
 def getSubmissions(extensions):
     listOfSubmissions = []
     for extension in extensions:
-       listOfSubmissions = listOfSubmissions + glob.glob(r"*" + extension)
+        listOfSubmissions = listOfSubmissions + glob.glob(r"*" + extension)
     return listOfSubmissions
 
 def updateLogFile(submission, logMessage, alsoPrint = False):
@@ -512,7 +512,7 @@ def updateLogFile(submission, logMessage, alsoPrint = False):
     with open(os.path.join(rootDir,"logGlobal.txt"), "a") as fglog:
         fglog.write(submission["submissionDateTime"] + ' ' + submission["FileName"] + ' ' + logMessage + "\n")
     # assignment log file in classRootDir
-    if "assignmentGroupDir" in submission: 
+    if "assignmentGroupDir" in submission:
         with open(os.path.join(submission["assignmentGroupDir"],"logAssignment.txt"), "a") as falog:
             falog.write(submission["submissionDateTime"] + ' ' + submission["FileName"] + ' ' + logMessage + "\n")
     # student log file in student directory
@@ -521,24 +521,24 @@ def updateLogFile(submission, logMessage, alsoPrint = False):
             fslog.write(submission["submissionDateTime"] + ' ' + submission["FileName"] + ' ' + logMessage + "\n")
 
 def gradeSubmission(submission):
-   gradeFileName = os.path.join(submission["studentAssignmentDir"],"grades.txt")
-   with open(gradeFileName) as gradeFile:
-      for line in gradeFile:
-         print("  " + line.rstrip())
-   grade = input("  enter Grade ")
-   note  = input("  enter Note  ")
-   with open(gradeFileName, "a") as gradeFile:
-      line2write = f'{grade.strip():<5s}' + " : " + submission["submissionDateTime"] + " : " + note.strip() + "\n"
-      gradeFile.write(line2write)
+    gradeFileName = os.path.join(submission["studentAssignmentDir"],"grades.txt")
+    with open(gradeFileName) as gradeFile:
+        for line in gradeFile:
+            print("  " + line.rstrip())
+    grade = input("  enter Grade ")
+    note  = input("  enter Note  ")
+    with open(gradeFileName, "a") as gradeFile:
+        line2write = f'{grade.strip():<5s}' + " : " + submission["submissionDateTime"] + " : " + note.strip() + "\n"
+        gradeFile.write(line2write)
 
 def submissionCorrect(submission):
     if not os.path.exists(os.path.join(submission["plagiarismAssignmentDir"],submission["submittedFileNameWithDate"])):
-       os.rename(submission["FileName"], os.path.join(submission["plagiarismAssignmentDir"],submission["submittedFileNameWithDate"]))  # move pgm to PLAGIARISM directory
+        os.rename(submission["FileName"], os.path.join(submission["plagiarismAssignmentDir"],submission["submittedFileNameWithDate"]))  # move pgm to PLAGIARISM directory
     else:
-       os.remove(submission["FileName"])       # remove submission file (this only happens if the same file with the same time stamp is copied into class directory)
+        os.remove(submission["FileName"])       # remove submission file (this only happens if the same file with the same time stamp is copied into class directory)
     copyfile(os.path.join(submission["studentPgmRunDir"],submission["outFileName"]), os.path.join(submission["studentDir"],submission["outCorrectFileName"]))  # copy output file to data directory
     if "partnerName" in submission:
-       copyfile(os.path.join(submission["studentPgmRunDir"],submission["outFileName"]), os.path.join(submission["partnerDir"],submission["outCorrectFileName"]))  # copy output file to partner's data directory
+        copyfile(os.path.join(submission["studentPgmRunDir"],submission["outFileName"]), os.path.join(submission["partnerDir"],submission["outCorrectFileName"]))  # copy output file to partner's data directory
     scoreboard.updateScoreboard(scoreboardDir,submission["assignmentGroupDir"],submission["assignmentGroupId"],submission["classPeriod"],submission["listOfAssignments"])
     updateLogFile(submission, "  *** CORRECT *** ")
 
@@ -551,7 +551,7 @@ def submissionIncorrect(submission):
         scoreboard.updateScoreboard(scoreboardDir,submission["assignmentGroupDir"],submission["assignmentGroupId"],submission["classPeriod"],submission["listOfAssignments"])
         updateLogFile(submission, "  >>> INCORRECT <<< ")
     else:
-        updateLogFile(submission, "  >>> INVALID SUBMISSION <<< ")        
+        updateLogFile(submission, "  >>> INVALID SUBMISSION <<< ")
     os.remove(submission["FileName"])
 
 def bringUpProgramInIDE(submission, run=True):
@@ -572,7 +572,7 @@ def bringUpProgramInIDE(submission, run=True):
     ideCmdString = ideCmd[0] + ' ' + submission["studentPgmRunDir"] + '\\' + ideCmd[1]
     #print(f'{ideCmdString=}')
     return ideCmdString
-            
+
 ### MAIN PROGRAM ###
 def main():
     global interrupted, autoJudging, autoJudgingPeriods, autoJudgingSleepTime
@@ -590,7 +590,7 @@ def main():
             check4Activity()
             validClassPeriodsString = ""
             for classPeriod in validClassPeriods:
-              validClassPeriodsString = validClassPeriodsString + classPeriod + " "
+                validClassPeriodsString = validClassPeriodsString + classPeriod + " "
             validClassPeriodsString = validClassPeriodsString.rstrip()
             response = input("\n" + "("+ validClassPeriodsString + ")manual (a)utojudge (l)og e(x)it (<ENTER>=check)? ")
             inputContinue = (response == 'x') or (response in validClassPeriods)
@@ -609,7 +609,7 @@ def main():
                     autoJudgingPeriods = response3.split(",")
                     autoJudgingSleepTime = 2
                 else:
-                    autoJudgingPeriods = validClassPeriods    
+                    autoJudgingPeriods = validClassPeriods
             elif response == "l":   # log
                 with open(os.path.join(rootDir,"logGlobal.txt")) as logfile:
                     lines = logfile.readlines()
@@ -627,8 +627,8 @@ def main():
         if autoJudging:
             classPeriod = autoJudgingPeriods[0]
             print(classPeriod,end="")
-            
-            
+
+
         classRootDir = os.path.join(rootDir,classPeriod)  # CLASSROOTDIRassignment (directory for submissions)
         os.chdir(classRootDir)
 
@@ -677,7 +677,7 @@ def main():
                                     with open("REGISTER.txt", "r") as r:
                                         for line in sorted(r):
                                             print(line, end="")
-                            else:                              
+                            else:
                                 updateLogFile(submission, "  ERROR!!! " + submission["studentCode"] + " has not been previously registered!!!",True)
                     # if it is a known assignment
                     if submission["validAssignment"]:
@@ -694,9 +694,9 @@ def main():
                 lCount = 0
                 if autoJudging:
                     if correct:
-                        submissionCorrect(submission)                                               
+                        submissionCorrect(submission)
                     else:
-                        submissionIncorrect(submission)                         
+                        submissionIncorrect(submission)
                 while not autoJudging:    # loop until a valid response
                     if submission["valid"]:
                         answer = input("  y/n [i a t d g o e c s f l](r){x} h=help? ")
@@ -715,22 +715,22 @@ def main():
                         os.chdir(classRootDir)
                     elif answer == "t":
                         diffCmd = [diffLoc,os.path.join(submission["studentPgmRunDir"],submission["outputFile"]),os.path.join(submission["goldenAssignmentDir"], "gold.txt")]
-                        result = subprocess.run(diffCmd, shell=True)     # run diff program                      
+                        result = subprocess.run(diffCmd, shell=True)     # run diff program
                     elif answer == "d":
                         if submission["dataInputFileExists"]:
-                           dataCmdFile = [textEditorLoc,"-multiInst","-nosession",submission["dataInputFileName"]]
-                           result = subprocess.run(dataCmdFile, shell=True)   # bring up input data file in text editor
+                            dataCmdFile = [textEditorLoc,"-multiInst","-nosession",submission["dataInputFileName"]]
+                            result = subprocess.run(dataCmdFile, shell=True)   # bring up input data file in text editor
                         else:
-                           print("  Assignment does not have a data input file named")
-                           print("  " + submission["dataInputFile"])
+                            print("  Assignment does not have a data input file named")
+                            print("  " + submission["dataInputFile"])
                     elif answer == "g":
-                       gradeSubmission(submission)
+                        gradeSubmission(submission)
                     elif answer == "o":   # print program output (making newline character visible)
                         outfile = os.path.join(submission["studentPgmRunDir"],submission["outFileName"])
                         with open(outfile,'r') as outf:
-                           for line in outf:
-                               line = line.replace("\n","↵")
-                               print(line)
+                            for line in outf:
+                                line = line.replace("\n","↵")
+                                print(line)
                     elif submission["valid"] and answer == "a":  # run program again
                         runProgram(submission, classRootDir)
                     elif answer == "e":  # email student
@@ -760,7 +760,7 @@ def main():
                             else:
                                 for line in lines[fromLine:]:
                                     print(line.rstrip())
-                        lCount += 1                        
+                        lCount += 1
                     elif answer == "r":  # remove submitted file. CONTINUE to next submission.
                         response = input("  Save in directory" + submission["saveDir"] + " before removing (y)? ")
                         if response == "y":
@@ -795,7 +795,7 @@ def main():
                             print("  Please answer with y/n [i a t d g o e c s f l](r){x} h=help?")
                         else:
                             print("  Please answer with c [i e s l](r){x} h=help? ")
-                             
+
             elif not autoJudging:  # no current submissions (wait for new ones)
                 currentSubmissions = getSubmissions(validFileExtensions)
                 print("PERIOD *",classPeriod,"* waiting for new submissions (<Ctrl-C> back to main menu) ", end="",flush=True)
@@ -820,7 +820,7 @@ def main():
                 #print("sleep",autoJudgingSleepTime)
                 time.sleep(autoJudgingSleepTime)
                 break
-                
+
             if interrupted:  # if there is an interrupt go back to asking for class
                 interrupted = False
                 print()
