@@ -44,7 +44,7 @@ else:
 
 if not os.path.exists(os.path.join(scoreboardDir)):
     initError = True
-    print("ERROR!!! scoreboard directory does not exist (" + scoreboarDir + ")")
+    print("ERROR!!! scoreboard directory does not exist (" + scoreboardDir + ")")
 
 if not os.path.exists(os.path.join(pythonIdeLoc)):
     initError = True
@@ -460,9 +460,6 @@ def runProgram(submission, classRootDir):
             os.remove(os.path.join(submission["classDir"],submission["studentName"] + "_compileError.txt"))
         with open(submission["outFileName"], "w") as fout:
             with open(submission["errorFileName"], "w") as ferr:
-                print(runCmd)
-                print(os.getcwd())
-                print(submission["errorFileName"])
                 result = subprocess.run(runCmd, stdout=fout, stderr=ferr)   # RUN PROGRAM
         errorRun = checkErrorFileForErrors(submission["errorFileName"], "  RUNTIME ERROR")            
         if errorRun:
@@ -524,6 +521,14 @@ def updateLogFile(submission, logMessage, alsoPrint = False):
         with open(os.path.join(submission["studentDir"],"log.txt"), "a") as fslog:
             fslog.write(submission["submissionDateTime"] + ' ' + submission["FileName"] + ' ' + logMessage + "\n")
 
+def gradeSubmission(submission):
+   grade = input("  enter Grade ")
+   note  = input("  enter Note  ")
+   gradeFileName = os.path.join(submission["studentAssignmentDir"],"grades.txt")
+   with open(gradeFileName, "a") as gradeFile:
+      line2write = f'{grade.strip():<5s}' + " : " + submission["submissionDateTime"] + " : " + note.strip() + "\n"
+      gradeFile.write(line2write)
+
 def submissionCorrect(submission):
     if not os.path.exists(os.path.join(submission["plagiarismAssignmentDir"],submission["submittedFileNameWithDate"])):
        os.rename(submission["FileName"], os.path.join(submission["plagiarismAssignmentDir"],submission["submittedFileNameWithDate"]))  # move pgm to PLAGIARISM directory
@@ -575,7 +580,7 @@ def main():
     autoJudgingFirstTime = True
     autoJudgingSleepTime = 60  # in seconds
     while True:
-        print("Directory =",rootDir)
+        print("root directory =",rootDir)
         os.chdir(rootDir)
         inputContinue = False
         lCount = 0
@@ -692,7 +697,7 @@ def main():
                         submissionIncorrect(submission)                         
                 while not autoJudging:    # loop until a valid response
                     if submission["valid"]:
-                        answer = input("  y/n [i a t d o e c s f l](r){x} h=help? ")
+                        answer = input("  y/n [i a t d g o e c s f l](r){x} h=help? ")
                     else:
                         answer = input("  Invalid submission c [i e s](r){x} h=help? ")
                     if submission["valid"] and answer == "y":  # submission correct. UPDATE scoreboard, CONTINUE to next submission.
@@ -716,6 +721,8 @@ def main():
                         else:
                            print("  Assignment does not have a data input file named")
                            print("  " + submission["dataInputFile"])
+                    elif answer == "g":
+                       gradeSubmission(submission)
                     elif answer == "o":   # print program output (making newline character visible)
                         outfile = os.path.join(submission["studentPgmRunDir"],submission["outFileName"])
                         with open(outfile,'r') as outf:
@@ -781,28 +788,6 @@ def main():
                         sys.exit()
                     elif answer == "h":
                         webbrowser.open("https://github.com/rainerpm/CSAssignmentChecker#assignment-menu")
-##                        if submission["valid"]:
-##                            print("  'y' submission correct. UPDATE scoreboard, CONTINUE to next submission.")
-##                            print("  'n' submission incorrect. UPDATE scoreboard, CONTINUE to next submission.")
-##                        print("  'i' show the program in IDE.")
-##                        print("  'o' print output with newline replaced by ↵")
-##                        if submission["valid"]:                        
-##                            print("  'a' run the program again.")
-##                        else:
-##                            print("  'c' change name of the submitted file.")
-##                        print("  'e' email student (to avoid having to enter student's email add email after class number in REGISTER.txt file).")
-##                        print("  'c' copy information to clipboard (in case email is blocked).")
-##                        print("  'r' remove submitted file. CONTINUE to next submission.")
-##                        print("  's' save submission in 00SAVE directory.")
-##                        if submission["valid"]:
-##                             print("  'f' print files in student directory.")
-##                        print("  'l' print class log file (chosing l again will get the next earlier set of lines)")
-##                        print("  'x' exit this program (does not remove submitted file).")
-##                        print("  'h' help for menu choices.")
-                    elif answer == "t":   # temporary functionality
-                        if "studentCode" in submission and submission["studentCode"] in classRegistration:
-                            if len(classRegistration[submission["studentCode"]]) > 2:  # email address was manually added to REGISTER.txt
-                                receiverEmailAddress = classRegistration[submission["studentCode"]][2]
                     else:
                         if submission["valid"]:
                             print("  Please answer with y/n [i a t d o e c s f l](r){x} h=help?")
