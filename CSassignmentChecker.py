@@ -1,5 +1,4 @@
 # TODO/IMPROVEMENTS
-#   * add a 'g' option for grading.  Enter absolute grade or a deduction (how to handle multiple deductions).
 #   * multiple tests per assignment (e.g. easy, medium, hard tests)
 
 import scoreboard  # import the associated scoreboard.py which creates the scoreboard files
@@ -522,9 +521,12 @@ def updateLogFile(submission, logMessage, alsoPrint = False):
             fslog.write(submission["submissionDateTime"] + ' ' + submission["FileName"] + ' ' + logMessage + "\n")
 
 def gradeSubmission(submission):
+   gradeFileName = os.path.join(submission["studentAssignmentDir"],"grades.txt")
+   with open(gradeFileName) as gradeFile:
+      for line in gradeFile:
+         print("  " + line.rstrip())
    grade = input("  enter Grade ")
    note  = input("  enter Note  ")
-   gradeFileName = os.path.join(submission["studentAssignmentDir"],"grades.txt")
    with open(gradeFileName, "a") as gradeFile:
       line2write = f'{grade.strip():<5s}' + " : " + submission["submissionDateTime"] + " : " + note.strip() + "\n"
       gradeFile.write(line2write)
@@ -790,7 +792,7 @@ def main():
                         webbrowser.open("https://github.com/rainerpm/CSAssignmentChecker#assignment-menu")
                     else:
                         if submission["valid"]:
-                            print("  Please answer with y/n [i a t d o e c s f l](r){x} h=help?")
+                            print("  Please answer with y/n [i a t d g o e c s f l](r){x} h=help?")
                         else:
                             print("  Please answer with c [i e s l](r){x} h=help? ")
                              
