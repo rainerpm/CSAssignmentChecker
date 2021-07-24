@@ -83,7 +83,7 @@ has the following options
 ### Assignment Menu
 In manual mode after a student's program submission has been run and either the program was correct or the program was incorrect and the **diff window** has been closed, the Assignment Menu\
 **y/n \[i a t d g o e c s f l](r){x} h=help?**\
-is displayed with the following options (NOTE: do not answer y or n until you are ready to move on to the next submission)
+is displayed with the following options (NOTE: do not answer y or n until you are ready for the program to proceed to the next submission)
 * **y** judge the student's program as correct, update the program's status in /demo/scoreboard/, and then move on to the next studet's submission. The teacher can choose to ignore inconsequential differences in the output shown in the **diff window** and still count the program correct.
 * **n** judge the student's program as incorrect, update the program's status in /demo/scoreboard/, and then move on to the next studet's submission.
 * **i** show the student's program submission in the IDE.
@@ -97,7 +97,7 @@ is displayed with the following options (NOTE: do not answer y or n until you ar
 * **s** save the student's program submission and removes it from the class period directory (enabling the program to process the next submission).
 * **f** print a list of the files that are in the student's assignment directory.
 * **l** print the last 20 lines of the logGlobal.txt file.
-* **r** remove the program from the class period directory (enabling the program to process the next submission).
+* **r** prompt user to either rename or remove the submission from the class period directory. If renamed, program will rename submission and then process the renamed submission. If removed, the submission is removed and the program proceeds to the next submission.
 * **x** exit the program.
 * **h** open web browser showing this page
  
