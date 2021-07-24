@@ -96,7 +96,8 @@ is displayed with the following options (NOTE: do not answer y or n until you ar
 * **c** copy information about the assignment status to the Clipboard (requires Windows 10’s October 2018 Update which provided a Clipboard History enabling multiple items to be saved on the clipboard). This option is provided, since emailing directly from the program may not be allowed by the school network.
 * **s** save the student's program submission and removes it from the class period directory (enabling the program to process the next submission).
 * **f** print a list of the files that are in the student's assignment directory.
-* **l** print the last 20 lines of the logGlobal.txt file.
+* **l** print the last 20 lines of the global log file (logGlobal.txt).  Choosing l again shows the previous 20 lines.
+* **ls** print the last 20 lines of the student's log file (log.txt).  Choosing ls again shows the previous 20 lines.
 * **r** prompt user to either rename or remove the submission from the class period directory. If renamed, program will rename submission and then process the renamed submission. If removed, the submission is removed and the program proceeds to the next submission.
 * **x** exit the program.
 * **h** open web browser showing this page
