@@ -82,23 +82,23 @@ has the following options
 
 ### Assignment Menu
 In manual mode after a student's program submission has been run and either the program was correct or the program was incorrect and the **diff window** has been closed, the Assignment Menu\
-**y/n \[i a t d g o e c s f l](r){x} h=help?**\
-is displayed with the following options (NOTE: do not answer y or n until you are ready for the program to proceed to the next submission)
-* **y** judge the student's program as correct, update the program's status in /demo/scoreboard/, and then move on to the next studet's submission. The teacher can choose to ignore inconsequential differences in the output shown in the **diff window** and still count the program correct.
-* **n** judge the student's program as incorrect, update the program's status in /demo/scoreboard/, and then move on to the next studet's submission.
-* **i** show the student's program submission in the IDE.
-* **a** run the program again
-* **t** run diff program again
-* **d** show the data input file for the assignment (?.dat file in assignment folder - ? is the **assignment name**) 
-* **g** prompt for grade and note and write to grades.txt file in student's assignment folder 
+**y/n \[s d r i o g e c s f l](r){x} h=help?**\
+is displayed with the following options (NOTE: Be sure that you are done with the current assignment submission before answering y n m r as this will make program proceed to the next submission)
+* **y** judge the student's program as correct, update the program's status in /demo/scoreboard/, and then move on to the next student submission. The teacher can choose to ignore inconsequential differences in the output shown in the **diff window** and still count the program correct.
+* **n** judge the student's program as incorrect, update the program's status in /demo/scoreboard/, and then move on to the next student submission.
+* **s** show the student's program submission in the IDE.
+* **d** run diff program again
+* **r** run the program again
+* **i** show the data input file (?.dat file in assignment folder - ? is the **assignment name**) for the assignment (newline's are shown as ↵)
 * **o** print the student's output (newline's are shown as ↵)
+* **g** prompt for grade and note and write to grades.txt file in student's assignment folder 
 * **e** email the student with information regarding the assignment status.
 * **c** copy information about the assignment status to the Clipboard (requires Windows 10’s October 2018 Update which provided a Clipboard History enabling multiple items to be saved on the clipboard). This option is provided, since emailing directly from the program may not be allowed by the school network.
-* **s** save the student's program submission and removes it from the class period directory (enabling the program to process the next submission).
-* **f** print a list of the files that are in the student's assignment directory.
+* **m** move the student's program submission to the 00SAVE directory and then move on to the next student submission.
+* **f** print a list of the files in the student's assignment directory.
 * **l** print the last 20 lines of the global log file (logGlobal.txt).  Choosing l again shows the previous 20 lines.
 * **ls** print the last 20 lines of the student's log file (log.txt).  Choosing ls again shows the previous 20 lines.
-* **r** prompt user to either rename or remove the submission from the class period directory. If renamed, program will rename submission and then process the renamed submission. If removed, the submission is removed and the program proceeds to the next submission.
+* **r** prompt user to either rename or remove the submission from the class period directory. If renamed, program will rename submission and then process the renamed submission. If removed, the submission is removed and then move on to the next student submission.
 * **x** exit the program.
 * **h** open web browser showing this page
  
