@@ -699,7 +699,7 @@ def main():
                         submissionIncorrect(submission)
                 while not autoJudging:    # loop until a valid response
                     if submission["valid"]:
-                        answer = input("  y/n [i a t d g o e c s f l](r){x} h=help? ")
+                        answer = input("  y/n [i a t d g o e c s f l ls](r){x} h=help? ")
                     else:
                         answer = input("  Invalid submission c [i e s](r){x} h=help? ")
                     if submission["valid"] and answer == "y":  # submission correct. UPDATE scoreboard, CONTINUE to next submission.
@@ -735,13 +735,6 @@ def main():
                         runProgram(submission, classRootDir)
                     elif answer == "e":  # email student
                         emailStudent(submission, classRegistration)
-                    elif answer == "n":  # new submission name
-                        if autoJudging:
-                            break
-                        else:
-                            newFileName = input("  Enter new filename for " + submission["FileName"] + " -> ")
-                            copyfile(submission["FileName"],newFileName)  # move output file to data directory
-                            updateLogFile(submission, "  changed name from " + submission["FileName"] + " to " + newFileName)
                     elif answer == "s":  # save submission
                         copyfile(os.path.join(classRootDir,submission["FileName"]),os.path.join(submission["saveDir"],submission["FileName"]))  # copy (replace if already there) pgm to 00SAVE directory
                         updateLogFile(submission, "  copied to " + os.path.join(submission["saveDir"],submission["FileName"]),True)
@@ -750,8 +743,12 @@ def main():
                         # print("    " + '/'.join(submission["studentPgmRunDir"].split('/')[-3:]))   # print the last 3 folders in path
                         for file in glob.glob(os.path.join(submission["studentPgmRunDir"],"*")):
                             print("    " + os.path.basename(file))
-                    elif answer == "l":  # log, show the class log file (chosing l again will get the next earlier set of lines)
-                        with open(os.path.join(rootDir,"logGlobal.txt")) as logfile:
+                    elif answer == "l" or answer == 'ls':  # log, show the last lines of global log file (chosing l again will get the next earlier set of lines)
+                        if answer == "l":
+                           logfile2Show = os.path.join(rootDir,"logGlobal.txt")
+                        else:
+                           logfile2Show = os.path.join(submission["studentDir"],"log.txt")
+                        with open(logfile2Show) as logfile:
                             lines = logfile.readlines()
                             fromLine = -min((lCount+1)*20,len(lines))
                             if lCount > 0:
@@ -761,17 +758,23 @@ def main():
                                 for line in lines[fromLine:]:
                                     print(line.rstrip())
                         lCount += 1
-                    elif answer == "r":  # remove submitted file. CONTINUE to next submission.
-                        response = input("  Save in directory" + submission["saveDir"] + " before removing (y)? ")
-                        if response == "y":
-                            os.replace(os.path.join(classRootDir,submission["FileName"]),os.path.join(submission["saveDir"],submission["FileName"]))  # move (replace if already there) pgm to 00SAVE directory
+                    elif answer == "r":  # rename or remove submitted file (if remove, CONTINUE to next submission).
+                        response = input("  reply 'r' to rename file or anything else to remove file? ")
+                        if response == 'r':
+                           newFileName = input("  Enter new filename for " + submission["FileName"] + " -> ")
+                           copyfile(submission["FileName"],newFileName)  
+                           updateLogFile(submission, "  changed name from " + submission["FileName"] + " to " + newFileName)
                         else:
-                            response = input("Confirm remove (y)? ")
-                            if response == "y":
-                                os.remove(submission["FileName"])  # remove submitted
-                                print("  " + submission["FileName"] + "was removed")
-                        updateLogFile(submission, "  removed "  + os.path.join(classRootDir,submission["FileName"]),True)
-                        break
+                           response = input("  Save in directory" + submission["saveDir"] + " before removing (y)? ")
+                           if response == "y":
+                               os.replace(os.path.join(classRootDir,submission["FileName"]),os.path.join(submission["saveDir"],submission["FileName"]))  # move (replace if already there) pgm to 00SAVE directory
+                           else:
+                               response = input("Confirm remove (y)? ")
+                               if response == "y":
+                                   os.remove(submission["FileName"])  # remove submitted
+                                   print("  " + submission["FileName"] + "was removed")
+                           updateLogFile(submission, "  removed "  + os.path.join(classRootDir,submission["FileName"]),True)
+                           break
                     elif answer == "c":  # clipboard (put email, subject, in Windows-10 clipboard)
                         comment = commentFromFile(submission)
                         if comment:
@@ -792,7 +795,7 @@ def main():
                         webbrowser.open("https://github.com/rainerpm/CSAssignmentChecker#assignment-menu")
                     else:
                         if submission["valid"]:
-                            print("  Please answer with y/n [i a t d g o e c s f l](r){x} h=help?")
+                            print("  Please answer with y/n [i a t d g o e c s f l ls](r){x} h=help?")
                         else:
                             print("  Please answer with c [i e s l](r){x} h=help? ")
 
