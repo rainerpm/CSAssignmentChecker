@@ -195,7 +195,7 @@ def emailStudent(submission, classRegistration):
         filename = filename.replace(" ", "_")  # Outlook email routine does not like spaces in filename
         dirname = os.path.dirname(newestFileInDirectory)
         attachment = os.path.join(dirname,filename)
-        os.rename(newestFileInDirectory, attachment)
+        os.rename(newestFileInDirectory, attachment)   # move rile to attachment directory
         comment = comment + "\nBe sure to look at the attachment."
     updateLogFile(submission, "  email msg -> " + comment)
     message = comment + emailSignature
@@ -699,45 +699,49 @@ def main():
                         submissionIncorrect(submission)
                 while not autoJudging:    # loop until a valid response
                     if submission["valid"]:
-                        answer = input("  y/n [i a t d g o e c s f l ls](r){x} h=help? ")
+                        answer = input("  y/n [s d r i o g e c m f l ls](r){x} h=help? ")
                     else:
-                        answer = input("  Invalid submission c [i e s](r){x} h=help? ")
+                        answer = input("  Invalid submission [s e c m l ls](r){x} h=help? ")
                     if submission["valid"] and answer == "y":  # submission correct. UPDATE scoreboard, CONTINUE to next submission.
                         submissionCorrect(submission)
                         break
                     elif submission["valid"] and answer == "n":  # submission incorrect. UPDATE scoreboard, CONTINUE to next submission.
                         submissionIncorrect(submission)
                         break
-                    elif answer == "i":  # open program in IDE
-                        if submission["valid"]:
-                            os.chdir(submission["studentPgmRunDir"])
+                    elif answer == "s":  # open program in IDE
                         bringUpProgramInIDE(submission)
-                        os.chdir(classRootDir)
-                    elif answer == "t":
+                    elif answer == "d":
                         diffCmd = [diffLoc,os.path.join(submission["studentPgmRunDir"],submission["outputFile"]),os.path.join(submission["goldenAssignmentDir"], "gold.txt")]
                         result = subprocess.run(diffCmd, shell=True)     # run diff program
-                    elif answer == "d":
+                    elif answer == "r":  # run program again
+                        if submission["valid"]:
+                            runProgram(submission, classRootDir)
+                        else:
+                            print("  Submission was not valid and can not be run again.")
+                    elif answer == "i":
                         if submission["dataInputFileExists"]:
-                            dataCmdFile = [textEditorLoc,"-multiInst","-nosession",submission["dataInputFileName"]]
-                            result = subprocess.run(dataCmdFile, shell=True)   # bring up input data file in text editor
+                           infile = os.path.join(submission["studentPgmRunDir"],submission["dataInputFileName"])
+                           with open(infile,'r') as inf:
+                               for line in inf:
+                                   line = line.replace("\n","↵")
+                                   print(line)
                         else:
                             print("  Assignment does not have a data input file named")
                             print("  " + submission["dataInputFile"])
-                    elif answer == "g":
-                        gradeSubmission(submission)
                     elif answer == "o":   # print program output (making newline character visible)
                         outfile = os.path.join(submission["studentPgmRunDir"],submission["outFileName"])
                         with open(outfile,'r') as outf:
                             for line in outf:
                                 line = line.replace("\n","↵")
                                 print(line)
-                    elif submission["valid"] and answer == "a":  # run program again
-                        runProgram(submission, classRootDir)
+                    elif answer == "g":
+                        gradeSubmission(submission)
                     elif answer == "e":  # email student
                         emailStudent(submission, classRegistration)
-                    elif answer == "s":  # save submission
-                        copyfile(os.path.join(classRootDir,submission["FileName"]),os.path.join(submission["saveDir"],submission["FileName"]))  # copy (replace if already there) pgm to 00SAVE directory
+                    elif answer == "m":  # move submission to 00SAVE directory
+                        os.rename(os.path.join(classRootDir,submission["FileName"]),os.path.join(submission["saveDir"],submission["FileName"]))  # copy (replace if already there) pgm to 00SAVE directory
                         updateLogFile(submission, "  copied to " + os.path.join(submission["saveDir"],submission["FileName"]),True)
+                        break
                     elif submission["valid"] and answer == "f":  # files (show files in student directory)
                         print("    " + submission["studentPgmRunDir"])
                         # print("    " + '/'.join(submission["studentPgmRunDir"].split('/')[-3:]))   # print the last 3 folders in path
@@ -762,19 +766,19 @@ def main():
                         response = input("  reply 'r' to rename file or anything else to remove file? ")
                         if response == 'r':
                            newFileName = input("  Enter new filename for " + submission["FileName"] + " -> ")
-                           copyfile(submission["FileName"],newFileName)  
+                           os.rename(submission["FileName"],newFileName)  
                            updateLogFile(submission, "  changed name from " + submission["FileName"] + " to " + newFileName)
                         else:
                            response = input("  Save in directory" + submission["saveDir"] + " before removing (y)? ")
                            if response == "y":
                                os.replace(os.path.join(classRootDir,submission["FileName"]),os.path.join(submission["saveDir"],submission["FileName"]))  # move (replace if already there) pgm to 00SAVE directory
                            else:
-                               response = input("Confirm remove (y)? ")
+                               response = input("  Confirm remove (y)? ")
                                if response == "y":
                                    os.remove(submission["FileName"])  # remove submitted
                                    print("  " + submission["FileName"] + "was removed")
                            updateLogFile(submission, "  removed "  + os.path.join(classRootDir,submission["FileName"]),True)
-                           break
+                        break
                     elif answer == "c":  # clipboard (put email, subject, in Windows-10 clipboard)
                         comment = commentFromFile(submission)
                         if comment:
@@ -795,9 +799,9 @@ def main():
                         webbrowser.open("https://github.com/rainerpm/CSAssignmentChecker#assignment-menu")
                     else:
                         if submission["valid"]:
-                            print("  Please answer with y/n [i a t d g o e c s f l ls](r){x} h=help?")
+                            print("  Please answer with y/n [s d r i o g e c m f l ls](r){x} h=help?")
                         else:
-                            print("  Please answer with c [i e s l](r){x} h=help? ")
+                            print("  Please answer with c [s e m l ls](r){x} h=help? ")
 
             elif not autoJudging:  # no current submissions (wait for new ones)
                 currentSubmissions = getSubmissions(validFileExtensions)
