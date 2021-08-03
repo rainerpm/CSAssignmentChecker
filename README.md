@@ -53,8 +53,8 @@ The demo verifies two student assignments (1) [encryption](https://drive.google.
 * For this demo, instead of students submitting files to the class period folder, *we will simply copy example files from /demo/sampleSubmissions/*
 * To demo the basic verification of a student program, copy /demo/sampleSubmissions/studentProblems/4ShotwellGwynne4381_encryption.py to the class period 4 folder /demo/4/. This file is Period 4's student Gwynne Shotwell's submission of the encryption assignment. The program (which up to now had been printing periods) will detect this file and run the program. 
    * Since this initial student program has an error, the program will use diff program to display the differences between the students program output and the expected "gold" output.
-   * After you close the diff window, the program displays the Assignment Menu **y/n \[i a t d g o e c s f l](r){x} h=help?**
-     * **Answer i** to display the program in the Python IDE.
+   * After you close the diff window, the program displays the Assignment Menu **y/n \[s d r i o g e c m f l ls](r){x} h=help?**
+     * **Answer s** to show the program in the Python IDE.
      * **Answer n** to judge the program as incorrect. The student's program status is reflected in /demo/scoreboard/ (one file with the student's name and one that is annoymized using the student's 4 digit code that can be made accessible to the class).
    * Since the output was incorrect, the program also created a file (ShotwellGwynne.bat) in the class period folder that enables the teacher to easily run diff program for the student's last incorrect submission and optionally bring up the program in the IDE or look at the data input file in the text editor.
    * fix the error on line 21 (changing thing[1] to thing[0]) in /demo/sampleSubmissions/studentProblems/4ShotwellGwynne4381_encryption.py and then once again copy the file to the class period 4 folder /demo/4/. 
