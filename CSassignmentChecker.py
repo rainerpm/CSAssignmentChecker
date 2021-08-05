@@ -1,27 +1,3 @@
-# submit
-# A student can submit
-# 1) a single file (following the naming convention)
-# 2) a zip file containing multiple files (following the naming convention) 
-#    - a file name ?.py or ?.java  (? = assignment name)
-#    - a ?Runner.java, which is the student's test code for the class defined in the ?.java file.
-#    - other .java files that define classes or methods required by ?.java or ?Runner.java.
-#
-#
-# The runs
-# 1) the student program with either or both of the following
-#    * student program requires keyboard input- e.g. scan.nextInt().
-#      - teacher supplies one or more user input files (program is run once for each of the input files).
-#        Files are named userInput#.txt.
-#    * student program with a teacher supplied data file that the student program reads in and processes.
-# 2) a teacher supplied ?Tester program (? = assignment name). This program can use JAVA reflection to
-#    check the students code, as well as run the constructors and methods.
-# 3) a studnet 
-
-
-# Output from all of the runs is collect in one assignment output file that is then compared against
-# the teacher supplied gold.txt file for that assignment.
-
-
 import scoreboard  # import the associated scoreboard.py which creates the scoreboard files
 from login import emailSendFromAddress, emailSendFromPassword
 from customize import validClassPeriods,rootDir,scoreboardDir,pythonIdeLoc,javaIdeLoc,tkdiffLoc,kdiff3Loc,textEditorLoc,emailSignature,emailAttachmentDir
