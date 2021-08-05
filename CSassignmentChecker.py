@@ -1,5 +1,26 @@
-# TODO/IMPROVEMENTS
-#   * multiple tests per assignment (e.g. easy, medium, hard tests)
+# submit
+# A student can submit
+# 1) a single file (following the naming convention)
+# 2) a zip file containing multiple files (following the naming convention) 
+#    - a file name ?.py or ?.java  (? = assignment name)
+#    - a ?Runner.java, which is the student's test code for the class defined in the ?.java file.
+#    - other .java files that define classes or methods required by ?.java or ?Runner.java.
+#
+#
+# The runs
+# 1) the student program with either or both of the following
+#    * student program requires keyboard input- e.g. scan.nextInt().
+#      - teacher supplies one or more user input files (program is run once for each of the input files).
+#        Files are named userInput#.txt.
+#    * student program with a teacher supplied data file that the student program reads in and processes.
+# 2) a teacher supplied ?Tester program (? = assignment name). This program can use JAVA reflection to
+#    check the students code, as well as run the constructors and methods.
+# 3) a studnet 
+
+
+# Output from all of the runs is collect in one assignment output file that is then compared against
+# the teacher supplied gold.txt file for that assignment.
+
 
 import scoreboard  # import the associated scoreboard.py which creates the scoreboard files
 from login import emailSendFromAddress, emailSendFromPassword
@@ -417,7 +438,6 @@ def filesMatch(outputFile,goldenFile):
 def runProgram(submission, classRootDir):
     correct = False
     error = False
-    #os.chdir(classRootDir)
     if submission["FileExtension"] == ".java":
         copyfile(os.path.join(classRootDir,submission["FileName"]),os.path.join(submission["studentPgmRunDir"],submission["assignmentFileName"]))  # filename has to match assignment name for java
     else:  # .zip files or Python .py files
@@ -426,19 +446,19 @@ def runProgram(submission, classRootDir):
     os.chdir(submission["studentPgmRunDir"])
     if submission["language"] == "python":
         compileCmd = ["python","-m","py_compile",submission["FileName"]]
-        runCmd = ["python", submission["FileName"]]
+        runCmds = [["python", submission["FileName"]]]
     elif submission["language"] == "java":
         if submission["FileExtension"] == ".zip":
             result = subprocess.run(["tar", "-xf", submission["FileName"]])  # EXTRACT zip file
-        # Think about having multiple Tester programs for each program (e.g. easy, medium, hard???)
-        #for file in glob.glob(os.path.join(submission["testersDir"],submission["Assignment"] + "Tester.java")):  # copy TESTERS program to student directory
-        #   copy(file, os.path.join(submission["studentPgmRunDir"],"."))
+        compileCmd = ["javac", "-parameters", "*.java"]
+        runCmds = []
         if os.path.exists(os.path.join(submission["Assignment"] + "Tester.java")):
             javaPgmName = submission["Assignment"] + "Tester"
         else:
             javaPgmName = submission["assignmentFileName"]
-        compileCmd = ["javac", "*.java"]
-        runCmd = ["java", javaPgmName]
+        runCmds.append(["java", javaPgmName])
+        if os.path.exists(os.path.join(submission["Assignment"] + "Runner.java")):
+            runCmds.append(["java", submission["Assignment"] + "Runner"])        
     else:
         print("ERROR!!! Unsupported language")
         sys.exit()
@@ -447,7 +467,9 @@ def runProgram(submission, classRootDir):
         with open("CompilerError.txt", "w") as ferr:
             result = subprocess.run(compileCmd, stdout=fout, stderr=ferr)  #COMPILE PROGRAM
     errorCompile = checkErrorFileForErrors("CompilerError.txt", "  COMPILE ERROR")
-    bringUpIDEorDataFile = '\nset /P c=Bring up IDE [y]? \nif /I "%c%" EQU "Y" goto :ide\ngoto :next\n:ide\n' + bringUpProgramInIDE(submission,False) + '\n:next\nset /P c=Bring up input data file [y]? \nif /I "%c%" EQU "Y" goto :idf\ngoto :end\n:idf\n' + '"' + textEditorLoc + '"' + " -multiInst -nosession " + submission["dataInputFileName"] + '\n:end'
+    bringUpIDEorDataFile = '\nset /P c=Bring up IDE [y]? \nif /I "%c%" EQU "Y" goto :ide\ngoto :next\n:ide\n' + bringUpProgramInIDE(submission,False) + '\n:next'
+    if submission["dataInputFileExists"]:
+        bringUpIDEorDataFile += '\nset /P c=Bring up input data file [y]? \nif /I "%c%" EQU "Y" goto :idf\ngoto :end\n:idf\n' + '"' + textEditorLoc + '"' + " -multiInst -nosession " + '"' + submission["dataInputFileName"] + '"' + '\n:end'
     if errorCompile:
         copyfile("CompilerError.txt", os.path.join(submission["classDir"],submission["studentName"] + "_compileError.txt"))  # copy compile error file to class directory
         copyfile("CompilerError.txt", os.path.join(submission["studentDir"],submission["compileErrFileName"]))  # copy output file to data directory
@@ -457,9 +479,32 @@ def runProgram(submission, classRootDir):
     else:
         if os.path.exists(os.path.join(submission["classDir"],submission["studentName"] + "_compileError.txt")):
             os.remove(os.path.join(submission["classDir"],submission["studentName"] + "_compileError.txt"))
-        with open(submission["outFileName"], "w") as fout:
-            with open(submission["errorFileName"], "w") as ferr:
-                result = subprocess.run(runCmd, stdout=fout, stderr=ferr)   # RUN PROGRAM
+        writeOrAppend = "w"
+        for runCmd in runCmds:
+            runStdin = None           
+            if not runCmd[1].endswith("Tester"):
+               if runCmd[1].endswith("Runner"):
+                   inputFileList = glob.glob(r"runnerUserInput*.txt")
+               else:
+                  inputFileList = glob.glob(r"pgmUserInput*.txt")
+               if len(inputFileList) > 0:
+                  for inputFile in inputFileList:
+                     runStdin = open(inputFile)
+                     with open(submission["outFileName"], writeOrAppend) as fout:
+                         with open(submission["errorFileName"], writeOrAppend) as ferr:
+                            fout.write("\n" + runCmd[1] + " stdin=" + inputFile +"\n")
+                            fout.flush()
+                            result = subprocess.run(runCmd, stdin=runStdin, stdout=fout, stderr=ferr)   # run sumbmitted RUNNER or student program with a user input file (i.e. program reads from stdin)
+                            writeOrAppend = "a"
+               else:
+                  with open(submission["outFileName"], writeOrAppend) as fout:
+                      with open(submission["errorFileName"], writeOrAppend) as ferr: 
+                           result = subprocess.run(runCmd, stdin=runStdin, stdout=fout, stderr=ferr)   # run sumbmitted RUNNER or student program without a user input file      
+            else:  
+               with open(submission["outFileName"], writeOrAppend) as fout:
+                   with open(submission["errorFileName"], writeOrAppend) as ferr: 
+                      result = subprocess.run(runCmd, stdin=runStdin, stdout=fout, stderr=ferr)   # run TESTER
+            writeOrAppend = "a"
         errorRun = checkErrorFileForErrors(submission["errorFileName"], "  RUNTIME ERROR")
         if errorRun:
             if os.path.exists(submission["outFileName"]):
@@ -488,9 +533,9 @@ def runProgram(submission, classRootDir):
             else:
                 diffCmd = [diffLoc,submission["outputFile"],submission["goldFile"]]
                 result = subprocess.run(diffCmd, shell=True)     # run diff program
-            with open(os.path.join(submission["studentPgmRunDir"], "tkdiff.bat"), "w") as ftkdiff:
-                ftkdiff.write('"' + diffLoc + '"' + " " + submission["outFileName"] + " " + os.path.join(submission["goldenAssignmentDir"], "gold.txt"))
-            # also write tkdiff batch file to class directory (for quick access to each student's last run results)
+            with open(os.path.join(submission["studentPgmRunDir"], "diff.bat"), "w") as fdiff:
+                fdiff.write('"' + diffLoc + '"' + " " + submission["outFileName"] + " " + os.path.join(submission["goldenAssignmentDir"], "gold.txt"))
+            # also write diff batch file to class directory (for quick access to each student's last run results)
             if os.path.exists(os.path.join(classRootDir,submission["studentName"] + ".bat")):
                 os.remove(os.path.join(classRootDir,submission["studentName"] + ".bat"))
             with open(os.path.join(classRootDir,submission["studentName"] + ".bat"), "w") as fbatch:
@@ -559,18 +604,18 @@ def bringUpProgramInIDE(submission, run=True):
     ideCmd = ['none','none']
     if submission["language"] == "python":
         if os.path.exists(pythonIdeLoc):
-            ideCmd = [pythonIdeLoc,submission["FileName"]]
+            ideCmd = [pythonIdeLoc,os.path.join(submission["studentPgmRunDir"],submission["FileName"])]
         else:
             print("Error!!! Did not find IDE executable at " + pythonIdeLoc + "\nSet pythonIdeLoc variable in program to correct IDE location")
     elif submission["language"] == "java":
         if os.path.exists(javaIdeLoc):
-            ideCmd = [javaIdeLoc,submission["Assignment"] + ".java"]
+            ideCmd = [javaIdeLoc,os.path.join(submission["studentPgmRunDir"],submission["Assignment"] + ".java")]
         else:
             print("Error!!! Did not find IDE executable at " + javaIdeLoc + "\nSet javaIdeLoc variable in program to correct IDE location")
     if run:
         result = subprocess.run(ideCmd, shell=True)
-    ideCmdString = ideCmd[0] + ' ' + submission["studentPgmRunDir"] + '\\' + ideCmd[1]
-    #print(f'{ideCmdString=}')
+    #ideCmdString = '"' + ideCmd[0] + '"' + ' ' + '"' + submission["studentPgmRunDir"] + '"' + '\\' + ideCmd[1]
+    ideCmdString = '"' + ideCmd[0] + '"' + ' ' + ideCmd[1]
     return ideCmdString
 
 ### MAIN PROGRAM ###
@@ -699,7 +744,7 @@ def main():
                         submissionIncorrect(submission)
                 while not autoJudging:    # loop until a valid response
                     if submission["valid"]:
-                        answer = input("  y/n [s d r i o g e c m f l ls](r){x} h=help? ")
+                        answer = input("  y/n [s d a i o g e c m f l ls](r){x} h=help? ")
                     else:
                         answer = input("  Invalid submission [s e c m l ls](r){x} h=help? ")
                     if submission["valid"] and answer == "y":  # submission correct. UPDATE scoreboard, CONTINUE to next submission.
@@ -708,12 +753,12 @@ def main():
                     elif submission["valid"] and answer == "n":  # submission incorrect. UPDATE scoreboard, CONTINUE to next submission.
                         submissionIncorrect(submission)
                         break
-                    elif answer == "s":  # open program in IDE
+                    elif answer == "s":  # show program in IDE
                         bringUpProgramInIDE(submission)
                     elif answer == "d":
                         diffCmd = [diffLoc,os.path.join(submission["studentPgmRunDir"],submission["outputFile"]),os.path.join(submission["goldenAssignmentDir"], "gold.txt")]
                         result = subprocess.run(diffCmd, shell=True)     # run diff program
-                    elif answer == "r":  # run program again
+                    elif answer == "a":  # run program again
                         if submission["valid"]:
                             runProgram(submission, classRootDir)
                         else:
@@ -726,8 +771,11 @@ def main():
                                    line = line.replace("\n","↵")
                                    print(line)
                         else:
-                            print("  Assignment does not have a data input file named")
-                            print("  " + submission["dataInputFile"])
+                           if "dataInputFile" in submission:
+                              print("  Assignment does not have a data input file named")
+                              print("  " + submission["dataInputFile"])
+                           else:
+                              print("  Assignment does not have a data input file")
                     elif answer == "o":   # print program output (making newline character visible)
                         outfile = os.path.join(submission["studentPgmRunDir"],submission["outFileName"])
                         with open(outfile,'r') as outf:
