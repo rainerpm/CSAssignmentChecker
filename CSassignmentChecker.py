@@ -720,9 +720,9 @@ def main():
                         submissionIncorrect(submission)
                 while not autoJudging:    # loop until a valid response
                     if submission["valid"]:
-                        answer = input("  y/n [s d a i o g e c m f l ls](r){x} h=help? ")
+                        answer = input("  y/n [s d a i o rn g e c m f l ls](r){x} h=help? ")
                     else:
-                        answer = input("  Invalid submission [s e c m l ls](r){x} h=help? ")
+                        answer = input("  Invalid submission [s rn e c m l ls](r){x} h=help? ")
                     if submission["valid"] and answer == "y":  # submission correct. UPDATE scoreboard, CONTINUE to next submission.
                         submissionCorrect(submission)
                         break
@@ -786,23 +786,23 @@ def main():
                                 for line in lines[fromLine:]:
                                     print(line.rstrip())
                         lCount += 1
-                    elif answer == "r":  # rename or remove submitted file (if remove, CONTINUE to next submission).
-                        response = input("  reply 'r' to rename file or anything else to remove file? ")
-                        if response == 'r':
-                           newFileName = input("  Enter new filename for " + submission["FileName"] + " -> ")
-                           os.rename(submission["FileName"],newFileName)  
-                           updateLogFile(submission, "  changed name from " + submission["FileName"] + " to " + newFileName)
+                    elif answer == "r":  # remove submitted file and CONTINUE to next submission
+                        response = input("  Save in directory" + submission["saveDir"] + " before removing (y)? ")
+                        if response == "y":
+                            os.replace(os.path.join(classRootDir,submission["FileName"]),os.path.join(submission["saveDir"],submission["FileName"]))  # move (replace if already there) pgm to 00SAVE directory
                         else:
-                           response = input("  Save in directory" + submission["saveDir"] + " before removing (y)? ")
-                           if response == "y":
-                               os.replace(os.path.join(classRootDir,submission["FileName"]),os.path.join(submission["saveDir"],submission["FileName"]))  # move (replace if already there) pgm to 00SAVE directory
-                           else:
-                               response = input("  Confirm remove (y)? ")
-                               if response == "y":
-                                   os.remove(submission["FileName"])  # remove submitted
-                                   print("  " + submission["FileName"] + "was removed")
-                           updateLogFile(submission, "  removed "  + os.path.join(classRootDir,submission["FileName"]),True)
+                            response = input("  Confirm remove (y)? ")
+                            if response == "y":
+                                os.remove(submission["FileName"])  # remove submitted
+                                print("  " + submission["FileName"] + "was removed")
+                        updateLogFile(submission, "  removed "  + os.path.join(classRootDir,submission["FileName"]),True)
                         break
+                    elif answer == "rn":  # rename submitted file
+                        pyperclip.copy(submission["FileName"])
+                        # time.sleep(0.5)
+                        newFileName = input("  Enter new filename for " + submission["FileName"] + "(available in clipboard) -> ")
+                        os.rename(submission["FileName"],newFileName)  
+                        updateLogFile(submission, "  changed name from " + submission["FileName"] + " to " + newFileName)
                     elif answer == "c":  # clipboard (put email, subject, in Windows-10 clipboard)
                         comment = commentFromFile(submission)
                         if comment:
