@@ -62,7 +62,7 @@ The demo verifies two student assignments (1) [encryption](https://docs.google.c
    * After you close the diff window, the program displays the Assignment Menu **y/n \[s d a i o g e c m f l ls](r){x} h=help?**
      * **Answer s** to show the program in the Python IDE.
      * **Answer n** to judge the program as incorrect. The student's program status is reflected in /demo/scoreboard/ (one file with the student's name and one that is annoymized using the student's 4 digit code that can be made accessible to the class).
-   * Since the output was incorrect, the program also created a file (ShotwellGwynne.bat) in the class period folder that enables the teacher to easily run diff program for the student's last incorrect submission and optionally bring up the program in the IDE or look at the data input file in the text editor.
+   * Since the output was incorrect, the program also created a file (ShotwellGwynne.bat) in the latestResults folder inside the class period folder that enables the teacher to easily run diff program for the student's last incorrect submission and optionally bring up the program in the IDE or look at the data input file in the text editor.
    * fix the error on line 21 (changing thing[1] to thing[0]) in /demo/sampleSubmissions/studentProblems/4ShotwellGwynne4381_encryption.py and then once again copy the file to the class period 4 folder /demo/4/. 
     * Since the student now program works as expected the program reports *** CORRECT ***. NOTE: The program ignores any whitespace at the end of a line or the end of the output when comparing the student's output to the expected output in the assignment's gold.txt file.
      * **Answer y** to judge the program as correct and update the program's status in /demo/scoreboard/.
@@ -114,4 +114,4 @@ is displayed with the following options (NOTE: Be sure that you are done with th
 * The program will give you options to use a saved set of comments or enter a new comment to be used in the mail or put on the clipboard. You can chooose from preset assignment specific comments (stored in the comments.txt file in the assignments folder) or global comments (stored in ASSIGNMENT_GROUPS/comments.txt)
 
 ### Batch Files
-The class directory will contain a batch file for each student's last submission. If the submission compiled & ran the batch file will run diff and then offer to open the IDE and input data files. If the submission did not compile or run, instead of running diff, the batch file will open the error file.
+The latestResults directory inside the class directory will contain a batch file for each student's last submission. If the submission compiled & ran the batch file will run diff and then offer to open the IDE and input data files. If the submission did not compile or run, instead of running diff, the batch file will open the error file.
