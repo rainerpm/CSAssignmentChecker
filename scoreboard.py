@@ -89,9 +89,9 @@ def updateScoreboard(scoreboardDir,contestDataDir,assignmentGroupId,classId,list
            studentResult = studentResult + f'{result:<2s}' + '  '
            countTestsInRow += 1
         if includeNames:
-           fscoreboard.write(f'{name:20s} {correctCount:>2d}   {code}   {studentResult} {points:>4d}' + '\n')
+           fscoreboard.write(f'{name:20s} {correctCount:>2d}   {code:<6s} {studentResult} {points:>4d}' + '\n')
         else:
-           fscoreboard.write(f'{code}    {studentResult}  {correctCount:>2d}    {points:>4d}' + '\n')
+           fscoreboard.write(f'{code:<6s}  {studentResult}  {correctCount:>2d}    {points:>4d}' + '\n')
       totals = ''
       sumTotals = 0
       for test in listOfTestNames:
