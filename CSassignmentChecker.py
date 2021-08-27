@@ -124,8 +124,11 @@ def setup():
     for globalAssignmentGroupDirOnly in listOfGlobalAssignmentGroupDirectories:
         globalAssignmentGroupDir = os.path.join(rootDir,"ASSIGNMENT_GROUPS",globalAssignmentGroupDirOnly)
         classesFile = os.path.join(globalAssignmentGroupDir,"periods.txt")
-        with open(classesFile, "r") as cfile:
-            classPeriods = cfile.read().replace("\n"," ").split()
+        if os.path.exists(classesFile): 
+           with open(classesFile, "r") as cfile:
+               classPeriods = cfile.read().replace("\n"," ").split()
+        else:
+           print("Did not find file period.txt in",globalAssignmentGroupDir)
         for classPeriod in classPeriods:
             classPeriodsDir = os.path.join(rootDir,classPeriod)
             if not os.path.isdir(classPeriodsDir):
@@ -603,7 +606,6 @@ def main():
     autoJudgingFirstTime = True
     autoJudgingSleepTime = 60  # in seconds
     while True:
-        print("root directory =",rootDir)
         os.chdir(rootDir)
         inputContinue = False
         lCount = 0
@@ -787,16 +789,16 @@ def main():
                                     print(line.rstrip())
                         lCount += 1
                     elif answer == "r":  # remove submitted file and CONTINUE to next submission
-                        response = input("  Save in directory" + submission["saveDir"] + " before removing (y)? ")
-                        if response == "y":
-                            os.replace(os.path.join(classRootDir,submission["FileName"]),os.path.join(submission["saveDir"],submission["FileName"]))  # move (replace if already there) pgm to 00SAVE directory
-                        else:
-                            response = input("  Confirm remove (y)? ")
-                            if response == "y":
-                                os.remove(submission["FileName"])  # remove submitted
-                                print("  " + submission["FileName"] + "was removed")
-                        updateLogFile(submission, "  removed "  + os.path.join(classRootDir,submission["FileName"]),True)
-                        break
+                       if submission["valid"]:
+                          response = input("  Save in directory" + submission["saveDir"] + " before removing (y)? ")
+                          if response == "y":
+                             os.replace(os.path.join(classRootDir,submission["FileName"]),os.path.join(submission["saveDir"],submission["FileName"]))  # move (replace if already there) pgm to 00SAVE directory
+                       response = input("  Confirm remove (y)? ")
+                       if response == "y":
+                          os.remove(submission["FileName"])  # remove submitted
+                          print("  " + submission["FileName"] + "was removed")
+                       updateLogFile(submission, "  removed "  + os.path.join(classRootDir,submission["FileName"]),True)
+                       break
                     elif answer == "rn":  # rename submitted file
                         pyperclip.copy(submission["FileName"])
                         # time.sleep(0.5)
