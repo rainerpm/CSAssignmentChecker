@@ -121,7 +121,7 @@ def setup():
     listOfGlobalAssignmentGroupDirectories = [f.name for f in os.scandir(os.path.join(rootDir,"ASSIGNMENT_GROUPS")) if f.is_dir()]  # https://stackoverflow.com/questions/973473/getting-a-list-of-all-subdirectories-in-the-current-directory
     allAssignmentGroups = {}
     allAssignments = {}
-    for globalAssignmentGroupDirOnly in listOfGlobalAssignmentGroupDirectories:
+    for globalAssignmentGroupDirOnly in listOfGlobalAssignmentGroupDirectories:  # iterate over assignment group directories in ASSIGNMENT_GROUPS directory
         globalAssignmentGroupDir = os.path.join(rootDir,"ASSIGNMENT_GROUPS",globalAssignmentGroupDirOnly)
         classesFile = os.path.join(globalAssignmentGroupDir,"periods.txt")
         if os.path.exists(classesFile): 
@@ -138,7 +138,10 @@ def setup():
             if not os.path.isdir(classAssignmentGroupDir):
                 os.mkdir(classAssignmentGroupDir)
                 print("Created directory",classAssignmentGroupDir)
-            goldenDir = os.path.join(classAssignmentGroupDir,"00GOLDEN")
+            latestResultsDir = os.path.join(rootDir,classPeriod,"latestResults")
+            if not os.path.isdir(latestResultsDir):
+                os.mkdir(latestResultsDir)
+                print("Created directory",latestResultsDir)
             saveDir = os.path.join(classAssignmentGroupDir,"00SAVE")
             if not os.path.isdir(saveDir):
                 os.mkdir(saveDir)
@@ -246,6 +249,10 @@ def commentFromFile(submission):
     print("    0 enter a new comment for assignment " + submission["Assignment"] + " that will also be saved.")
     lines1 = lines2 = []
     choice1 = 0
+    if not submission["validAssignment"]:
+       comment = ">>" + submission["Assignment"] + "<< is not a known assignment name. Please use the exact name after the water drop on the website"
+       print("Using comment -> " + comment[:40] + "...")
+       return comment
     if os.path.exists(os.path.join(submission["goldenAssignmentDir"],"comments.txt")):
         with open(os.path.join(submission["goldenAssignmentDir"],"comments.txt")) as commentFile:
             lines1 = commentFile.readlines()
@@ -257,28 +264,28 @@ def commentFromFile(submission):
     if os.path.exists(os.path.join(rootDir,"ASSIGNMENT_GROUPS","comments.txt")):
         with open(os.path.join(rootDir,"ASSIGNMENT_GROUPS","comments.txt")) as commentFile:
             lines2 = commentFile.readlines()
-            print("    GLOBAL COMMENTS")
+            print("  GLOBAL COMMENTS")
             for line in lines2:
                 choice2 = chr(ord(choice2)+1)
                 print(f'    {choice2} ' + line.rstrip()[:80])
         lines = lines1 + lines2
     while True:
-        response = input("    Select <0-" + str(choice1) + "> or <a-" + choice2 + "> (<ENTER> for one time comment)? ")
+        response = input("  Select <0-" + str(choice1) + "> or <a-" + choice2 + "> (<ENTER> for one time comment)? ")
         if response == "":
-            comment = input("    enter one time comment that will not be saved for next time (use \\n for newline) \n    -> ")
+            comment = input("    enter one time comment that will not be saved for next time (use \\n for newline) \n    -> ").replace(r'\n', '\n')
             break
         response = int(response) if response.lstrip('-').isnumeric() else ord(response)-96+choice1
         if not(response >= 0 and response <= len(lines)):
             print("  Not a valid response.")
         else:
             if response == 0:
-                comment = input("  enter new comment (use \\n for newline) -> ")
+                comment = input("  enter new comment (use \\n for newline) -> ").replace(r'\n', '\n')
                 response = input("  add comment to assignment's comments.txt file (y)? ")
                 if response == 'y':
                     with open(os.path.join(submission["goldenAssignmentDir"],"comments.txt"),"a") as commentFile:
                         commentFile.write(comment + '\n')
             else:
-                comment = lines[response-1]
+                comment = lines[response-1].replace(r'\n', '\n')
             break
     return comment
 
@@ -339,13 +346,18 @@ def processCurrentSubmission(currentSubmission, assignmentGroups, assignments,cl
     if submission["validFormat"]:
         submission["classPeriod"] = classPeriod.strip()
         submission["studentName"] = name.strip()
+        res = [idx for idx in range(len(name)) if name[idx].isupper()]  # indexes of all uppercase characters
+        submission["studentFirstNameL"] = name[res[-1]:] + name[0]
         submission["studentCode"] = code.strip()
         submission["Assignment"]  = assignment.strip()
 ##        print("*** DBG",submission["classPeriod"],submission["studentName"],submission["studentCode"],submission["Assignment"])
 ##        if match2:
 ##            print("*** DBG","(partner",submission["partnerName"],submission["partnerCode"]+')')
         submission["validAssignment"] = submission["Assignment"] in assignments
-        submission["assignmentFileName"] = submission["Assignment"] + submission["FileExtension"]
+        if submission["FileExtension"] == ".zip":
+           submission["assignmentFileName"] = submission["Assignment"] + ".java"
+        else:
+           submission["assignmentFileName"] = submission["Assignment"] + submission["FileExtension"]
         submission["outFileName"] = submission["Assignment"] + "_out.txt"
         submission["outCorrectFileName"] = submission["Assignment"] + "_" + submission["submissionDateTime"] + "_out_CORRECT.txt"
         submission["outLongFileName"] = submission["Assignment"] + "_" + submission["submissionDateTime"] + "_out.txt"
@@ -447,17 +459,18 @@ def runProgram(submission, classRootDir):
             result = subprocess.run(compileCmd, stdout=fout, stderr=ferr)  #COMPILE PROGRAM
     errorCompile = checkErrorFileForErrors("CompilerError.txt", "  COMPILE ERROR")
     bringUpIDEorDataFile = '\nset /P c=Bring up IDE [y]? \nif /I "%c%" EQU "Y" goto :ide\ngoto :next\n:ide\n' + bringUpProgramInIDE(submission,False) + '\n:next'
+    latestResultsDir = os.path.join(classRootDir,"latestResults")
     if submission["dataInputFileExists"]:
         bringUpIDEorDataFile += '\nset /P c=Bring up input data file [y]? \nif /I "%c%" EQU "Y" goto :idf\ngoto :end\n:idf\n' + '"' + textEditorLoc + '"' + " -multiInst -nosession " + '"' + submission["dataInputFileName"] + '"' + '\n:end'
     if errorCompile:
-        copyfile("CompilerError.txt", os.path.join(submission["classDir"],submission["studentName"] + "_compileError.txt"))  # copy compile error file to class directory
+        copyfile("CompilerError.txt", os.path.join(latestResultsDir,submission["studentFirstNameL"] + "_compileError.txt"))  # copy compile error file to class directory
         copyfile("CompilerError.txt", os.path.join(submission["studentDir"],submission["compileErrFileName"]))  # copy output file to data directory
         if "partnerName" in submission:
             copyfile("CompilerError.txt",os.path.join(submission["partnerDir"],submission["compileErrFileName"]))  # copy output file to partner's data directory
         updateLogFile(submission, "  ERROR!!! " + submission["FileName"] + " had a compile time error.",False)
     else:
-        if os.path.exists(os.path.join(submission["classDir"],submission["studentName"] + "_compileError.txt")):
-            os.remove(os.path.join(submission["classDir"],submission["studentName"] + "_compileError.txt"))
+        if os.path.exists(os.path.join(latestResultsDir,submission["studentFirstNameL"] + "_compileError.txt")):
+            os.remove(os.path.join(latestResultsDir,submission["studentFirstNameL"] + "_compileError.txt"))
         writeOrAppend = "w"
         for runCmd in runCmds:
             runStdin = None           
@@ -488,19 +501,19 @@ def runProgram(submission, classRootDir):
         if errorRun:
             if os.path.exists(submission["outFileName"]):
                 os.remove(submission["outFileName"])
-            if os.path.exists(os.path.join(classRootDir,submission["studentName"] + ".bat")):
-                os.remove(os.path.join(classRootDir,submission["studentName"] + ".bat"))
-            with open(os.path.join(classRootDir,submission["studentName"] + ".bat"), "w") as fbatch:
+            if os.path.exists(os.path.join(latestResultsDir,submission["studentFirstNameL"] + ".bat")):
+                os.remove(os.path.join(latestResultsDir,submission["studentFirstNameL"] + ".bat"))
+            with open(os.path.join(latestResultsDir,submission["studentFirstNameL"] + ".bat"), "w") as fbatch:
                 fbatch.write('"' + textEditorLoc + '"' + " -multiInst -nosession " + os.path.join(submission["studentDir"],submission["runErrFileName"]))
                 fbatch.write(bringUpIDEorDataFile)
-            copyfile(submission["errorFileName"], os.path.join(submission["classDir"],submission["studentName"] + "_runTimeError.txt"))  # copy compile error file to class directory
+            copyfile(submission["errorFileName"], os.path.join(latestResultsDir,submission["studentFirstNameL"] + "_runTimeError.txt"))  # copy compile error file to class directory
             copyfile(submission["errorFileName"], os.path.join(submission["studentDir"],submission["runErrFileName"]))  # copy output file to data directory
             if "partnerName" in submission:
                 copyfile(submission["errorFileName"],os.path.join(submission["partnerDir"],submission["runErrFileName"]))  # copy output file to partner's data directory
             updateLogFile(submission, "  ERROR!!! " + submission["FileName"] + " had a run time error.",False)
         else:
-            if os.path.exists(os.path.join(submission["classDir"],submission["studentName"] + "_runTimeError.txt")):
-                os.remove(os.path.join(submission["classDir"],submission["studentName"] + "_runTimeError.txt"))
+            if os.path.exists(os.path.join(latestResultsDir,submission["studentFirstNameL"] + "_runTimeError.txt")):
+                os.remove(os.path.join(latestResultsDir,submission["studentFirstNameL"] + "_runTimeError.txt"))
     error = errorCompile or errorRun
     if not error:
         correct = filesMatch(submission["outputFile"],submission["goldFile"])
@@ -515,9 +528,9 @@ def runProgram(submission, classRootDir):
             with open(os.path.join(submission["studentPgmRunDir"], "diff.bat"), "w") as fdiff:
                 fdiff.write('"' + diffLoc + '"' + " " + submission["outFileName"] + " " + os.path.join(submission["goldenAssignmentDir"], "gold.txt"))
             # also write diff batch file to class directory (for quick access to each student's last run results)
-            if os.path.exists(os.path.join(classRootDir,submission["studentName"] + ".bat")):
-                os.remove(os.path.join(classRootDir,submission["studentName"] + ".bat"))
-            with open(os.path.join(classRootDir,submission["studentName"] + ".bat"), "w") as fbatch:
+            if os.path.exists(os.path.join(latestResultsDir,submission["studentFirstNameL"] + ".bat")):
+                os.remove(os.path.join(latestResultsDir,submission["studentFirstNameL"] + ".bat"))
+            with open(os.path.join(latestResultsDir,submission["studentFirstNameL"] + ".bat"), "w") as fbatch:
                 fbatch.write('"' + diffLoc + '"' + " " + os.path.join(submission["studentPgmRunDir"],submission["outFileName"]) + " " + os.path.join(submission["goldenAssignmentDir"], "gold.txt"))
                 fbatch.write(bringUpIDEorDataFile)
     os.chdir(classRootDir)
