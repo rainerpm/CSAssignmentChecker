@@ -114,12 +114,25 @@ def updateScoreboard(scoreboardDir,contestDataDir,assignmentGroupId,classId,list
       fscoreboard.write("Er  = latest submission had a run-time error - e.g. div by 0, index out range.\n")
       fscoreboard.write("C#  = test ran successfully, had # of incorrect submissions.\n")
       fscoreboard.write("#x  = test never ran successfully, submitted # times.")
+      fscoreboard.write("The POINTS column indicates your UIL programming competition score (60 pts/problem, -5 pts for every incorrect submission)")
       fscoreboard.close()  
 
+         
+def lastname(directoryName):
+## 2nd capital letter
+##   m = re.search(r'^([^A-Z]*[A-Z]){2}', directoryName);
+##   idxOf2ndCapitalLetter = m.span()[1]
+
+   ## last capitol letter
+   res = [idx for idx in range(len(directoryName)) if directoryName[idx].isupper()]
+   
+   lastName = directoryName[:res[-1]]
+   return(lastName)
 
 def getListOfStudentDirectories(contestDataDir):
    listOfDataDirectories = [ f.name for f in os.scandir(contestDataDir) if f.is_dir() ]  # https://stackoverflow.com/questions/973473/getting-a-list-of-all-subdirectories-in-the-current-directory
-   listOfDataDirectoriesSorted = sorted(listOfDataDirectories, key=str.casefold)  # sorts case insensitvely:  https://stackoverflow.com/questions/10269701/case-insensitive-list-sorting-without-lowercasing-the-result
+   # listOfDataDirectoriesSorted = sorted(listOfDataDirectories, key=str.casefold)  # sorts case insensitvely:  https://stackoverflow.com/questions/10269701/case-insensitive-list-sorting-without-lowercasing-the-result
+   listOfDataDirectoriesSorted = sorted(listOfDataDirectories, key=lastname)  # sorts by everything up to the last capital letter, which means the lastname (unless first name has 2 capitals in it)
    listOfStudentDirectories = []
    for dataDirectory in listOfDataDirectoriesSorted:
      if not dataDirectory.startswith('00'):
@@ -135,8 +148,10 @@ def getListOfStudentNamesFromStudentDirectories(contestDataDir):
      listOfStudentNames.append(name)
    return listOfStudentNames
 
-         
 
+   
+   
+   
 
           
 
