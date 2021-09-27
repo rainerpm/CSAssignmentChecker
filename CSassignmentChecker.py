@@ -1,6 +1,6 @@
 import scoreboard  # import the associated scoreboard.py which creates the scoreboard files
 from login import emailSendFromAddress, emailSendFromPassword
-from customize import validClassPeriods,rootDir,scoreboardDir,pythonIdeLoc,javaIdeLoc,tkdiffLoc,kdiff3Loc,textEditorLoc,emailSignature,emailAttachmentDir
+from customize import validClassPeriods,rootDir,scoreboardDir,pythonIdeLoc,javaIdeLoc,diffLoc,textEditorLoc,emailSignature,emailAttachmentDir
 
 # import standard python libraries (might need to be installed on your computer using 'pip install')
 import os
@@ -54,13 +54,15 @@ if not os.path.exists(os.path.join(textEditorLoc)):
     initError = True
     print("ERROR!!! TextEditor not found @ " + textEditorLoc)
 
-if os.path.exists(os.path.join(tkdiffLoc)):
-    diffLoc = tkdiffLoc
-elif os.path.exists(os.path.join(kdiff3Loc)):
-    diffLoc = kdiff3Loc
-else:
-    initError = True
-    print("ERROR!!! Diff program not found")
+##if os.path.exists(os.path.join(meldLoc)):
+##    diffLoc = meldLoc
+##elif os.path.exists(os.path.join(tkdiffLoc)):
+##    diffLoc = tkdiffLoc
+##elif os.path.exists(os.path.join(kdiff3Loc)):
+##    diffLoc = kdiff3Loc
+##else:
+##    initError = True
+##    print("ERROR!!! Diff program not found")
 
 if initError:
     exit()
@@ -342,12 +344,16 @@ def processCurrentSubmission(currentSubmission, assignmentGroups, assignments,cl
             if match3:
                 name = match3.group(1)
                 code = match3.group(2)
-    submission["validFormat"] = match1 and (match2 or match3)
+    caps = [idx for idx in range(len(name)) if name[idx].isupper()]  # indexes of all uppercase characters
+    hasCaps = True
+    if len(caps) == 0:
+       hasCaps = False
+       print("Error!!! Name does not have any capital letters")
+    submission["validFormat"] = match1 and (match2 or match3) and hasCaps
     if submission["validFormat"]:
         submission["classPeriod"] = classPeriod.strip()
         submission["studentName"] = name.strip()
-        res = [idx for idx in range(len(name)) if name[idx].isupper()]  # indexes of all uppercase characters
-        submission["studentFirstNameL"] = name[res[-1]:] + name[0]
+        submission["studentFirstNameL"] = name[caps[-1]:] + name[0]
         submission["studentCode"] = code.strip()
         submission["Assignment"]  = assignment.strip()
 ##        print("*** DBG",submission["classPeriod"],submission["studentName"],submission["studentCode"],submission["Assignment"])
@@ -359,6 +365,7 @@ def processCurrentSubmission(currentSubmission, assignmentGroups, assignments,cl
         else:
            submission["assignmentFileName"] = submission["Assignment"] + submission["FileExtension"]
         submission["outFileName"] = submission["Assignment"] + "_out.txt"
+        submission["outCheckFileName"] = submission["Assignment"] + "_check.txt"
         submission["outCorrectFileName"] = submission["Assignment"] + "_" + submission["submissionDateTime"] + "_out_CORRECT.txt"
         submission["outLongFileName"] = submission["Assignment"] + "_" + submission["submissionDateTime"] + "_out.txt"
         submission["compileErrFileName"] = submission["Assignment"] + "_" + submission["submissionDateTime"] + "_compileErr.txt"
@@ -377,6 +384,7 @@ def processCurrentSubmission(currentSubmission, assignmentGroups, assignments,cl
                 submission["goldenDir"] = assignmentGroup["goldenDir"]
                 submission["goldenAssignmentDir"] = os.path.join(assignmentGroup["goldenDir"], submission["Assignment"])
                 submission["goldFile"] = os.path.join(submission["goldenAssignmentDir"], "gold.txt")
+                submission["goldCheckFile"] = os.path.join(submission["goldenAssignmentDir"], "checker.txt")
                 submission["dataInputFileExists"] = os.path.exists(os.path.join(submission["goldenAssignmentDir"],submission["Assignment"]+".dat"))
                 submission["dataInputFileName"] = os.path.join(submission["goldenAssignmentDir"],submission["Assignment"]+".dat")
                 submission["saveDir"] = assignmentGroup["saveDir"]
@@ -402,18 +410,30 @@ def processCurrentSubmission(currentSubmission, assignmentGroups, assignments,cl
 
     return submission
 
-def copyFromGolden(goldenAssignmentDir, pgmRunDir):
+def copyFilesToProgramRunDirectory(submission, classRootDir):
+    goldenAssignmentDir = submission["goldenAssignmentDir"]
+    pgmRunDir = submission["studentPgmRunDir"] 
+    if submission["FileExtension"] == ".java":
+        copyfile(os.path.join(classRootDir,submission["FileName"]),os.path.join(submission["studentPgmRunDir"],submission["assignmentFileName"]))  # filename has to match assignment name for java
+    else:  # .zip files or Python .py files
+        copyfile(os.path.join(classRootDir,submission["FileName"]),os.path.join(submission["studentPgmRunDir"],submission["FileName"]))
+    os.chdir(submission["studentPgmRunDir"])
+    if submission["FileExtension"] == ".zip":
+        result = subprocess.run(["tar", "-xf", submission["FileName"]])  # EXTRACT zip file    
     goldenDirFiles = os.listdir(goldenAssignmentDir)
     for goldenDirFile in goldenDirFiles:
-        if goldenDirFile != "gold.txt":
+        if goldenDirFile != "gold.txt" or goldenDirFile != "checker.txt":
             fullGoldenDirFile = os.path.join(goldenAssignmentDir, goldenDirFile)
             if os.path.isfile(fullGoldenDirFile):
                 copy(fullGoldenDirFile, pgmRunDir)
-
+    os.chdir(classRootDir)
+    
 # returns True if output file matches golden file EXACTLY (except for line ending spaces or extra spaces/newlines at end of file)
 def filesMatch(outputFile,goldenFile):
     with open(outputFile) as ofile:
         output = ofile.read().rstrip().split("\n")
+    if not os.path.exists(goldenFile):
+        return False
     with open(goldenFile) as gfile:
         golden = gfile.read().rstrip().split("\n")
     match = True
@@ -426,23 +446,37 @@ def filesMatch(outputFile,goldenFile):
                 break
     return match
 
+def checkProgram(submission, classRootDir):
+    checked = True
+    os.chdir(submission["studentPgmRunDir"])
+    if os.path.exists(os.path.join(submission["Assignment"] + "Checker.java")):
+       compileCmd = ["javac", "-parameters", submission["Assignment"] + "Checker.java"]
+       with open("CompilerOutput.txt", "w") as fout:
+           with open("CompilerError.txt", "w") as ferr:
+               result = subprocess.run(compileCmd, stdout=fout, stderr=ferr)  #COMPILE CHECKER
+       runCmd = ["java", submission["Assignment"] + "Checker"]
+       with open(submission["outCheckFileName"], 'w') as fout:
+          result = subprocess.run(runCmd, stdin=None, stdout=fout, stderr=None)   # run Checker
+       checkFilesMatches = filesMatch(submission["outCheckFileName"],submission["goldCheckFile"])
+       if checkFilesMatches:
+           print("  >>> CHECK CORRECT <<<")
+       else:
+           diffCmd = [diffLoc,submission["outCheckFileName"],submission["goldCheckFile"]]
+           result = subprocess.run(diffCmd, shell=True)     # run diff program                      
+           checked = False
+    os.chdir(classRootDir)
+    return checked
+
 def runProgram(submission, classRootDir):
     correct = False
     error = False
-    if submission["FileExtension"] == ".java":
-        copyfile(os.path.join(classRootDir,submission["FileName"]),os.path.join(submission["studentPgmRunDir"],submission["assignmentFileName"]))  # filename has to match assignment name for java
-    else:  # .zip files or Python .py files
-        copyfile(os.path.join(classRootDir,submission["FileName"]),os.path.join(submission["studentPgmRunDir"],submission["FileName"]))
-    copyFromGolden(submission["goldenAssignmentDir"], submission["studentPgmRunDir"])
     os.chdir(submission["studentPgmRunDir"])
     if submission["language"] == "python":
         compileCmd = ["python","-m","py_compile",submission["FileName"]]
         runCmds = [["python", submission["FileName"]]]
     elif submission["language"] == "java":
-        if submission["FileExtension"] == ".zip":
-            result = subprocess.run(["tar", "-xf", submission["FileName"]])  # EXTRACT zip file
         compileCmd = ["javac", "-parameters", "*.java"]
-        runCmds = []
+        runCmds = []                    
         if os.path.exists(os.path.join(submission["Assignment"] + "Tester.java")):
             javaPgmName = submission["Assignment"] + "Tester"
         else:
@@ -473,10 +507,10 @@ def runProgram(submission, classRootDir):
             os.remove(os.path.join(latestResultsDir,submission["studentFirstNameL"] + "_compileError.txt"))
         writeOrAppend = "w"
         for runCmd in runCmds:
-            runStdin = None           
+            runStdin = None
             if not runCmd[1].endswith("Tester"):
                if runCmd[1].endswith("Runner"):
-                   inputFileList = glob.glob(r"runnerUserInput*.txt")
+                  inputFileList = glob.glob(r"runnerUserInput*.txt")
                else:
                   inputFileList = glob.glob(r"pgmUserInput*.txt")
                if len(inputFileList) > 0:
@@ -486,17 +520,18 @@ def runProgram(submission, classRootDir):
                          with open(submission["errorFileName"], writeOrAppend) as ferr:
                             fout.write("\n" + runCmd[1] + " stdin=" + inputFile +"\n")
                             fout.flush()
-                            result = subprocess.run(runCmd, stdin=runStdin, stdout=fout, stderr=ferr)   # run sumbmitted RUNNER or student program with a user input file (i.e. program reads from stdin)
+                            result = subprocess.run(runCmd, stdin=runStdin, stdout=fout, stderr=ferr)   # run submitted RUNNER or student program with a user input file (i.e. program reads from stdin)
                             writeOrAppend = "a"
                else:
                   with open(submission["outFileName"], writeOrAppend) as fout:
                       with open(submission["errorFileName"], writeOrAppend) as ferr: 
-                           result = subprocess.run(runCmd, stdin=runStdin, stdout=fout, stderr=ferr)   # run sumbmitted RUNNER or student program without a user input file      
-            else:  
+                           result = subprocess.run(runCmd, stdin=runStdin, stdout=fout, stderr=ferr)   # run submitted RUNNER or student program without a user input file      
+                           writeOrAppend = "a"
+            else:
                with open(submission["outFileName"], writeOrAppend) as fout:
                    with open(submission["errorFileName"], writeOrAppend) as ferr: 
-                      result = subprocess.run(runCmd, stdin=runStdin, stdout=fout, stderr=ferr)   # run TESTER
-            writeOrAppend = "a"
+                      result = subprocess.run(runCmd, stdin=runStdin, stdout=fout, stderr=ferr)   # run Tester
+                      writeOrAppend = "a"
         errorRun = checkErrorFileForErrors(submission["errorFileName"], "  RUNTIME ERROR")
         if errorRun:
             if os.path.exists(submission["outFileName"]):
@@ -516,9 +551,9 @@ def runProgram(submission, classRootDir):
                 os.remove(os.path.join(latestResultsDir,submission["studentFirstNameL"] + "_runTimeError.txt"))
     error = errorCompile or errorRun
     if not error:
-        correct = filesMatch(submission["outputFile"],submission["goldFile"])
-        if correct:
-            print("  *** CORRECT ***")
+        goldFileMatches = filesMatch(submission["outputFile"],submission["goldFile"])
+        if goldFileMatches:
+            print("  *** RUN CORRECT ***")
         else:
             if autoJudging:
                 print("  INCORRECT (autojudged)")
@@ -534,7 +569,7 @@ def runProgram(submission, classRootDir):
                 fbatch.write('"' + diffLoc + '"' + " " + os.path.join(submission["studentPgmRunDir"],submission["outFileName"]) + " " + os.path.join(submission["goldenAssignmentDir"], "gold.txt"))
                 fbatch.write(bringUpIDEorDataFile)
     os.chdir(classRootDir)
-    return correct, error
+    return correct
 
 def getSubmissions(extensions):
     listOfSubmissions = []
@@ -559,9 +594,10 @@ def updateLogFile(submission, logMessage, alsoPrint = False):
 
 def gradeSubmission(submission):
     gradeFileName = os.path.join(submission["studentAssignmentDir"],"grades.txt")
-    with open(gradeFileName) as gradeFile:
-        for line in gradeFile:
-            print("  " + line.rstrip())
+    if os.path.exists(gradeFileName): 
+        with open(gradeFileName) as gradeFile:
+            for line in gradeFile:
+                print("  " + line.rstrip())
     grade = input("  enter Grade ")
     note  = input("  enter Note  ")
     with open(gradeFileName, "a") as gradeFile:
@@ -718,9 +754,17 @@ def main():
                     # if it is a known assignment
                     if submission["validAssignment"]:
                         if submission["assignmentInGroup"]:
-                            ### run the program ###
                             print("\n"+submission["studentName"] + " * " + submission["Assignment"] + " * " + " (" + submission["FileName"] + ") " + submission["submissionDateTime"])
-                            correct,error = runProgram(submission, classRootDir)
+                            copyFilesToProgramRunDirectory(submission, classRootDir)
+                            checked = checkProgram(submission, classRootDir)
+                            goodToRun = True
+                            if not checked:
+                                response = input("Check failed. Run program anyways (y)? ")
+                                if response != 'y':
+                                    goodToRun = False
+                            if goodToRun:
+                                ### run the program ###
+                                correct = runProgram(submission, classRootDir)
                         else:
                             updateLogFile(submission, "  ERROR!!! >>" + submission["Assignment"] + "<< is not an assignment in", submission["assignmentGroupId"],"(submitted file " + submission["FileName"] + ")",True)
                     else:
@@ -735,7 +779,7 @@ def main():
                         submissionIncorrect(submission)
                 while not autoJudging:    # loop until a valid response
                     if submission["valid"]:
-                        answer = input("  y/n [s d a i o rn g e c m f l ls](r){x} h=help? ")
+                        answer = input("  y/n [s d a h i o rn g e c m f l ls](r){x} h=help? ")
                     else:
                         answer = input("  Invalid submission [s rn e c m l ls](r){x} h=help? ")
                     if submission["valid"] and answer == "y":  # submission correct. UPDATE scoreboard, CONTINUE to next submission.
@@ -754,6 +798,14 @@ def main():
                             runProgram(submission, classRootDir)
                         else:
                             print("  Submission was not valid and can not be run again.")
+                    elif answer == "h":
+                        listOfStudentDataFiles = glob.glob(submission["studentDir"] + '/' + submission["Assignment"] + r'_*.txt')
+                        if len(listOfStudentDataFiles) == 0:
+                           print("  This is the first submission.")
+                        else:
+                           listOfStudentDataFilesSorted = sorted(listOfStudentDataFiles,key = os.path.getmtime, reverse=True)
+                           for studentDataFile in listOfStudentDataFilesSorted:
+                              print("  ",studentDataFile)
                     elif answer == "i":
                         if submission["dataInputFileExists"]:
                            infile = os.path.join(submission["studentPgmRunDir"],submission["dataInputFileName"])
