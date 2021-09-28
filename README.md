@@ -13,7 +13,7 @@ The **CSAssignmentChecker.py** program verifies python or java assignments submi
     * k3diff (http://kdiff3.sourceforge.net/)
 
 ### Assignment Submission and Verification
-A student submits an assignment by submitting a single file to their class period folder on the computer running this program.
+A student submits an assignment by submitting a single file to their class period folder on the teacher's computer running this program.
 The submitted file must be named **#LastFirst?_@.$** (KEY for whole README: **#** student's class period, **LastFirst** student's name, **?** unique student number, **@** assignment name, **$** file extension: either py, java, or zip) and the java class must be named @. Since a java program's file name must match its class name, this program renames **#LastFirst?_@.java** to simply **@.java**.
 
 Ideally students students have a way to submit a file in real time directly to a class period folder on the teacher's hard drive (one way to do this is to have the students submit to an online folder that is automatically synched to the teacher's PC - e.g. Dropbox File Request feature).
