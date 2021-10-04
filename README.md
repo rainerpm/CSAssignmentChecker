@@ -2,21 +2,19 @@
 
 ### Overview
 
-The **CSAssignmentChecker.py** program verifies python or java assignments submitted by students. This program does basic verification by simply running the submitted student's .py or .java program and comparing the program's output to a teacher provided "gold" output file. If the two don't match, the program shows the highlighted differences. More advanced verification is possible in JAVA by enabling a student to submit a single .java file or multiple .java files (in a .zip file) which can then verified by a teacher provided Checker and/or Tester program. 
+The **CSAssignmentChecker.py** program verifies python or java assignments submitted by students. This program does basic verification by simply running the submitted student's .py or .java program and comparing the program's output to a teacher provided "gold" output file. If the two don't match, the program shows the highlighted differences. More advanced verification is possible for JAVA assignments by allowing a student to submit multiple .java files which can then verified by a teacher provided Checker and/or Tester program. 
 
 ### Required Python packages
   * pip install pyperclip
   
 ### Other Requirements
-  * download & install a diff program (either of the below is fine).
-    * tkdiff (https://sourceforge.net/projects/tkdiff/) - this one can be tricky to install.
-    * k3diff (http://kdiff3.sourceforge.net/)
+  * download & install a diff program such as meld (https://meldmerge.org/).
 
 ### Assignment Submission and Verification
-A student submits an assignment by submitting a single file to their class period folder on the teacher's computer running this program.
+Student submit an assignment by submitting a single file to their class period folder on the teacher's computer running this program.
 The submitted file must be named **#LastFirst?_@.$** (KEY for whole README: **#** student's class period, **LastFirst** student's name, **?** unique student number, **@** assignment name, **$** file extension: either py, java for individual files or zip for multiple files) and the java class must be named @. Since a java program's file name must match its class name, this program renames **#LastFirst?_@.java** to simply **@.java**.
 
-Ideally students students have a way to submit a file in real time directly to a class period folder on the teacher's hard drive (one way to do this is to have the students submit to an online folder that is automatically synched to the teacher's PC - e.g. Dropbox File Request feature).
+Ideally students students have a way to submit a file in real time directly to the class's period folder on the teacher's hard drive (one way to do this is to have the students submit to an online folder that is automatically synched to the teacher's PC - e.g. Dropbox File Request feature).
 
 * **Basic Verification**  When the student submits a Python or JAVA program that simply prints its output, this program runs the student's program and compares the program's generated output to the teacher provided "golden" output.  The student's program can optionally read test data from a file named **@.dat**. As part of an assignment, student's are usually provided a **@.dat** file with a few basic test cases. A teacher will typically provide this program a **@.dat** file with more comprehensive test cases.  The student's program can optionally prompt the user for input - e.g. Python: input() JAVA: scan.nextInt().  To provide this user input, the teacher provides this program with one or more **pgmUserInput&.txt** files (& is a unique identifier, usually 1,2,3, ...). The submitted program is run once for each user input file.
 
