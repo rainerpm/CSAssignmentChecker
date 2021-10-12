@@ -6,6 +6,7 @@ The **CSAssignmentChecker.py** program verifies python or java assignments submi
 
 ### Required Python packages
   * pip install pyperclip
+  * pip install pillow
   
 ### Other Requirements
   * download & install a diff program such as meld (https://meldmerge.org/).
