@@ -16,5 +16,5 @@ diffLoc = r'C:\Program Files (x86)\Meld\Meld.exe'
 
 # email (email login is in login.py)
 emailSignature = "\n\nMr. Mueller\n\n"
-emailAttachmentDir = r"C:/Users/E151509/Downloads/StudentAttachment/"  # use newest file in this dir as email attachment
+emailAttachmentFile = r"C:/Users/E151509/Documents/CSassignmentChecker.jpg"  # use newest file in this dir as email attachment
 
