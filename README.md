@@ -2,36 +2,40 @@
 
 ### Overview
 
-The **CSAssignmentChecker.py** program verifies python or java assignments submitted by students. This program does basic verification by simply running the submitted student's .py or .java program and comparing the program's output to a teacher provided "gold" output file. If the two don't match, the program shows the highlighted differences. More advanced verification is possible in JAVA by enabling a student to submit a single .java file or multiple .java files (in a .zip file) which can then verified by a teacher provided Tester program. 
+The **CSAssignmentChecker.py** program verifies python or java assignments submitted by students. This program does basic verification by simply running the submitted student's .py or .java program and comparing the program's output to a teacher provided "gold" output file. If the two don't match, the program shows the highlighted differences. More advanced verification is possible for JAVA assignments by allowing a student to submit multiple .java files which can then verified by a teacher provided Checker and/or Tester program. 
 
 ### Required Python packages
   * pip install pyperclip
+  * pip install pillow
   
 ### Other Requirements
-  * download & install a diff program (either of the below is fine).
-    * tkdiff (https://sourceforge.net/projects/tkdiff/) - this one can be tricky to install.
-    * k3diff (http://kdiff3.sourceforge.net/)
+  * download & install a diff program such as meld (https://meldmerge.org/).
 
 ### Assignment Submission and Verification
-A student submits an assignment by submitting a single file to their class period folder on the computer running this program.
-The submitted file must be named **#LastFirst?_@.$** (KEY for whole README: **#** student's class period, **LastFirst** student's name, **?** unique student number, **@** assignment name, **$** file extension: either py, java, or zip) and the java class must be named @. Since a java program's file name must match its class name, this program renames **#LastFirst?_@.java** to simply **@.java**.
+Student submit an assignment by submitting a single file to their class period folder on the teacher's computer running this program.
+The submitted file must be named **#LastFirst?_@.$** (KEY for whole README: **#** student's class period, **LastFirst** student's name, **?** unique student number, **@** assignment name, **$** file extension: either py, java for individual files or zip for multiple files) and the java class must be named @. Since a java program's file name must match its class name, this program renames **#LastFirst?_@.java** to simply **@.java**.
 
-Ideally students students have a way to submit a file in real time directly to a class period folder on the teacher's hard drive (one way to do this is to have the students submit to an online folder that is automatically synched to the teacher's PC - e.g. Dropbox File Request feature).
+Ideally students students have a way to submit a file in real time directly to the class's period folder on the teacher's hard drive (one way to do this is to have the students submit to an online folder that is automatically synched to the teacher's PC - e.g. Dropbox File Request feature).
 
-* **Basic Verification**  When the student submits a Python or JAVA program that simply prints its output, this program runs the student's program and compares the program's generated output to the teacher provided "golden" output.  The student's program can optionally read test data from a file named **@.dat**. As part of an assignment, student's are usually provided a **@.dat** file with a few basic test cases. A teacher will typically provide this program a **@.dat** file with more comprehensive test cases.  The student's program can optionally prompt the user for input - e.g. Python: input() JAVA: scan.nextInt().  To provide this user input, the teacher can provide this program with one or more **pgmUserInput&.txt** files (& is a unique identifier, usually 1,2,3, ...). The submitted program will be run once for each user input file.
+* **Basic Verification**  When the student submits a Python or JAVA program that simply prints its output, this program runs the student's program and compares the program's generated output to the teacher provided "golden" output.  The student's program can optionally read test data from a file named **@.dat**. As part of an assignment, student's are usually provided a **@.dat** file with a few basic test cases. A teacher will typically provide this program a **@.dat** file with more comprehensive test cases.  The student's program can optionally prompt the user for input - e.g. Python: input() JAVA: scan.nextInt().  To provide this user input, the teacher provides this program with one or more **pgmUserInput&.txt** files (& is a unique identifier, usually 1,2,3, ...). The submitted program is run once for each user input file.
 
-* **Advanced Verification (JAVA only)** When the student submits a JAVA file defining a class and the teacher provids a **@Tester.java** program, the **@Tester.java** is run and the output of **@Tester.java** is compared to the teacher provided "golden" output. The student's class file may depend on other classes the student wrote.  Thus the student can submit multiple .java files in a ZIP file called **#LastFirst?_@.zip** (which must contain a file called **@.java**). Often students are asked to write not just a class, but also code that uses/tests the class they wrote. A student can provide this code in a file name **@Runner.java** which this program will run and compare the output of to the teacher provided "golden" output.  The student's **@Runner.java** program can optionally prompt the user for input - e.g. Python: input() JAVA: scan.nextInt().  To provide this user input to this program, the teacher can provide one or more **runnerUserInput&.txt** files (& is a unique identifier, usually 1,2,3, ...). The **@Runner.java** program will be run once for each user input file. It is permissible for both the teacher to provide a **@Tester.java** program (run first) and the student to sumbmit a **@Runner.java** program (run last).
+* **Advanced Verification (JAVA only)** This program runs any or all of these OPTIONAL programs 
+  * **@Checker.java**  [provided by teacher] Code to check the contents of the student's program (number and type of instance variables as well as details on the constructors and methods in the student's program). The output is compared to **checker.txt** file provided by the teacher. 
+  * **@Runner.java**  [submitted by students] Contains the code that the student wrote that uses/tests the class(es) they wrote. The output is compared to the  **gold.txt** output file provided by the teacher. The @Runner.java program can optionally prompt the user for input. To provide this user input to this program, the teacher provides one or more runnerUserInput&.txt files (& is a unique identifier, usually 1,2,3, ...). The @Runner.java program will be run once for each user input file.
+  * **@Tester.java**  [provided by teacher] Contains the code that the teacher wrote that uses/tests the program submitted by the student. The output is compared to the  **gold.txt** output file provided by the teacher.    
 
 ### Program (and Demo) Setup
 * unzip demo.zip to a folder on your hard drive (i.e. C:/YourPathToDemoDir/demo)
   * **ASSIGNMENT_GROUPS** folder
     * **first6weeksAssignments, pythonAssignments** (these are the assignment group folders)
       * **Collatz, encryption** (these are the assignment folders  - the name of the assignment folder **is** the **assignment name**, assignment names must be unique)
-         * **gold.txt** is the teacher provided golden output for the assignment
          * **@.dat** is the teacher provided input data file for the assignment (@ is the **assignment name**). Typically this file contains more/harder test data then what's been given to the students.
          * **@Tester.java** is an optional test program (@ is the **assignment name**)
+         * **@Checker.java** is an optional checker program (@ is the **assignment name**)
          * **pgmUserInput&.txt** user input files if the student's program requires user input - e.g. Python: input() JAVA: scan.nextInt() 
          * **runnerUserInput&.txt** user input files if the student also submits **@Runner.java** file
+         * **gold.txt** is the teacher provided golden output for the assignment
+         * **checker.txt** is the teacher provided checker output for the assignment
          * **comments.txt** contains the assignment specific comments used in student emails or clipboard
       * **periods.txt** indicates which class periods this assignment group is assigned to
     * **comments.txt** contains the global comments used in student emails or clipboard
@@ -41,13 +45,11 @@ Ideally students students have a way to submit a file in real time directly to a
   * set the **scoreboardDir** variable to C:/YourPathToDemoDir/demo/scoreboard
   * hereafter C:/YourPathToDemoDir/demo is abbreviated /demo.
 * set the following executable variables
-  * set either of the following for the location of the diff program
-    * set the **tkdiffLoc** variable to the location of the **tkdiff.exe** executable.
-    *  set the **kdiff3Loc** variable to the location of the **kdiff3.exe** executable.
   * set the **pythonIdeLoc** variable to the location of the Python IDE (e.g. IDLE) executable.
   * set the **javaIdeLoc** variable to the location of the JAVA IDE (e.g. jGrasp) executable.
     * NOTE: The program uses *-parameters* compile option to ensure that JAVA reflection reflects parameter types instead of just using arg0
   * set the **textEditorLoc** variable to the location of a text editor (e.g. Notepad++) executable.
+  * set the **diffLoc** variable to the location of the diff program (e.g. meld, kdiff, or tkdiff) executable.
 ### Run the Demo
 The demo verifies two student assignments (1) [encryption](https://docs.google.com/document/d/1mr5FHL-cf3T1kRR0F10KCWwGGdjZC4Cj/edit?usp=sharing&ouid=117088614197672338242&rtpof=true&sd=true) (2) [Collatz](https://docs.google.com/document/d/1TKC45I9ZGvg82XGRzkpnoEnlxtC9xXnPdiv9Qmajf9g/edit?usp=sharing)
 * run CSassignmentChecker.py
