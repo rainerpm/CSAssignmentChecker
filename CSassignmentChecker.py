@@ -1,6 +1,6 @@
 import scoreboard  # import the associated scoreboard.py which creates the scoreboard files
 from login import emailSendFromAddress, emailSendFromPassword
-from customize import validClassPeriods,rootDir,scoreboardDir,pythonIdeLoc,javaIdeLoc,diffLoc,textEditorLoc,emailSignature,emailAttachmentDir
+from customize import validClassPeriods,rootDir,scoreboardDir,pythonIdeLoc,javaIdeLoc,diffLoc,textEditorLoc,emailSignature,emailAttachmentFile
 
 # import standard python libraries (might need to be installed on your computer using 'pip install')
 import os
@@ -15,12 +15,14 @@ from   datetime import datetime
 from   pathlib  import Path
 from   shutil   import copyfile
 from   shutil   import copy
+from   shutil   import rmtree
 import ssl     # for gmail
 import smtplib # for gmail & outlook
 from   email.mime.text      import MIMEText      # for outlook
 from   email.mime.multipart import MIMEMultipart # for outlook
 from   email.mime.base      import MIMEBase      # for outlook
 from   email                import encoders      # for outlook
+from   PIL      import ImageGrab                 # pip install pillow
 import pyperclip        # allows python to add things to the clipboard (so it can be quickly pasted)
 #from icecream import ic
 import webbrowser
@@ -54,16 +56,6 @@ if not os.path.exists(os.path.join(textEditorLoc)):
     initError = True
     print("ERROR!!! TextEditor not found @ " + textEditorLoc)
 
-##if os.path.exists(os.path.join(meldLoc)):
-##    diffLoc = meldLoc
-##elif os.path.exists(os.path.join(tkdiffLoc)):
-##    diffLoc = tkdiffLoc
-##elif os.path.exists(os.path.join(kdiff3Loc)):
-##    diffLoc = kdiff3Loc
-##else:
-##    initError = True
-##    print("ERROR!!! Diff program not found")
-
 if initError:
     exit()
 
@@ -91,7 +83,8 @@ def check4Activity():
             if files:
                 files.sort(key=os.path.getmtime)
                 for file in files:
-                    print(" ", file)
+                    fname = Path(file)
+                    print(" ", datetime.fromtimestamp(fname.stat().st_mtime).strftime("%b%d %Hh%Mm"), os.path.basename(file))
 
 # return a dictionary of all registered students and create student directory
 # if it does not yet exist
@@ -191,17 +184,22 @@ def emailStudent(submission, classRegistration):
     comment = commentFromFile(submission)
     response = ""
     if comment:
-        response = input("  attachment (y)? ")
+        response = input("  attach image from clipboard (y)? ")
     attachment = ""
     if response == "y":
-        listOfFiles = glob.glob(os.path.join(emailAttachmentDir,r"*"))
-        newestFileInDirectory = max(listOfFiles, key=os.path.getctime)
-        filename = os.path.basename(newestFileInDirectory)
-        filename = filename.replace(" ", "_")  # Outlook email routine does not like spaces in filename
-        dirname = os.path.dirname(newestFileInDirectory)
-        attachment = os.path.join(dirname,filename)
-        os.rename(newestFileInDirectory, attachment)   # move rile to attachment directory
-        comment = comment + "\nBe sure to look at the attachment."
+        while True:
+           image = ImageGrab.grabclipboard()
+           if image == None:
+             print("No image found on top of clipboard.")
+             response = input("<enter> to try again or <q>uit trying? ")
+             if response == 'q':
+                break
+           else:
+              break
+        imageJpg = image.convert('RGB')
+        imageJpg.save(emailAttachmentFile,'JPEG')
+        attachment = emailAttachmentFile
+        comment = comment + "\nBe sure to look at the e-mail attachment."
     updateLogFile(submission, "  email msg -> " + comment)
     message = comment + emailSignature
     print("SENDING EMAIL")
@@ -308,7 +306,24 @@ def checkErrorFileForErrors(errFile, errorType):
         return True
     return False
 
-def processCurrentSubmission(currentSubmission, assignmentGroups, assignments,classRootDir):
+def checkStudentRegistration(currentSubmission,name,code,classRegistration):
+   foundNameInRegistration = True
+   if name != "MyTest":
+      if (code not in classRegistration):
+         print("  code " + code + " is not registered " + "(" + currentSubmission +")") 
+         foundNameInRegistration = False
+      elif classRegistration[code][0] != name:
+         print("  code " + code + " was previously registered as",classRegistration[submission["studentCode"]],"not as",submission["studentName"] + " (" + currentSubmission +")")
+         foundNameInRegistration = False
+##      if askToShow:
+##         response = input("  show registered students (y)? ")
+##         if response == "y":
+##            with open("REGISTER.txt", "r") as r:
+##                for line in sorted(r):
+##                    print(line, end="")
+   return foundNameInRegistration
+
+def processCurrentSubmission(currentSubmission, assignmentGroups, assignments,classRootDir,classRegistration):
     submission = {}
     # submission["dateTime"] = datetime.now().strftime("%Y_%m_%d_%Hh%Mm%Ss")
     # submission["dateTime"] = datetime.now().strftime("%b_%d_%Hh%Mm%Ss")
@@ -326,30 +341,41 @@ def processCurrentSubmission(currentSubmission, assignmentGroups, assignments,cl
     submission["validAssignment"] = False
     submission["assignmentInGroup"] = False
     submission["valid"] = False
+    caps = []
     if match1:  # file name has main three parts
         classPeriod = match1.group(1)
         nameAndCode = match1.group(3)
         assignment = match1.group(4)
         match2 = False
         match3 = False
-        if '(' in nameAndCode:   # Handle pair filenames 2Lovelace(Turing)Ada(Alan)1234(6789)_test
+        studentRegistered = False
+        partnerFound = False
+        partnerRegistered = True
+        if '(' in nameAndCode:   # Handle pair programming submissions - e.g. 2Lovelace(Turing)Ada(Alan)1234(6789)_test
             match2 = re.search("(.*?)\((.*?)\)(.*?)\((.*?)\)(.*?)\((.*?)\)",nameAndCode)
             if match2:
-                name = match2.group(1) + match2.group(3)
-                code = match2.group(5)
-                submission["partnerName"] = match2.group(2) + match2.group(4)
-                submission["partnerCode"] = match2.group(6)
-        else:
+                name = match2.group(1) + match2.group(3)    # first name
+                code = match2.group(5)                      # first code
+                studentRegistered = checkStudentRegistration(currentSubmission,name,code,classRegistration)
+                namePartner = match2.group(2) + match2.group(4)  # second name
+                codePartner = match2.group(6)                    # second code
+                submission["partnerName"] = namePartner 
+                submission["partnerCode"] = codePartner
+                partnerRegistered = checkStudentRegistration(currentSubmission,namePartner,codePartner,classRegistration)
+                partnerFound = True
+        else:      # handle regular submission - e.g. 2LovelaceAda1234_test
             match3 = re.search("(.*?)(\d+)",nameAndCode)
             if match3:
                 name = match3.group(1)
                 code = match3.group(2)
-    caps = [idx for idx in range(len(name)) if name[idx].isupper()]  # indexes of all uppercase characters
-    hasCaps = True
+                studentRegistered = checkStudentRegistration(currentSubmission,name,code,classRegistration)
+        submission["hasPartner"] = partnerFound       
+        caps = [idx for idx in range(len(name)) if name[idx].isupper()]  # indexes of all uppercase characters
+        hasCaps = True
     if len(caps) == 0:
        hasCaps = False
        print("Error!!! Name does not have any capital letters")
-    submission["validFormat"] = match1 and (match2 or match3) and hasCaps
+    submission["validFormat"] = match1 and (match2 or match3) and hasCaps and studentRegistered and partnerRegistered
     if submission["validFormat"]:
         submission["classPeriod"] = classPeriod.strip()
         submission["studentName"] = name.strip()
@@ -428,14 +454,14 @@ def copyFilesToProgramRunDirectory(submission, classRootDir):
                 copy(fullGoldenDirFile, pgmRunDir)
     os.chdir(classRootDir)
     
-# returns True if output file matches golden file EXACTLY (except for line ending spaces or extra spaces/newlines at end of file)
+# returns True if output file matches golden file EXACTLY (except for line ending spaces or extra spaces/newlines at beginning or end of file)
 def filesMatch(outputFile,goldenFile):
     with open(outputFile) as ofile:
-        output = ofile.read().rstrip().split("\n")
+        output = ofile.read().strip().split("\n")
     if not os.path.exists(goldenFile):
         return False
     with open(goldenFile) as gfile:
-        golden = gfile.read().rstrip().split("\n")
+        golden = gfile.read().strip().split("\n")
     match = True
     if len(output) != len(golden):
         match = False
@@ -476,14 +502,17 @@ def runProgram(submission, classRootDir):
         runCmds = [["python", submission["FileName"]]]
     elif submission["language"] == "java":
         compileCmd = ["javac", "-parameters", "*.java"]
-        runCmds = []                    
+        runCmds = []
+        tester = False
+        runner = False
         if os.path.exists(os.path.join(submission["Assignment"] + "Tester.java")):
-            javaPgmName = submission["Assignment"] + "Tester"
-        else:
-            javaPgmName = submission["assignmentFileName"]
-        runCmds.append(["java", javaPgmName])
+            runCmds.append(["java",submission["Assignment"] + "Tester"])
+            tester = True
         if os.path.exists(os.path.join(submission["Assignment"] + "Runner.java")):
-            runCmds.append(["java", submission["Assignment"] + "Runner"])        
+            runCmds.append(["java",submission["Assignment"] + "Runner"]);
+            runner = True
+        if not(tester or runner):
+            runCmds.append(["java",submission["assignmentFileName"]]);
     else:
         print("ERROR!!! Unsupported language")
         sys.exit()
@@ -606,8 +635,9 @@ def gradeSubmission(submission):
 
 def submissionCorrect(submission):
     if not os.path.exists(os.path.join(submission["plagiarismAssignmentDir"],submission["submittedFileNameWithDate"])):
-        os.rename(submission["FileName"], os.path.join(submission["plagiarismAssignmentDir"],submission["submittedFileNameWithDate"]))  # move pgm to PLAGIARISM directory
+       os.rename(submission["FileName"], os.path.join(submission["plagiarismAssignmentDir"],submission["submittedFileNameWithDate"]))  # move pgm to PLAGIARISM directory
     else:
+        print("DBG2",submission["FileName"])
         os.remove(submission["FileName"])       # remove submission file (this only happens if the same file with the same time stamp is copied into class directory)
     copyfile(os.path.join(submission["studentPgmRunDir"],submission["outFileName"]), os.path.join(submission["studentDir"],submission["outCorrectFileName"]))  # copy output file to data directory
     if "partnerName" in submission:
@@ -724,7 +754,7 @@ def main():
             if len(currentSubmissions) > 0:
                 currentSubmission = min(currentSubmissions, key=os.path.getmtime)
                 currentSubmissions.remove(currentSubmission)
-                submission = processCurrentSubmission(currentSubmission, assignmentGroups, assignments,classRootDir)
+                submission = processCurrentSubmission(currentSubmission, assignmentGroups, assignments,classRootDir,classRegistration)
                 updateLogFile(submission,"\nRECEIVED " + submission["FileName"])
                 if submission["validFormat"]:  # format for assignment submission name is valid
                     if submission["Assignment"] == "register":  # student submitted a registration request
@@ -740,17 +770,29 @@ def main():
                         os.remove(submission["FileName"])  # remove registration file (assignment name was register, file has served its purpose)
                         continue  # CONTINUE TO NEXT SUBMISSION
 
-                    if registrationRequired:  # if registration is required, check to see if student is registered
-                        if (not submission["studentCode"] in classRegistration) or (classRegistration[submission["studentCode"]][0] != submission["studentName"]):
-                            if submission["studentCode"] in classRegistration:
-                                print("  code " + submission["studentCode"] + " was previously registered as",classRegistration[submission["studentCode"]])
-                                response = input("  show registered students (y)? ")
-                                if response == "y":
-                                    with open("REGISTER.txt", "r") as r:
-                                        for line in sorted(r):
-                                            print(line, end="")
-                            else:
-                                updateLogFile(submission, "  ERROR!!! " + submission["studentCode"] + " has not been previously registered!!!",True)
+##                    if registrationRequired:  # if registration is required, check to see if student is registered
+##                        if (not submission["studentCode"] in classRegistration) or (classRegistration[submission["studentCode"]][0] != submission["studentName"]):
+##                            if submission["studentCode"] in classRegistration:
+##                                print("  code " + submission["studentCode"] + " was previously registered as",classRegistration[submission["studentCode"]])
+##                                response = input("  show registered students (y)? ")
+##                                if response == "y":
+##                                    with open("REGISTER.txt", "r") as r:
+##                                        for line in sorted(r):
+##                                            print(line, end="")
+##                            else:
+##                                updateLogFile(submission, "  ERROR!!! " + submission["studentCode"] + " has not been previously registered!!!",True)
+##                        if submission["hasPartner"]:
+##                          if (not submission["partnerCode"] in classRegistration) or (classRegistration[submission["partnerCode"]][0] != submission["partnerName"]):
+##                              if submission["partnerCode"] in classRegistration:
+##                                  print("  code " + submission["partnerCode"] + " was previously registered as",classRegistration[submission["partnerCode"]])
+##                                  response = input("  show registered students (y)? ")
+##                                  if response == "y":
+##                                      with open("REGISTER.txt", "r") as r:
+##                                          for line in sorted(r):
+##                                              print(line, end="")
+##                              else:
+##                                  updateLogFile(submission, "  ERROR!!! " + submission["partnerCode"] + " has not been previously registered!!!",True)
+
                     # if it is a known assignment
                     if submission["validAssignment"]:
                         if submission["assignmentInGroup"]:
@@ -778,8 +820,17 @@ def main():
                     else:
                         submissionIncorrect(submission)
                 while not autoJudging:    # loop until a valid response
-                    if submission["valid"]:
-                        answer = input("  y/n [s d a h i o rn g e c m f l ls](r){x} h=help? ")
+                    if submission["valid"] and submission["studentName"] != "MyTest":
+                       answer = input("  y/n [s d a h i o rn g e c m f l ls](r){x} h=help? ")
+                    elif submission["valid"] and submission["studentName"] == "MyTest":
+                      print("   *** THIS WAS JUST A TEST RUN ***")
+                      response = input("  Confirm removing of file submission & student directory (y)? ")
+                      if response == "y":
+                          os.remove(submission["FileName"])  # remove submitted file
+                          print("  " + submission["FileName"] + "was removed")                       
+                          if os.path.isdir(submission["studentDir"]):
+                            rmtree(submission["studentDir"]) # remove student directory 
+                      break
                     else:
                         answer = input("  Invalid submission [s rn e c m l ls](r){x} h=help? ")
                     if submission["valid"] and answer == "y":  # submission correct. UPDATE scoreboard, CONTINUE to next submission.
