@@ -13,6 +13,35 @@ import random
 # It generates two scoreboard files (one with a student name and
 # one with a students secret code).
 
+def assignmentResults(listOfStudentDataFiles):
+     newestStudentDataFile = ""
+     correctFound = False
+     points = 0
+     if len(listOfStudentDataFiles) > 0:
+        newestStudentDataFile = max(listOfStudentDataFiles, key=os.path.getmtime)
+     if newestStudentDataFile.endswith("compileErr.txt"):
+        result = "Ec"
+     elif newestStudentDataFile.endswith("runErr.txt"):
+        result = "Er"
+     else:
+        count = 0
+        correctFound = False
+        for studentDataFile in listOfStudentDataFiles:
+           if not studentDataFile.endswith("CORRECT.txt"):
+              count += 1
+           else:
+              correctFound = True
+        if correctFound:
+           if count == 0:
+              result = "C"
+              points = 60
+           else:
+              result = "C" + str(count)
+              points = 60 - (count*5)
+        else:
+           result = str(count) + 'x'
+     return result,points,correctFound 
+
 def updateScoreboard(scoreboardDir,contestDataDir,assignmentGroupId,classId,listOfTestNames):
    currentDate = datetime.now().strftime("%m-%d-%y")
    if not os.path.isdir(scoreboardDir + '/annonymous/'):
@@ -47,6 +76,12 @@ def updateScoreboard(scoreboardDir,contestDataDir,assignmentGroupId,classId,list
       else:
          fscoreboard.write(' TOTALS POINTS\n')
       listOfStudentDirectories = getListOfStudentDirectories(contestDataDir)
+##      print("DBG1",listOfStudentDirectories)
+##      print("DBG2",includeNames)
+##      for x in listOfStudentDirectories:
+##        print("DBG3",x)
+##        print("DBG4",x.split('_')[1])
+##        print("DBG5",int(x.split('_')[1]))
       if not includeNames:
          listOfStudentDirectories.sort(key = lambda x: int(x.split('_')[1]))  # https://stackoverflow.com/questions/31306951/how-to-sort-a-list-by-last-character-of-string
       testsCorrect = {}
@@ -57,41 +92,21 @@ def updateScoreboard(scoreboardDir,contestDataDir,assignmentGroupId,classId,list
         studentResult = ''
         correctCount = 0
         countTestsInRow = 1
-        points = 0
+        totalPoints = 0
         for test in listOfTestNames:
            listOfStudentDataFiles = glob.glob(contestDataDir + '/' + studentDirectory + '/' + test + r'_*.txt')
-           newestTestDataFile = ""
-           if len(listOfStudentDataFiles) > 0:
-              newestTestDataFile = max(listOfStudentDataFiles, key=os.path.getmtime)
-           if newestTestDataFile.endswith("compileErr.txt"):
-              result = "Ec"
-           elif newestTestDataFile.endswith("runErr.txt"):
-              result = "Er"
-           else:
-              count = 0
-              correctFound = False
-              for studentDataFile in listOfStudentDataFiles:
-                 if not studentDataFile.endswith("CORRECT.txt"):
-                    count += 1
-                 else:
-                    correctFound = True
-              if correctFound:
-                 correctCount = correctCount + 1
-                 testsCorrect[test] = testsCorrect.get(test,0) + 1
-                 if count == 0:
-                    result = "C"
-                    points = points + 60
-                 else:
-                    result = "C" + str(count)
-                    points = points + (60 - (count*5))
-              else:
-                 result = str(count) + 'x'
+           result,points,correctFound = assignmentResults(listOfStudentDataFiles)
+           totalPoints = totalPoints + points
+           if correctFound:
+              correctCount = correctCount + 1
+              testsCorrect[test] = testsCorrect.get(test,0) + 1           
+                           
            studentResult = studentResult + f'{result:<2s}' + '  '
            countTestsInRow += 1
         if includeNames:
-           fscoreboard.write(f'{name:20s} {correctCount:>2d}   {code:<6s} {studentResult} {points:>4d}' + '\n')
+           fscoreboard.write(f'{name:20s} {correctCount:>2d}   {code:<6s} {studentResult} {totalPoints:>4d}' + '\n')
         else:
-           fscoreboard.write(f'{code:<6s}  {studentResult}  {correctCount:>2d}    {points:>4d}' + '\n')
+           fscoreboard.write(f'{code:<6s}  {studentResult}  {correctCount:>2d}    {totalPoints:>4d}' + '\n')
       totals = ''
       sumTotals = 0
       for test in listOfTestNames:
@@ -114,7 +129,7 @@ def updateScoreboard(scoreboardDir,contestDataDir,assignmentGroupId,classId,list
       fscoreboard.write("Er  = latest submission had a run-time error - e.g. div by 0, index out range.\n")
       fscoreboard.write("C#  = test ran successfully, had # of incorrect submissions.\n")
       fscoreboard.write("#x  = test never ran successfully, submitted # times.")
-      fscoreboard.write("The POINTS column indicates your UIL programming competition score (60 pts/problem, -5 pts for every incorrect submission)")
+      fscoreboard.write("\nThe POINTS column indicates your UIL programming competition score (60 pts/problem, -5 pts for every incorrect submission)")
       fscoreboard.close()  
 
          
@@ -125,7 +140,6 @@ def lastname(directoryName):
 
    ## last capitol letter
    res = [idx for idx in range(len(directoryName)) if directoryName[idx].isupper()]
-   
    lastName = directoryName[:res[-1]]
    return(lastName)
 
