@@ -187,7 +187,7 @@ def emailStudent(submission, classRegistration):
         subject = "P"+ submission["classPeriod"] + "StudentDrop (" + submission["Assignment"] + ")"
     else:
         subject = "StudentDrop Error"
-    print("  ready to send", subject, "email to", receiverEmailAddress)
+    print("  Preparing to send", subject, "email to", receiverEmailAddress)
     comment = commentFromFile(submission)
     response = ""
     if comment:
@@ -253,6 +253,63 @@ def emailWithOutlook(email_sender,email_password,email_recipient,email_subject,e
     return True
 
 def commentFromFile(submission):
+   askQuestion = True
+   matchResponse = False
+   commentsFile = ""
+   while askQuestion:
+      askQuestion = False
+      while not matchResponse:
+         response = input("  Comment (g[#], l[#], o=one-time comment, n=no comment)? ")
+         if matchResponse := re.match('([glon])(\d*)',response):
+            commentTypeResponse = matchResponse.group(1)
+            commentNumResponse  = matchResponse.group(2)
+      if commentTypeResponse == 'g':
+         commentsFile = os.path.join(rootDir,"ASSIGNMENT_GROUPS","comments"+submission["language"].upper()+".txt")
+      elif commentTypeResponse == 'l':
+         commentsFile = os.path.join(submission["goldenAssignmentDir"],"comments.txt")
+      if commentTypeResponse == 'g' or commentTypeResponse == 'l':
+         if not commentNumResponse:
+            askQuestion = True
+            matchResponse = False
+            txtEditorCmd = [textEditorLoc,commentsFile]      
+            result = subprocess.run(txtEditorCmd, shell=True)
+         else:
+            print("    retrieving comment",commentNumResponse,"from",commentsFile)
+            commentsDict = {}
+            firstComment = True
+            comment = ''
+            commentNum = 0
+            commentCount = 1
+            with open(commentsFile) as cFile:
+               for line in cFile:
+                  if matchResponse := re.match('comment (\d+)',line):
+                     commentNumPrev = commentNum
+                     commentNum = matchResponse.group(1)
+                     if firstComment:
+                        firstComment = False
+                     else:
+                        commentsDict[commentNumPrev] = comment
+                        comment = ''
+                        commentCount += 1
+                  else:
+                     if line.strip() != "":    # left strip non empty lines
+                        line = line.lstrip()
+                     comment = comment + line
+               commentsDict[commentNum] = comment  # put last comment from file into dictionary
+            # print("   found",commentCount,"comments in file.")
+            if commentNumResponse in commentsDict:
+               comment = commentsDict[commentNumResponse]
+            else:
+               print("    comment",commentNumResponse,"was not found.")
+               askQuestion = True
+               matchResponse = False               
+      elif commentTypeResponse == 'o':
+         comment = input("    enter a online, one-time comment that will not be saved for next time (use \\n if you want a newline) \n    -> ").replace(r'\n', '\n')
+      elif commentTypeResponse == 'n':
+         comment = ""
+   return comment
+      
+def commentFromFileOLD(submission):
     print("    0 enter a new comment for assignment " + submission.get("Assignment","????") + " that will also be saved.")
     lines1 = lines2 = []
     choice1 = 0
@@ -317,10 +374,10 @@ def checkStudentRegistration(currentSubmission,name,code,classRegistration):
    foundNameInRegistration = True
    if name != "MyTest":
       if (code not in classRegistration):
-         print("  Registration problem - code " + code + " is not registered " + "(" + currentSubmission +")") 
+         print("  Registration problem - code >" + code + "< is not registered " + "(" + currentSubmission +")") 
          foundNameInRegistration = False
       elif classRegistration[code][0] != name:
-         print("  Registration problem - code " + code + " was previously registered as",classRegistration[code],"not as",name + " (" + currentSubmission +")")
+         print("  Registration problem - code >" + code + "< was previously registered as",classRegistration[code],"not as",name + " (" + currentSubmission +")")
          foundNameInRegistration = False
    return foundNameInRegistration
 
@@ -672,7 +729,6 @@ def bringUpProgramInIDE(submission, run=True):
             print("Error!!! Did not find IDE executable at " + javaIdeLoc + "\nSet javaIdeLoc variable in program to correct IDE location")
     if run:
         result = subprocess.run(ideCmd, shell=True)
-    #ideCmdString = '"' + ideCmd[0] + '"' + ' ' + '"' + submission["studentPgmRunDir"] + '"' + '\\' + ideCmd[1]
     ideCmdString = '"' + ideCmd[0] + '"' + ' ' + ideCmd[1]
     return ideCmdString
 
