@@ -89,7 +89,7 @@ has the following options
 
 ### Assignment Menu
 In manual mode after a student's program submission has been run and either the program was correct or the program was incorrect and the **diff window** has been closed, the Assignment Menu\
-**y/n \[s d a i o rn g e c s f l](r){x} h=help?**\
+**y/n \[s d a i o g e c s f l](r){x} h=help?**\
 is displayed with the following options (NOTE: Be sure that you are done with the current assignment submission before answering y n m r as this will make program proceed to the next submission)
 * **y** judge the student's program as correct, update the program's status in /demo/scoreboard/, and then move on to the next student submission. The teacher can choose to ignore inconsequential differences in the output shown in the **diff window** and still count the program correct.
 * **n** judge the student's program as incorrect, update the program's status in /demo/scoreboard/, and then move on to the next student submission.
@@ -98,7 +98,6 @@ is displayed with the following options (NOTE: Be sure that you are done with th
 * **a** run the program again
 * **i** show the data input file (@.dat file in assignment folder - @ is the **assignment name**) for the assignment (newline's are shown as ↵)
 * **o** print the student's output (newline's are shown as ↵)
-* **rn** rename submission and then process the renamed submission. 
 * **g** prompt for grade and note and write to grades.txt file in student's assignment folder 
 * **e** email the student with information regarding the assignment status.
 * **c** copy information about the assignment status to the Clipboard (requires Windows 10’s October 2018 Update which provided a Clipboard History enabling multiple items to be saved on the clipboard). This option is provided, since emailing directly from the program may not be allowed by the school network.
