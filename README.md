@@ -2,22 +2,21 @@
 
 ### Overview
 
-The **CSAssignmentChecker.py** program verifies python or java assignments submitted by students. This program does basic verification by simply running the submitted student's .py or .java program and comparing the program's output to a teacher provided "gold" output file. If the two don't match, the program shows the highlighted differences. More advanced verification is possible for JAVA assignments by allowing a student to submit multiple .java files which can then verified by a teacher provided Checker and/or Tester program. 
+The **CSAssignmentChecker.py** program verifies python or java assignments submitted by students. This program does basic verification for Python programs and more advanced verification of JAVA programs. Basic verification simply compares the program's output to a teacher provided "gold" output file. Differences are shown by using a a visual diff tool. Advanced verification allows a student to submit multiple .java files which are then verified by a teacher provided Checker and/or Tester program. 
 
-### Required Python packages
-  * pip install pyperclip
-  * pip install pillow
-  
-### Other Requirements
+### Requirements
+  * Python installation & IDE
+    * To enable the program to access the clipboard - pip install pyperclip, pip install pillow
+  * JAVA installation & IDE
   * download & install a diff program such as meld (https://meldmerge.org/).
 
 ### Assignment Submission and Verification
 Student submit an assignment by submitting a single file to their class period folder on the teacher's computer running this program.
-The submitted file must be named **First Last ? - @.$** (KEY for whole README: **First** student's first name, **Last** student's last name, **?** unique student number, **@** assignment name, **$** file extension: either py, java for individual files or zip for multiple files) and the java class must be named @.
+The submitted file must be named **First Last ? - @.$** (KEY: **First** student's first name, **Last** student's last name, **?** unique student number, **@** assignment name, **$** file extension: either py, java for individual files or zip for multiple files). The java class must be named @.
 
 Ideally students students have a way to submit a file in real time directly to the class's period folder on the teacher's hard drive (one way to do this is to have the students submit to an online folder that is automatically synched to the teacher's PC - e.g. [Dropbox File Request feature](https://fileinbox.com/articles/dropbox-file-requests-ultimate-guide#:~:text=Unfortunately%2C%20Dropbox%20File%20Requests%20don,to%20create%20a%20Dropbox%20account.).
 
-* **Basic Verification**  When the student submits a Python or JAVA program that simply prints its output, this program runs the student's program and compares the program's generated output to the teacher provided "golden" output.  The student's program can optionally read test data from a file named **@.dat**. As part of an assignment, student's are usually provided a **@.dat** file with a few basic test cases. A teacher will typically provide this program a **@.dat** file with more comprehensive test cases.  The student's program can optionally prompt the user for input - e.g. Python: input() JAVA: scan.nextInt().  To provide this user input, the teacher provides this program with one or more **pgmUserInput&.txt** files (& is a unique identifier, usually 1,2,3, ...). The submitted program is run once for each user input file.
+* **Basic Verification**  When the student submits a Python or JAVA program that simply prints its output, this program runs the student's program and compares the program's generated output to the teacher provided "golden" output.  The student's program can optionally read test data from a file named **@.dat**. As part of an assignment, student's are usually provided a **@.dat** file with a few basic test cases. A teacher will typically provides a **@.dat** file with more comprehensive test cases to this program.  The student's program can optionally prompt the user for input - e.g. Python: input() JAVA: scan.nextInt().  To provide this user input, the teacher provides this program with one or more **pgmUserInput&.txt** files (& is a unique identifier, usually 1,2,3, ...). The submitted program is run once for each user input file.
 
 * **Advanced Verification (JAVA only)** This program runs any or all of these OPTIONAL programs 
   * **@Checker.java**  [provided by teacher] Code to check the contents of the student's program (number and type of instance variables as well as details on the constructors and methods in the student's program). The output is compared to **checker.txt** file provided by the teacher. 
@@ -28,7 +27,7 @@ Ideally students students have a way to submit a file in real time directly to t
 * unzip demo.zip to a folder on your hard drive (i.e. C:/YourPathToDemoDir/demo)
   * **ASSIGNMENT_GROUPS** folder
     * **first6weeksAssignments, pythonAssignments** (these are the assignment group folders)
-      * **Collatz, encryption** (these are the assignment folders  - the name of the assignment folder **is** the **assignment name**, assignment names must be unique)
+      * **GCD, encryption** (these are the assignment folders  - the name of the assignment folder **is** the **assignment name**, assignment names must be unique)
          * **@.dat** is the teacher provided input data file for the assignment (@ is the **assignment name**). Typically this file contains more/harder test data then what's been given to the students.
          * **@Tester.java** is an optional test program (@ is the **assignment name**)
          * **@Checker.java** is an optional checker program (@ is the **assignment name**)
@@ -51,7 +50,7 @@ Ideally students students have a way to submit a file in real time directly to t
   * set the **textEditorLoc** variable to the location of a text editor (e.g. Notepad++) executable.
   * set the **diffLoc** variable to the location of the diff program (e.g. meld, kdiff, or tkdiff) executable.
 ### Run the Demo
-The demo verifies two student assignments (1) [encryption](https://docs.google.com/document/d/1mr5FHL-cf3T1kRR0F10KCWwGGdjZC4Cj/edit?usp=sharing&ouid=117088614197672338242&rtpof=true&sd=true) (2) [Collatz](https://docs.google.com/document/d/1TKC45I9ZGvg82XGRzkpnoEnlxtC9xXnPdiv9Qmajf9g/edit?usp=sharing)
+The demo verifies two student assignments (1) [encryption](https://docs.google.com/document/d/1mr5FHL-cf3T1kRR0F10KCWwGGdjZC4Cj/edit?usp=sharing&ouid=117088614197672338242&rtpof=true&sd=true) (2) [GCD](https://docs.google.com/document/d/14nIXTUOr70_zRUZojzMZhbs9AmTWs5WxatsVtjNT_c4/edit?usp=sharing)
 * run CSassignmentChecker.py
   * since this is the first time the program has been run, the program creates some required directories.
   * You should now see the Main Menu\
@@ -75,8 +74,8 @@ The demo verifies two student assignments (1) [encryption](https://docs.google.c
   (NOTE: For registration purposes the assignment name part of the file name must be the word "register").
   **Answer 1** in the Main Menu.  The program detects the registration files in /demo/1/ and registers the 2 students by creating/updating a file called REGISTER.txt (and then deleting the registration files).
   For the demo the directories /demo/5/ and /demo/6/ already had predefined student registrations in a REGISTER.txt file.
-* To demo the more advanced verification of a JAVA program, copy the student program /demo/sampleSubmissions/studentProblems/1LovelaceAda1234_Collatz.zip to the class period 1 folder /demo/1/.
-  This represents the student's code for an assignment named "Collatz". The student submitted a zip file containing Collatz.java (definining the Collatz object) and the test code for that object that the student wrote in CollatzRunner.java. In addition to the expected output file gold.txt, the teacher has also supplied a specific test program called CollatzTester.java in the folder /demo/ASSIGNMENT_GROUPS/first6weeksAssignments/collatz/ as well as two runnerUserInput&.txt files to provide input to the Collatz. The program runs the CollatzTester program and should report *** CORRECT *** since the program's output matches the expected output.  Selecting **d** in the assignment menu will show the program and expected (which match). You'll see the output from the runs of CollatzTeseter.java, CollatzRunner.java (with runnerUserInput1.txt providing the user input),  and CollatzRunner.java (with runnerUserInput2.txt providing the user input)
+* To demo the more advanced verification of a JAVA program, copy the student program /demo/sampleSubmissions/studentProblems/Ada Lovelace 1234 - GCD.zip to the class period 1 folder /demo/1/.
+  This represents the student's code for an assignment named "GCD". The student submitted a zip file containing GCD.java (definining the GCD object) and the test code for that object that the student wrote in GCDRunner.java. In addition to the expected output file gold.txt, the teacher has also supplied a specific test program called GCDTester.java in the folder /demo/ASSIGNMENT_GROUPS/first6weeksAssignments/GCD/ as well as runnerUserInput&.txt files to provide user input to GCDRunner.java. The program runs the GCDTester program and should report *** CORRECT *** since the program's output matches the expected output in gold.txt.  Selecting **d** in the assignment menu shows the program and expected output in the diff program. This is the output from the runs of GCDTester.java and GCDRunner.java (with the runnerUserInput*.txt files providing the user input).
   
 ### Main Menu  
 The program's Main Menu\
