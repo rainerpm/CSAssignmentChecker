@@ -2,7 +2,7 @@
 
 ### Overview
 
-The **CSAssignmentChecker.py** program verifies python or java assignments submitted by students. This program does basic verification for Python programs and more advanced verification of JAVA programs. Basic verification simply compares the program's output to a teacher provided "gold" output file. Differences are shown by using a a visual diff tool. Advanced verification allows a student to submit multiple .java files which are then verified by a teacher provided Checker and/or Tester program. 
+The **CSAssignmentChecker.py** program verifies python or java assignments submitted by students. This program currently supports basic verification for Python programs and more advanced verification for JAVA programs. Student assignments are organized into assignment groups, each of which has a "scoreboard" file showing the results of a class's program submissions. The program supports directly emailing students (or using the clipboard when the school's network prevents emailing from a program). 
 
 ### Requirements
   * Python installation & IDE
@@ -19,9 +19,9 @@ Ideally students students have a way to submit a file in real time directly to t
 * **Basic Verification**  When the student submits a Python or JAVA program that simply prints its output, this program runs the student's program and compares the program's generated output to the teacher provided "golden" output.  The student's program can optionally read test data from a file named **@.dat**. As part of an assignment, student's are usually provided a **@.dat** file with a few basic test cases. A teacher will typically provides a **@.dat** file with more comprehensive test cases to this program.  The student's program can optionally prompt the user for input - e.g. Python: input() JAVA: scan.nextInt().  To provide this user input, the teacher provides this program with one or more **pgmUserInput&.txt** files (& is a unique identifier, usually 1,2,3, ...). The submitted program is run once for each user input file.
 
 * **Advanced Verification (JAVA only)** This program runs any or all of these OPTIONAL programs 
-  * **@Checker.java**  [provided by teacher] Code to check the contents of the student's program (number and type of instance variables as well as details on the constructors and methods in the student's program). The output is compared to **checker.txt** file provided by the teacher. 
-  * **@Runner.java**  [submitted by students] Contains the code that the student wrote that uses/tests the class(es) they wrote. The output is compared to the  **gold.txt** output file provided by the teacher. The @Runner.java program can optionally prompt the user for input. To provide this user input to this program, the teacher provides one or more runnerUserInput&.txt files (& is a unique identifier, usually 1,2,3, ...). The @Runner.java program will be run once for each user input file.
-  * **@Tester.java**  [provided by teacher] Contains the code that the teacher wrote that uses/tests the program submitted by the student. The output is compared to the  **gold.txt** output file provided by the teacher.    
+  * **@Checker.java**  [provided by teacher] Code provided by the teacher to check the contents of the student's program (number and type of instance variables as well as details on the constructors and methods in the student's program). The output is compared to the **checker.txt** file provided by the teacher. 
+  * **@Runner.java**  [submitted by students] Code that the student wrote that uses the class(es) they wrote. The output is compared to the  **gold.txt** output file provided by the teacher. The @Runner.java program can optionally prompt the user for input. To provide this user input to this program, the teacher provides one or more runnerUserInput&.txt files (& is a unique identifier, usually 1,2,3, ...). The @Runner.java program will be run once for each user input file.
+  * **@Tester.java**  [provided by teacher] Code provided by the teacher that tests the program submitted by the student. The output is compared to the  **gold.txt** output file provided by the teacher.    
 
 ### Program (and Demo) Setup
 * unzip demo.zip to a folder on your hard drive (i.e. C:/YourPathToDemoDir/demo)
