@@ -37,7 +37,7 @@ Ideally students students have a way to submit a file in real time directly to t
          * **checker.txt** is the teacher provided checker output for the assignment
          * **comments.txt** contains the assignment specific comments used in student emails or clipboard
       * **periods.txt** indicates which class periods this assignment group is assigned to
-    * **comments.txt** contains the global comments used in student emails or clipboard
+    * **commentsJAVA.txt** and **commentsPYTHON.txt** contain the global comments used in student emails or clipboard
   * **1,4,5** (these are the class period folders)
 * set the following folder/directory variables in **customize.py**
   * set the **rootDir** variable to the location of the unzipped demo folder - C:/YourPathToDemoDir/demo 
