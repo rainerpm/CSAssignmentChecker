@@ -26,7 +26,7 @@ Ideally students students have a way to submit a file in real time directly to t
 ### Program (and Demo) Setup
 * unzip demo.zip to a folder on your hard drive (i.e. C:/YourPathToDemoDir/demo)
   * **ASSIGNMENT_GROUPS** folder
-    * **first6weeksAssignments, pythonAssignments** (these are the assignment group folders)
+    * **first6weeksAssignments, pythonAssignments** (these folders contain a group of related assignments, each of which will have it's own scoreboard file)
       * **GCD, encryption** (these are the assignment folders  - the name of the assignment folder **is** the **assignment name**, assignment names must be unique)
          * **@.dat** is the teacher provided input data file for the assignment (@ is the **assignment name**). Typically this file contains more/harder test data then what's been given to the students.
          * **@Tester.java** is an optional test program (@ is the **assignment name**)
@@ -38,7 +38,7 @@ Ideally students students have a way to submit a file in real time directly to t
          * **comments.txt** contains the assignment specific comments used in student emails or clipboard
       * **periods.txt** indicates which class periods this assignment group is assigned to
     * **commentsJAVA.txt** and **commentsPYTHON.txt** contain the global comments used in student emails or clipboard
-  * **1,4,5** (these are the class period folders)
+  * **1,4,5** (these are the class period folders, new files are submitted to these folders via something like a Dropbox File Request. Each assignment group has a folder here that has folders for each of the students containing folders for the student's program submissions.
 * set the following folder/directory variables in **customize.py**
   * set the **rootDir** variable to the location of the unzipped demo folder - C:/YourPathToDemoDir/demo 
   * set the **scoreboardDir** variable to C:/YourPathToDemoDir/demo/scoreboard
