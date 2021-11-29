@@ -211,7 +211,6 @@ def emailStudent(submission, classRegistration):
     message = comment + emailSignature
     print("SENDING EMAIL")
     emailWithOutlook(emailSendFromAddress,emailSendFromPassword,receiverEmailAddress,subject,message,attachment)
-    #emailWithGmail("lasacsAutomated@gmail.com", "lasa{cs}ozarka", "rainer.mueller@austinisd.org", "test", "test message")
     print("SENT EMAIL")
 
 # https://realpython.com/python-send-email/#option-1-setting-up-a-gmail-account-for-development
