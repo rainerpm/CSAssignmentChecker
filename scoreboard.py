@@ -76,6 +76,7 @@ def updateScoreboard(scoreboardDir,contestDataDir,assignmentGroupId,classId,list
       else:
          fscoreboard.write(' TOTALS POINTS\n')
       listOfStudentDirectories = getListOfStudentDirectories(contestDataDir)
+##      print("DBG0",contestDataDir)
 ##      print("DBG1",listOfStudentDirectories)
 ##      print("DBG2",includeNames)
 ##      for x in listOfStudentDirectories:
@@ -146,7 +147,9 @@ def lastname(directoryName):
 def getListOfStudentDirectories(contestDataDir):
    listOfDataDirectories = [ f.name for f in os.scandir(contestDataDir) if f.is_dir() ]  # https://stackoverflow.com/questions/973473/getting-a-list-of-all-subdirectories-in-the-current-directory
    # listOfDataDirectoriesSorted = sorted(listOfDataDirectories, key=str.casefold)  # sorts case insensitvely:  https://stackoverflow.com/questions/10269701/case-insensitive-list-sorting-without-lowercasing-the-result
-   listOfDataDirectoriesSorted = sorted(listOfDataDirectories, key=lastname)  # sorts by everything up to the last capital letter, which means the lastname (unless first name has 2 capitals in it)
+   #listOfDataDirectoriesSorted = sorted(listOfDataDirectories, key=lastname)  # sorts by everything up to the last capital letter, which means the lastname (unless first name has 2 capitals in it)
+   listOfDataDirectoriesSorted = sorted(listOfDataDirectories)  # sorts by everything up to the last capital letter, which means the lastname (unless first name has 2 capitals in it)
+
    listOfStudentDirectories = []
    for dataDirectory in listOfDataDirectoriesSorted:
      if not dataDirectory.startswith('00'):
