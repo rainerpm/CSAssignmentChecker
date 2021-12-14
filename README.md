@@ -60,7 +60,7 @@ The demo verifies two student assignments (1) [encryption](https://docs.google.c
 * For this demo, instead of students submitting files to the class period folder, *we will simply copy example files from /demo/sampleSubmissions/*
 * To demo the basic verification of a student program, copy /demo/sampleSubmissions/studentProblems/Shotwell Gwynne 4381 - encryption.py to the class period 4 folder /demo/4/. This file is Period 4's student Gwynne Shotwell's submission of the encryption assignment. The program (which up to now had been printing periods) will detect this file and run the program. 
    * Since this initial student program has an error, the program will use diff program to display the differences between the students program output and the expected "gold" output.
-   * After you close the diff window, the program displays the Assignment Menu **y/n [s d a h i o g e c m f l ls](r){x} h=help?**
+   * After you close the diff window, the program displays the Assignment Menu **y/n/p [s d a h i o g e c m f l ls](r){x} h=help?**
      * **Answer s** to show/see the program in the Python IDE. After you've run and/or inspected the program, close the IDE.
      * **Answer n** to judge the program as incorrect. The student's program status is reflected in /demo/scoreboard/ (one file with the student's name and one that is annoymized using the student's 4 digit code that can be made accessible to the class).
    * Since the output was incorrect, the program also created a file (ShotwellGwynne.bat) in the latestResults folder inside the class period folder that enables the teacher to easily run diff program for the student's last incorrect submission and optionally bring up the program in the IDE or look at the data input file in the text editor.
@@ -89,10 +89,11 @@ has the following options
 
 ### Assignment Menu
 In manual mode after a student's program submission has been run and either the program was correct or the program was incorrect and the **diff window** has been closed, the Assignment Menu\
-**y/n \[s d a i o g e c s f l](r){x} h=help?**\
+**y/n/p \[s d a i o g e c s f l](r){x} h=help?**\
 is displayed with the following options (NOTE: Be sure that you are done with the current assignment submission before answering y n m r as this will make program proceed to the next submission)
 * **y** judge the student's program as correct, update the program's status in /demo/scoreboard/, and then move on to the next student submission. The teacher can choose to ignore inconsequential differences in the output shown in the **diff window** and still count the program correct.
 * **n** judge the student's program as incorrect, update the program's status in /demo/scoreboard/, and then move on to the next student submission.
+* **p** judge the student's program as incorrect due to a presentation error (e.g. incorrect spacing,punctuation,capitalization), update the program's status in /demo/scoreboard/, and then move on to the next student submission.
 * **s** show the student's program submission in the IDE.
 * **d** run diff program again
 * **a** run the program again
