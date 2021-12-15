@@ -23,6 +23,8 @@ def assignmentResults(listOfStudentDataFiles):
         result = "Ec"
      elif newestStudentDataFile.endswith("runErr.txt"):
         result = "Er"
+     elif newestStudentDataFile.endswith("presentationErr.txt"):
+        result = "Ep"
      else:
         count = 0
         correctFound = False
@@ -128,6 +130,7 @@ def updateScoreboard(scoreboardDir,contestDataDir,assignmentGroupId,classId,list
         
       fscoreboard.write("Ec  = latest submission had a compile or syntax error.\n")
       fscoreboard.write("Er  = latest submission had a run-time error - e.g. div by 0, index out range.\n")
+      fscoreboard.write("Ep  = latest submission had a presentation error - e.g. incorrect spelling, spacing, capitalization, punctuation.\n")
       fscoreboard.write("C#  = test ran successfully, had # of incorrect submissions.\n")
       fscoreboard.write("#x  = test never ran successfully, submitted # times.")
       fscoreboard.write("\nThe POINTS column indicates your UIL programming competition score (60 pts/problem, -5 pts for every incorrect submission)")
