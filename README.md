@@ -73,7 +73,7 @@ The demo verifies two student assignments (1) [encryption](https://docs.google.c
    * NOTE: This particular student program when run with the teacher supplied input file /demo/ASSIGNMENT_GROUPS/pythonAssignments/encryption/encryption.dat is expected to print out exactly what's found in /demo/ASSIGNMENT_GROUPS/pythonAssignments/encryption/gold.txt. 
 * The program is once again in the mode of continually checking for new submissions to the class period folder **/demo/4/**. 
   * Use Ctrl-C to go back to the Main Menu.
-* The class Period directories for Period 4 & 5 (**/demo/4/** and **/demo/6/**) already contained student registrations in the REGISTER.txt file. For class Period 1, we will now register two students in the **/demo/1/Register.txt** file. To register the students copy the two files in demo/sampleSubmissions/studentRegistrations/ to  **/demo/1/**.
+* The class Period directories for Period 4 & 5 (**/demo/4/** and **/demo/5/**) already contained student registrations in the REGISTER.txt file. For class Period 1, we will now register two students in the **/demo/1/Register.txt** file. To register the students copy the two files in demo/sampleSubmissions/studentRegistrations/ to  **/demo/1/**.
 * **Answer 1** in the Main Menu.  The program detects the registration files in **/demo/1/** and registers the 2 students by creating/updating the file REGISTER.txt in the student's class period folder.
 * To demo the more advanced verification of a JAVA program, copy the student program /demo/sampleSubmissions/studentProblems/Lovelace Ada 1234 - GCD.zip to the class period 1 folder /demo/1/.
   This represents the student's code for an assignment named "GCD". The student submitted a zip file containing GCD.java (definining the GCD object) and the test code for that object that the student wrote in GCDRunner.java. In addition to the expected output file gold.txt, the teacher has also supplied a specific test program called GCDTester.java in the folder /demo/ASSIGNMENT_GROUPS/first6weeksAssignments/GCD/ as well as runnerUserInput&.txt files to provide user input to GCDRunner.java. The program runs the GCDTester program and should report *** CORRECT *** since the program's output matches the expected output in gold.txt.  Selecting **d** in the assignment menu shows the program and expected output in the diff program. This is the output from the runs of GCDTester.java and GCDRunner.java (with the runnerUserInput*.txt files providing the user input).
@@ -84,7 +84,7 @@ The program's Main Menu\
 has the following options
 * **(? ? ?)** A choice of class period numbers which cause the program to enter manual mode and monitor that class period's folder for student program submissions.  The program processes any current (and future) program submissions to that class period's folder - oldest submission is processed first. Incorrect output differences will be shown in **diff window** after which the **Assignment Menu** is displayed.
 * **(a)utojuge** Brings up the Autojudge Menu **(? ? ?)autojudge (m)ultiple (<ENTER>=all periods)?**. Specified class period folders are checked and any current (and future) program submissions are processed and automatically judged - if program output is not correct, the submission is counted as incorrect. 
-* **(l)og** Program displays the last 20 lines of logGlobal.txt in **rootDir** 
+* **(l)og** Program opens the global log file (logGlobal.txt in **rootDir**) in the text editor. 
 * **e(x)it** Exits the program
 * **ENTER** Pressing the *Enter* key causes the program to check all class periods for submissions and then returns to the Main Menu.
 
@@ -105,8 +105,8 @@ is displayed with the following options (NOTE: Be sure that you are done with th
 * **c** copy information about the assignment status to the Clipboard (requires Windows 10’s October 2018 Update which provided a Clipboard History enabling multiple items to be saved on the clipboard). This option is provided, since emailing directly from the program may not be allowed by the school network.
 * **m** move the student's program submission to the 00SAVE directory and then **move on** to the next student submission.
 * **f** print a list of the files in the student's assignment directory.
-* **l** print the last 20 lines of the global log file (logGlobal.txt).  Choosing l again shows the previous 20 lines.
-* **ls** print the last 20 lines of the student's log file (log.txt).  Choosing ls again shows the previous 20 lines.
+* **l** opens the global log file (logGlobal.txt) in the text editor.
+* **ls** opens the student's log file (log.txt) in the text editor.
 * **r** remove the submission from the class period directory and then move on to the next student's submission.
 * **x** exit the program.
 * **h** open web browser showing this page
