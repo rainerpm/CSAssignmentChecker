@@ -2,7 +2,7 @@
 
 ### Overview
 
-The **CSAssignmentChecker.py** program verifies python or java assignments submitted by students. This program currently supports basic verification for Python programs and more advanced verification for JAVA programs. Student assignments are organized into assignment groups, each of which has a "scoreboard" file showing the results for each student in that class. The program supports directly emailing teacher comments to students (or using the clipboard when the school's network blocks automated emailing from a program). 
+The **CSAssignmentChecker.py** program verifies python or java assignments submitted by students. This program currently supports basic verification for Python programs and more advanced verification for JAVA programs. Student assignments are organized into assignment groups, each of which has a "scoreboard" file showing the results for each student. The program supports directly emailing a teacher comment to a student.
 
 ### Requirements
   * Python (https://www.python.org/downloads/)
@@ -14,7 +14,7 @@ The **CSAssignmentChecker.py** program verifies python or java assignments submi
 
 ### Assignment Submission and Verification
 Student submit an assignment by submitting a single file to the class period folder on the teacher's computer that is running this program.
-The submitted file must be named **First Last ? - @.$** (KEY: **First** student's first name, **Last** student's last name, **?** unique student number, **@** assignment name, **$** file extension: either py, java for individual files or zip for multiple files). For JAVA, the class in the **First Last ? - @.$** file must be named @.
+The submitted file must be named **Last First ? - @.$** (where **Last** student's last name, **First** student's first name,  **?** unique student number, **@** assignment name, **$** file extension: either py, java for individual files or zip for multiple files). For JAVA, the class in the **Last First ? - @.$** file must be named @. An example of a valid filename is **Shotwell Gwynne 4381 - encryption.py**.
 
 Ideally students students have a way to submit a file in real time directly to the class period folder on the teacher's hard drive (one way to do this is to have the students submit to an online folder that is automatically synched to the teacher's PC - e.g. [Dropbox File Request feature](https://fileinbox.com/articles/dropbox-file-requests-ultimate-guide#:~:text=Unfortunately%2C%20Dropbox%20File%20Requests%20don,to%20create%20a%20Dropbox%20account.).
 
