@@ -258,7 +258,7 @@ def commentFromFile(submission):
    while askQuestion:
       askQuestion = False
       while not matchResponse:
-         response = input("  Comment (g[#], l[#], o=one-time comment, n=no comment)? ")
+         response = input("  Comment (g[#], l[#], (o)ne-time comment, (n)o comment? ")
          if matchResponse := re.match('([glon])(\d*)',response):
             commentTypeResponse = matchResponse.group(1)
             commentNumResponse  = matchResponse.group(2)
@@ -388,6 +388,7 @@ def processCurrentSubmission(currentSubmission, assignmentGroups, assignments,cl
 
    name = nameLast + nameFirst
    namePartner = nameLastPartner + nameFirstPartner   # will be an empty string if this is not a pair programming submission
+   classRegistration = loadRegisteredStudents(assignmentGroups)
 
    if assignment == "registerMe":
       studentRegistered = True
@@ -420,7 +421,6 @@ def processCurrentSubmission(currentSubmission, assignmentGroups, assignments,cl
       submission["partnerCode"] = codePartner.strip()
 
       if submission["registration"]:   
-         classRegistration = loadRegisteredStudents(assignmentGroups)
          if submission["studentCode"] in classRegistration:
              print(submission["studentCode"], "is already registered")
              print("  current submission   ", submission["FileName"])
@@ -474,7 +474,7 @@ def processCurrentSubmission(currentSubmission, assignmentGroups, assignments,cl
          submission["goldenAssignmentDir"] = os.path.join(assignmentGroup["goldenDir"], submission["Assignment"])
          submission["goldFile"] = os.path.join(submission["goldenAssignmentDir"], "gold.txt")
          submission["goldCheckFile"] = os.path.join(submission["goldenAssignmentDir"], "checker.txt")
-         submission["dataInputFileExists"] = os.path.join(submission["goldenAssignmentDir"],submission["Assignment"]+".dat")
+         submission["dataInputFileExists"] = os.path.exists(os.path.join(submission["goldenAssignmentDir"],submission["Assignment"]+".dat"))
          submission["dataInputFileName"] = os.path.join(submission["goldenAssignmentDir"],submission["Assignment"]+".dat")
          submission["plagiarismAssignmentDir"] = os.path.join(assignmentGroup["plagiarismDir"],submission["Assignment"])
          ##RPM FIX Creating a plagiarism directory for each assignment should be done when setting up the class
@@ -871,7 +871,7 @@ def main():
                            submissionIncorrect(submission)
                    while not autoJudging:    # loop until a valid response
                        if submission["studentName"] != "TestTest":
-                          answer = input("  y/n/p [s d a h i o g e c m f l ls](r){x} h=help? ")
+                          answer = input("  y/n/p [s d a h i o g e c m f l ls](r){x}? ")
                        elif submission["studentName"] == "TestTest":
                          print("   *** THIS WAS JUST A TEST RUN ***")
                          response = input("  Confirm removing of file submission & student directory (y)? ")
@@ -882,7 +882,7 @@ def main():
                                rmtree(submission["studentDir"]) # remove student directory 
                          break
                        else:
-                           answer = input("  Invalid submission [s rn e c m l ls](r){x} h=help? ")
+                           answer = input("  Invalid submission [s rn e c m l ls](r){x}? ")
                        if answer == "y":  # submission correct. UPDATE scoreboard, CONTINUE to next submission.
                            submissionCorrect(submission)
                            break
@@ -973,7 +973,7 @@ def main():
                        elif answer == "h":
                            webbrowser.open("https://github.com/rainerpm/CSAssignmentChecker#assignment-menu")
                        else:
-                           print("  Please answer with y/n [s d r i o g e c m f l ls](r){x} h=help?")
+                           print("  Please answer with y/n [s d r i o g e c m f l ls](r){x}?")
 
             elif not autoJudging:  # no current submissions (wait for new ones)
                 currentSubmissions = getSubmissions(validFileExtensions)
