@@ -55,7 +55,8 @@ The demo verifies two student assignments (1) [encryption](https://docs.google.c
   * since this is the first time the program has been run, the program creates some required directories.
   * You should now see the Main Menu\
     **(1 4 5)manual (a)utojudge (l)og e(x)it (ENTER=check)?**\
-  **Answer 4** to have the program enter the manual mode for class period 4. In this mode, the program continually checks for new submissions to the class period folder /demo/4/. The program creates the directories for the two students have been registered with this class period.
+  **Answer 4** to have the program enter the manual mode for class period 4. In this mode, the program continually checks for new submissions to the class period folder /demo/4/. The program creates the directories for the two students have been 
+  ed with this class period.
   When there is no submission to process, the program will print a period every 2 seconds to let you know it is alive. Leave the program running (and printing periods) for now
 * For this demo, instead of students submitting files to the class period folder, *we will simply copy example files from /demo/sampleSubmissions/*
 * To demo the basic verification of a student program, copy /demo/sampleSubmissions/studentProblems/Shotwell Gwynne 4381 - encryption.py to the class period 4 folder /demo/4/. This file is Period 4's student Gwynne Shotwell's submission of the encryption assignment. The program (which up to now had been printing periods) will detect this file and run the program. 
@@ -71,8 +72,7 @@ The demo verifies two student assignments (1) [encryption](https://docs.google.c
 * The program should now be in the mode of continually checking for new submissions to the class period folder /demo/4/. 
   * Use Ctrl-C to go back to the Main Menu.
 * Each student should be registered with the program. To register two example students copy the two files in demo/sampleSubmissions/studentRegistrations/ to /demo/1/ 
-  (NOTE: For registration purposes the assignment name part of the file name must be the word "register").
-  **Answer 1** in the Main Menu.  The program detects the registration files in /demo/1/ and registers the 2 students by creating/updating a file called REGISTER.txt (and then deleting the registration files).
+  **Answer 1** in the Main Menu.  The program detects the registration files in /demo/1/ and registers the 2 students by creating/updating the file REGISTER.txt in the student's class period folder.
   For the demo the directories /demo/5/ and /demo/6/ already had predefined student registrations in a REGISTER.txt file.
 * To demo the more advanced verification of a JAVA program, copy the student program /demo/sampleSubmissions/studentProblems/Lovelace Ada 1234 - GCD.zip to the class period 1 folder /demo/1/.
   This represents the student's code for an assignment named "GCD". The student submitted a zip file containing GCD.java (definining the GCD object) and the test code for that object that the student wrote in GCDRunner.java. In addition to the expected output file gold.txt, the teacher has also supplied a specific test program called GCDTester.java in the folder /demo/ASSIGNMENT_GROUPS/first6weeksAssignments/GCD/ as well as runnerUserInput&.txt files to provide user input to GCDRunner.java. The program runs the GCDTester program and should report *** CORRECT *** since the program's output matches the expected output in gold.txt.  Selecting **d** in the assignment menu shows the program and expected output in the diff program. This is the output from the runs of GCDTester.java and GCDRunner.java (with the runnerUserInput*.txt files providing the user input).
@@ -110,9 +110,11 @@ is displayed with the following options (NOTE: Be sure that you are done with th
 * **x** exit the program.
 * **h** open web browser showing this page
  
+### Student Registration
+To register each student submits a text file with the assignment name **registerMe**. This file must contain the student's unique student number on line 1 and email address on line 2.
+ 
 ### Sending Emails or using the Clipboard 
-* To associate an email address with a student manually edit the REGISTER.txt file in the class period folder and enter a student email as a 4th field for the student.
-* The program will give you options to use a saved set of comments or enter a new comment to be used in the mail or put on the clipboard. You can chooose from preset assignment specific comments (stored in the comments.txt file in the assignments folder) or global comments (stored in ASSIGNMENT_GROUPS/comments.txt)
+When sending an email or using the clipboard, you can choose to include a local (i.e. assignment specific) comment from the comments.txt file in the assignments folder or general comment from ASSIGNMENT_GROUPS/commentsLANGUAGE.txt. From the comment menu **Comment (g[#], l[#], o=one-time comment, n=no comment)?** choose **g** or **l** to open the global or local comment file in the text editor.  Append a number to select one of the comments (e.g. **l2** selects **comment 2** from the local comments.txt).
 
 ### Batch Files
 The latestResults directory inside the class directory will contain a batch file for each student's last submission. If the submission compiled & ran the batch file will run diff and then offer to open the IDE and input data files. If the submission did not compile or run, instead of running diff, the batch file will open the error file.
