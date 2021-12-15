@@ -811,16 +811,19 @@ def main():
                 else:
                     autoJudgingPeriods = validClassPeriods
             elif response == "l":   # log
-                with open(os.path.join(rootDir,"logGlobal.txt")) as logfile:
-                    lines = logfile.readlines()
-                    fromLine = -min((lCount+1)*20,len(lines))
-                    if lCount > 0:
-                        for line in lines[fromLine:-(lCount*20)]:
-                            print(" ",line.rstrip())
-                    else:
-                        for line in lines[fromLine:]:
-                            print(" ",line.rstrip())
-                lCount += 1
+                txtEditorCmd = [textEditorLoc,"-n1000000","logGlobal.txt"]      
+                result = subprocess.run(txtEditorCmd, shell=True)
+               
+##                with open(os.path.join(rootDir,"logGlobal.txt")) as logfile:
+##                    lines = logfile.readlines()
+##                    fromLine = -min((lCount+1)*20,len(lines))
+##                    if lCount > 0:
+##                        for line in lines[fromLine:-(lCount*20)]:
+##                            print(" ",line.rstrip())
+##                    else:
+##                        for line in lines[fromLine:]:
+##                            print(" ",line.rstrip())
+##                lCount += 1
             elif response == "x":
                 sys.exit()
 
@@ -949,16 +952,19 @@ def main():
                               logfile2Show = os.path.join(rootDir,"logGlobal.txt")
                            else:
                               logfile2Show = os.path.join(submission["studentDir"],"log.txt")
-                           with open(logfile2Show) as logfile:
-                               lines = logfile.readlines()
-                               fromLine = -min((lCount+1)*20,len(lines))
-                               if lCount > 0:
-                                   for line in lines[fromLine:-(lCount*20)]:
-                                       print(line.rstrip())
-                               else:
-                                   for line in lines[fromLine:]:
-                                       print(line.rstrip())
-                           lCount += 1
+                           txtEditorCmd = [textEditorLoc,logfile2Show]      
+                           result = subprocess.run(txtEditorCmd, shell=True)
+##                              
+##                           with open(logfile2Show) as logfile:
+##                               lines = logfile.readlines()
+##                               fromLine = -min((lCount+1)*20,len(lines))
+##                               if lCount > 0:
+##                                   for line in lines[fromLine:-(lCount*20)]:
+##                                       print(line.rstrip())
+##                               else:
+##                                   for line in lines[fromLine:]:
+##                                       print(line.rstrip())
+##                           lCount += 1
                        elif answer == "r":  # remove submitted file and CONTINUE to next submission
                           response = input("  Save in directory" + submission["saveDir"] + " instead of removing (y)? ")
                           if response == "y":
