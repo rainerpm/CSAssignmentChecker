@@ -389,10 +389,14 @@ def processCurrentSubmission(currentSubmission, assignmentGroups, assignments,cl
    name = nameLast + nameFirst
    namePartner = nameLastPartner + nameFirstPartner   # will be an empty string if this is not a pair programming submission
 
-   studentRegistered = checkStudentRegistration(submission["FileName"],name,code,classRegistration)
-   partnerRegistered = True    
-   if namePartner:
-      partnerRegistered = checkStudentRegistration(submission["FileName"],namePartner,codePartner,classRegistration)
+   if assignment == "registerMe":
+      studentRegistered = True
+      partnerRegistered = True    
+   else:
+      studentRegistered = checkStudentRegistration(submission["FileName"],name,code,classRegistration)
+      partnerRegistered = True    
+      if namePartner:
+         partnerRegistered = checkStudentRegistration(submission["FileName"],namePartner,codePartner,classRegistration)
 
    if (assignment in assignments):   
        submission["assignmentGroupId"] = assignments[assignment]  # assignment group assignment belongs to
@@ -405,7 +409,7 @@ def processCurrentSubmission(currentSubmission, assignmentGroups, assignments,cl
    if validFileName and not((assignment in assignments) or (assignment == "registerMe")):
       print("  Invalid Assignment Name: >"+assignment+"<")
       
-   if validFileName and ((assignment in assignments) or (assignment == "registerMe")) and (studentRegistered and partnerRegistered) and (assignment in submission["listOfAssignments"]):
+   if validFileName and ((assignment in assignments) or (assignment == "registerMe")) and (studentRegistered and partnerRegistered) and (assignment == "registerMe" or (assignment in submission["listOfAssignments"])):
       submission["Assignment"]  = assignment
       submission["registration"] = submission["Assignment"] == "registerMe"  # student submitted a registration request
       submission["studentName"] = name
@@ -438,6 +442,7 @@ def processCurrentSubmission(currentSubmission, assignmentGroups, assignments,cl
                     # updateLogFile(submission,"registered " + submission["studentCode"] + " " + submission["studentName"] + " " + submission["classPeriod"],True)
                  else:
                     print("  Registration code and email not found on first two lines of " + submission["FileName"])
+             classRegistration = loadRegisteredStudents(assignmentGroups)
          os.remove(submission["FileName"])  # remove registration file (assignment name was register, file has served its purpose)
       else:   
          submission["valid"] = True
