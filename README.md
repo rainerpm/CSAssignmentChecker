@@ -2,13 +2,15 @@
 
 ### Overview
 
-The **CSAssignmentChecker.py** program verifies python or java assignments submitted by students. This program currently supports basic verification for Python programs and more advanced verification for JAVA programs. Student assignments are organized into assignment groups, each of which has a "scoreboard" file showing the results of a class's program submissions. The program supports directly emailing students (or using the clipboard when the school's network prevents emailing from a program). 
+The **CSAssignmentChecker.py** program verifies python or java assignments submitted by students. This program currently supports basic verification for Python programs and more advanced verification for JAVA programs. Student assignments are organized into assignment groups, each of which has a "scoreboard" file showing the results for each student in that class. The program supports directly emailing teacher comments to students (or using the clipboard when the school's network blocks automated emailing from a program). 
 
 ### Requirements
-  * Python installation & IDE
-    * To enable the program to access the clipboard - pip install pyperclip, pip install pillow
-  * JAVA installation & IDE
-  * download & install a diff program such as meld (https://meldmerge.org/).
+  * Python (https://www.python.org/downloads/)
+    * The following are only required for providing a student feeback comment via email or the clipboard and can be installed later
+      * pip install pyperclip (enables the program to access the clipboard)
+      * pip install pillow (enables the program to "grab" an image from the most recent clipboard entry) 
+  * JAVA (https://www.jgrasp.org/)
+  * download & install a diff program (https://meldmerge.org/).
 
 ### Assignment Submission and Verification
 Student submit an assignment by submitting a single file to the class period folder on the teacher's computer that is running this program.
@@ -90,9 +92,9 @@ has the following options
 In manual mode after a student's program submission has been run and either the program was correct or the program was incorrect and the **diff window** has been closed, the Assignment Menu\
 **y/n/p \[s d a i o g e c s f l](r){x} h=help?**\
 is displayed with the following options (NOTE: Be sure that you are done with the current assignment submission before answering y n m r as this will make program proceed to the next submission)
-* **y** judge the student's program as correct, update the program's status in /demo/scoreboard/, and then move on to the next student submission. The teacher can choose to ignore inconsequential differences in the output shown in the **diff window** and still count the program correct.
-* **n** judge the student's program as incorrect, update the program's status in /demo/scoreboard/, and then move on to the next student submission.
-* **p** judge the student's program as incorrect due to a presentation error (e.g. incorrect spacing,punctuation,capitalization), update the program's status in /demo/scoreboard/, and then move on to the next student submission.
+* **y** judge the student's program as correct, update the program's status in /demo/scoreboard/, and then **move on** to the next student submission. The teacher can choose to ignore inconsequential differences in the output shown in the **diff window** and still count the program correct.
+* **n** judge the student's program as incorrect, update the program's status in /demo/scoreboard/, and then **move on** to the next student submission.
+* **p** judge the student's program as incorrect due to a presentation error (e.g. incorrect spacing,punctuation,capitalization), update the program's status in /demo/scoreboard/, and then **move on** to the next student submission.
 * **s** show the student's program submission in the IDE.
 * **d** run diff program again
 * **a** run the program again
@@ -101,7 +103,7 @@ is displayed with the following options (NOTE: Be sure that you are done with th
 * **g** prompt for grade and note and write to grades.txt file in student's assignment folder 
 * **e** email the student with information regarding the assignment status.
 * **c** copy information about the assignment status to the Clipboard (requires Windows 10’s October 2018 Update which provided a Clipboard History enabling multiple items to be saved on the clipboard). This option is provided, since emailing directly from the program may not be allowed by the school network.
-* **m** move the student's program submission to the 00SAVE directory and then move on to the next student submission.
+* **m** move the student's program submission to the 00SAVE directory and then **move on** to the next student submission.
 * **f** print a list of the files in the student's assignment directory.
 * **l** print the last 20 lines of the global log file (logGlobal.txt).  Choosing l again shows the previous 20 lines.
 * **ls** print the last 20 lines of the student's log file (log.txt).  Choosing ls again shows the previous 20 lines.
