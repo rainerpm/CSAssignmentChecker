@@ -104,7 +104,7 @@ is displayed with the following options (NOTE: Be sure that you are done with th
 * **o** print the student's output (newline's are shown as ↵)
 * **g** prompt for grade and note and write to grades.txt file in student's assignment folder 
 * **e** email the student with information regarding the assignment status.
-* **c** copy information about the assignment status to the Clipboard (requires Windows 10’s October 2018 Update which provided a Clipboard History enabling multiple items to be saved on the clipboard). This option is provided, since emailing directly from the program may not be allowed by the school network.
+* **c** copy information about the assignment status to the Clipboard (be sure to enable Windows Clipboard History). This option is provided, since emailing directly from the program may not be allowed by the school network.
 * **m** move the student's program submission to the 00SAVE directory and then **move on** to the next student submission.
 * **f** print a list of the files in the student's assignment directory.
 * **l** opens the global log file (logGlobal.txt) in the text editor.
