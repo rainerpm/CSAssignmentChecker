@@ -55,7 +55,7 @@ Ideally students students have a way to submit a file in real time directly to t
   * set the **diffLoc** variable to the location of the diff program (e.g. meld, kdiff, or tkdiff) executable.
 * setup your email address and login in **login.py**
 ### Run the Demo
-The demo verifies two student assignments (1) [encryption](https://docs.google.com/document/d/1mr5FHL-cf3T1kRR0F10KCWwGGdjZC4Cj/edit?usp=sharing&ouid=117088614197672338242&rtpof=true&sd=true) (2) [GCD](https://docs.google.com/document/d/14nIXTUOr70_zRUZojzMZhbs9AmTWs5WxatsVtjNT_c4/edit?usp=sharing)
+[Demo video](https://youtu.be/Nr0t-hp050Y) The demo verifies two student assignments (1) [encryption](https://docs.google.com/document/d/1mr5FHL-cf3T1kRR0F10KCWwGGdjZC4Cj/edit?usp=sharing&ouid=117088614197672338242&rtpof=true&sd=true) (2) [GCD](https://docs.google.com/document/d/14nIXTUOr70_zRUZojzMZhbs9AmTWs5WxatsVtjNT_c4/edit?usp=sharing)
 * run CSassignmentChecker.py
   * since this is the first time the program has been run, the program creates some required directories.
   * You should now see the Main Menu\
