@@ -99,7 +99,7 @@ is displayed with the following options (NOTE: Be sure that you are done with th
 * **p** judge the student's program as incorrect due to a presentation error (e.g. incorrect spacing,punctuation,capitalization), update the program's status in /demo/scoreboard/, and then **move on** to the next student submission.
 * **s** show the student's program submission in the IDE.
 * **d** run diff program again
-* **a** run the program again
+* **a** run the program again (runs all the checks again, retaining any edits that may have been made in the directory where the student program is run).
 * **i** show the data input file (@.dat file in assignment folder - @ is the **assignment name**) for the assignment (newline's are shown as ↵)
 * **o** print the student's output (newline's are shown as ↵)
 * **g** prompt for grade and note and write to grades.txt file in student's assignment folder 
