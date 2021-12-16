@@ -5,14 +5,14 @@
 The **CSAssignmentChecker.py** program verifies python or java assignments submitted by students. This program currently supports basic verification for Python programs and more advanced verification for JAVA programs. Student assignments are organized into assignment groups, each of which has a "scoreboard" file showing the results for each student. The program supports directly emailing a teacher comment to a student.
 
 ### Requirements
-The following programs are required (the programs in parenthesis are what I use, but may be replaced with something equivilant).
+The following programs are required to be installed (the programs in parenthesis are what I use, but can be replaced with something equivilant).
   * Python (https://www.python.org/downloads/)
     * The following are only required for providing a student feeback comment via email or the clipboard and can be installed later
       * pip install pyperclip (enables the program to access the clipboard)
       * pip install pillow (enables the program to "grab" an image from the most recent clipboard entry) 
   * JAVA (https://www.jgrasp.org/)
   * Text Editor (https://notepad-plus-plus.org/downloads/ **CSAssignmentChecker.py** uses a Notepad++ session file to open multiple files)
-  * download & install a diff program (https://meldmerge.org/).
+  * diff program (https://meldmerge.org/).
 
 ### Assignment Submission and Verification
 Student submit an assignment by submitting a single file to the class period folder on the teacher's computer that is running this program.
