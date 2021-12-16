@@ -192,26 +192,30 @@ def emailStudent(submission, classRegistration):
     comment = commentFromFile(submission)
     response = ""
     if comment:
-        response = input("  attach image from clipboard (y)? ")
+        response = input("   from clipboard (y)? ")
     attachment = ""
     if response == "y":
         while True:
            image = ImageGrab.grabclipboard()
+           haveImage = True
            if image == None:
-             print("No image found on top of clipboard.")
-             response = input("<enter> to try again or <q>uit trying? ")
+             haveImage = False
+             print("  No image found on top of clipboard.")
+             response = input("  <enter> to try again or <q>uit trying? ")
              if response == 'q':
                 break
            else:
               break
-        imageJpg = image.convert('RGB')
-        imageJpg.save(emailAttachmentFile,'JPEG')
-        attachment = emailAttachmentFile
-        comment = comment + "\nBe sure to look at the e-mail attachment."
+        if haveImage:
+           imageJpg = image.convert('RGB')
+           imageJpg.save(emailAttachmentFile,'JPEG')
+           attachment = emailAttachmentFile
+           comment = comment + "\nBe sure to look at the e-mail attachment."
     updateLogFile(submission, "  email msg -> " + comment)
     message = comment + emailSignature
-    emailWithOutlook(emailSendFromAddress,emailSendFromPassword,receiverEmailAddress,subject,message,attachment)
-    print("  Email sent.")
+    emailSent = emailWithOutlook(emailSendFromAddress,emailSendFromPassword,receiverEmailAddress,subject,message,attachment)
+    if emailSent:
+       print("  Email sent.")
 
 # https://realpython.com/python-send-email/#option-1-setting-up-a-gmail-account-for-development
 # NOTE: DOES NOT CURRENTLY HANDLE ATTACHMENTS
@@ -226,6 +230,7 @@ def emailWithGmail(senderEmailAddress, senderPassword, receiverEmailAddress, sub
 
 # https://medium.com/@neonforge/how-to-send-emails-with-attachments-with-python-by-using-microsoft-outlook-or-office365-smtp-b20405c9e63a
 def emailWithOutlook(email_sender,email_password,email_recipient,email_subject,email_message,attachment_location=""):
+    success = True
     msg = MIMEMultipart()
     msg["From"] = email_sender
     msg["To"] = email_recipient
@@ -240,7 +245,8 @@ def emailWithOutlook(email_sender,email_password,email_recipient,email_subject,e
         part.add_header("Content-Disposition", "attachment; filename= %s" % filename)
         msg.attach(part)
     try:
-        server = smtplib.SMTP("smtp.office365.com", 587)
+        TIMEOUT = 5   # 5 seconds
+        server = smtplib.SMTP("smtp.office365.com", 587,None,TIMEOUT)  # for me times out at school (but does not timeout at home)
         response = server.ehlo()
         response = server.starttls()
         response = server.login(email_sender, email_password)
@@ -248,8 +254,9 @@ def emailWithOutlook(email_sender,email_password,email_recipient,email_subject,e
         server.sendmail(email_sender, email_recipient, text)
         server.quit()
     except:
-        print("SMPT server connection error")
-    return True
+        print("  email SMPT server connection error (TIMEOUT=" + str(TIMEOUT) + ")")
+        success = False
+    return success
 
 def commentFromFile(submission):
    askQuestion = True
@@ -895,7 +902,7 @@ def main():
                            diffCmd = [diffLoc,os.path.join(submission["studentPgmRunDir"],submission["outputFile"]),os.path.join(submission["goldenAssignmentDir"], "gold.txt")]
                            result = subprocess.run(diffCmd, shell=True)     # run diff program
                        elif answer == "a":  # run program again
-                           runProgram(submission, classRootDir)
+                           break
                        elif answer == "h":
                            listOfStudentDataFiles = glob.glob(submission["studentDir"] + '/' + submission["Assignment"] + r'_*.txt')
                            if len(listOfStudentDataFiles) == 0:
@@ -919,10 +926,13 @@ def main():
                                  print("  Assignment does not have a data input file")
                        elif answer == "o":   # print program output (making newline character visible)
                            outfile = os.path.join(submission["studentPgmRunDir"],submission["outFileName"])
-                           with open(outfile,'r') as outf:
-                               for line in outf:
-                                   line = line.replace("\n","↵")
-                                   print(line)
+                           if os.path.exists(outfile):
+                              with open(outfile,'r') as outf:
+                                  for line in outf:
+                                      line = line.replace("\n","↵")
+                                      print(line)
+                           else:
+                              print("  File does not exits (" + outfile + ")")
                        elif answer == "g":
                            gradeSubmission(submission)
                        elif answer == "e":  # email student
@@ -954,7 +964,7 @@ def main():
                                 print("  " + submission["FileName"] + "was removed")
                              updateLogFile(submission, "  removed "  + os.path.join(classRootDir,submission["FileName"]),True)
                           break
-                       elif answer == "c":  # clipboard (put email, subject, in Windows-10 clipboard)
+                       elif answer == "c":  # clipboard (put email, subject, in Windows-10 clipboard) to enable clipboard history see https://www.howtogeek.com/671222/how-to-enable-and-use-clipboard-history-on-windows-10/
                            comment = commentFromFile(submission)
                            if comment:
                                pyperclip.copy(comment)
