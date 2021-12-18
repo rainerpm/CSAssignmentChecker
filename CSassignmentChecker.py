@@ -191,31 +191,32 @@ def emailStudent(submission, classRegistration):
     print("  Preparing to send", subject, "email to", receiverEmailAddress)
     comment = commentFromFile(submission)
     response = ""
-    if comment:
-        response = input("   from clipboard (y)? ")
-    attachment = ""
-    if response == "y":
-        while True:
-           image = ImageGrab.grabclipboard()
-           haveImage = True
-           if image == None:
-             haveImage = False
-             print("  No image found on top of clipboard.")
-             response = input("  <enter> to try again or <q>uit trying? ")
-             if response == 'q':
-                break
-           else:
-              break
-        if haveImage:
-           imageJpg = image.convert('RGB')
-           imageJpg.save(emailAttachmentFile,'JPEG')
-           attachment = emailAttachmentFile
-           comment = comment + "\nBe sure to look at the e-mail attachment."
-    updateLogFile(submission, "  email msg -> " + comment)
-    message = comment + emailSignature
-    emailSent = emailWithOutlook(emailSendFromAddress,emailSendFromPassword,receiverEmailAddress,subject,message,attachment)
-    if emailSent:
-       print("  Email sent.")
+    if comment != "cancelComment":
+       if comment:
+           response = input("   from clipboard (y)? ")
+       attachment = ""
+       if response == "y":
+           while True:
+              image = ImageGrab.grabclipboard()
+              haveImage = True
+              if image == None:
+                haveImage = False
+                print("  No image found on top of clipboard.")
+                response = input("  <enter> to try again or <q>uit trying? ")
+                if response == 'q':
+                   break
+              else:
+                 break
+           if haveImage:
+              imageJpg = image.convert('RGB')
+              imageJpg.save(emailAttachmentFile,'JPEG')
+              attachment = emailAttachmentFile
+              comment = comment + "\nBe sure to look at the e-mail attachment."
+       updateLogFile(submission, "  email msg -> " + comment)
+       message = comment + emailSignature
+       emailSent = emailWithOutlook(emailSendFromAddress,emailSendFromPassword,receiverEmailAddress,subject,message,attachment)
+       if emailSent:
+          print("  Email sent.")
 
 # https://realpython.com/python-send-email/#option-1-setting-up-a-gmail-account-for-development
 # NOTE: DOES NOT CURRENTLY HANDLE ATTACHMENTS
@@ -265,7 +266,7 @@ def commentFromFile(submission):
    while askQuestion:
       askQuestion = False
       while not matchResponse:
-         response = input("  Comment (g[#], l[#], (o)ne-time comment, (n)o comment? ")
+         response = input("  Comment (g[#], l[#], (o)ne-time comment, (n)o comment, (c)ancel? ")
          if matchResponse := re.match('([glon])(\d*)',response):
             commentTypeResponse = matchResponse.group(1)
             commentNumResponse  = matchResponse.group(2)
@@ -329,10 +330,11 @@ def commentFromFile(submission):
          with open(commentsFileOneTime) as cfile:
             for line in cfile:
                comment = comment + line
-         comment = comment + emailSignature
          os.remove(commentsFileOneTime)  # remove 
       elif commentTypeResponse == 'n':
          comment = ""
+      elif commentTypeResponse == 'c':
+         comment = "cancelComment"
    return comment
 
 def checkErrorFileForErrors(errFile, errorType):
@@ -844,6 +846,7 @@ def main():
             if savedFiles != 0:
                 print(" ", savedFiles, "submissions found in /00SAVE for", key)
 
+        doItAgain = False
         while True:  # loop over each program, run the oldest first
             interrupted = False
             correct = False
@@ -860,7 +863,10 @@ def main():
                    listOfStudentDataFiles = glob.glob(submission["studentDir"] + '/' + submission["Assignment"] + r'_*.txt')
                    result,points,correctFound = assignmentResults(listOfStudentDataFiles)
                    print("\n"+ "*** " + submission["Assignment"] + " P" + submission["classPeriod"] + " (" + result + ") *** " + submission["FileName"] + ") " + submission["submissionDateTime"])
-                   copyFilesToProgramRunDirectory(submission, classRootDir)  ### copy file to student program run directory ###
+                   if doItAgain:
+                      doitAgain = False
+                   else:
+                      copyFilesToProgramRunDirectory(submission, classRootDir)  ### copy files to student program run directory ###
                    checked = checkProgram(submission, classRootDir)   ### check the program ###
                    goodToRun = True
                    if not checked:
@@ -902,6 +908,7 @@ def main():
                            diffCmd = [diffLoc,os.path.join(submission["studentPgmRunDir"],submission["outputFile"]),os.path.join(submission["goldenAssignmentDir"], "gold.txt")]
                            result = subprocess.run(diffCmd, shell=True)     # run diff program
                        elif answer == "a":  # run program again
+                           doItAgain = True
                            break
                        elif answer == "h":
                            listOfStudentDataFiles = glob.glob(submission["studentDir"] + '/' + submission["Assignment"] + r'_*.txt')
@@ -966,17 +973,18 @@ def main():
                           break
                        elif answer == "c":  # clipboard (put email, subject, in Windows-10 clipboard) to enable clipboard history see https://www.howtogeek.com/671222/how-to-enable-and-use-clipboard-history-on-windows-10/
                            comment = commentFromFile(submission)
-                           if comment:
-                               pyperclip.copy(comment)
-                               time.sleep(0.5)
-                           if "studentCode" in submission and submission.get("studentCode","NA") in classRegistration:
-                               if len(classRegistration[submission["studentCode"]]) > 2:  # email address was manually added to REGISTER.txt
-                                   receiverEmailAddress = classRegistration[submission["studentCode"]][2]
-                           subject = "P"+ submission.get("classPeriod","???") + "StudentDrop (" + submission.get("Assignment","????") + ")"
-                           pyperclip.copy(subject)
-                           time.sleep(0.5)
-                           pyperclip.copy(receiverEmailAddress)
-                           print("  ready to paste (subject & email address)!!!")
+                           if comment != "cancelComment":
+                              if comment:
+                                  pyperclip.copy(comment + emailSignature)
+                                  time.sleep(0.5)
+                              if "studentCode" in submission and submission.get("studentCode","NA") in classRegistration:
+                                  if len(classRegistration[submission["studentCode"]]) > 2:  # email address was manually added to REGISTER.txt
+                                      receiverEmailAddress = classRegistration[submission["studentCode"]][2]
+                              subject = "P"+ submission.get("classPeriod","???") + "StudentDrop (" + submission.get("Assignment","????") + ")"
+                              pyperclip.copy(subject)
+                              time.sleep(0.5)
+                              pyperclip.copy(receiverEmailAddress)
+                              print("  ready to paste (subject & email address)!!!")
                        elif answer == "x":  # exit program
                            print("exiting program")
                            sys.exit()
