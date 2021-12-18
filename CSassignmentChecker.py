@@ -102,11 +102,12 @@ def loadRegisteredStudents(assignmentGroups):
                 if not line:
                     continue
                 fields = line.split()
-                if len(fields) < 4:  # if registration does not have email yet
+                if len(fields) < 5:  # if registration does not have email
                     code, name, classPeriod = fields
                     email = ""
                 else:
-                    code, name, classPeriod, email = fields
+                    code, nameLast, nameFirst, classPeriod, email = fields
+                name = nameLast + " " + nameFirst
                 classRegistration[code] = (name, classPeriod, email)
                 # check if the student directory for each registered student exists in every assignment group of the class
                 aKeys = list(assignmentGroups.keys())
@@ -395,8 +396,10 @@ def processCurrentSubmission(currentSubmission, assignmentGroups, assignments,cl
    # check submission
    validFileName, nameLast, nameFirst, nameLastPartner, nameFirstPartner, code, codePartner, assignment = processFileName(submission["FileName"])
 
-   name = nameLast + nameFirst
+   name = nameLast + " " + nameFirst
    namePartner = nameLastPartner + nameFirstPartner   # will be an empty string if this is not a pair programming submission
+   if namePartner:
+      namePartner = nameLastPartner + " " + nameFirstPartner
    classRegistration = loadRegisteredStudents(assignmentGroups)
 
    if assignment == "registerMe":
@@ -423,7 +426,7 @@ def processCurrentSubmission(currentSubmission, assignmentGroups, assignments,cl
       submission["Assignment"]  = assignment
       submission["registration"] = submission["Assignment"] == "registerMe"  # student submitted a registration request
       submission["studentName"] = name
-      submission["studentFirstNameL"] = nameFirst + nameLast[0]   # RPM this also needs to exist for the partner somewhere
+      submission["nameForLatestDir"] = nameFirst + nameLast[0:2]
       submission["studentCode"] = code
       submission["hasPartner"] = (namePartner != "")
       submission["partnerName"] = namePartner.strip() 
@@ -615,14 +618,14 @@ def runProgram(submission, classRootDir):
     if submission["dataInputFileExists"]:
         bringUpIDEorDataFile += '\nset /P c=Bring up input data file [y]? \nif /I "%c%" EQU "Y" goto :idf\ngoto :end\n:idf\n' + '"' + textEditorLoc + '"' + " -multiInst -nosession " + '"' + submission["dataInputFileName"] + '"' + '\n:end'
     if errorCompile:
-        copyfile("CompilerError.txt", os.path.join(latestResultsDir,submission["studentFirstNameL"] + "_compileError.txt"))  # copy compile error file to class directory
+        copyfile("CompilerError.txt", os.path.join(latestResultsDir,submission["nameForLatestDir"] + "_compileError.txt"))  # copy compile error file to class directory
         copyfile("CompilerError.txt", os.path.join(submission["studentDir"],submission["compileErrFileName"]))  # copy output file to data directory
         if submission["hasPartner"]:
             copyfile("CompilerError.txt",os.path.join(submission["partnerDir"],submission["compileErrFileName"]))  # copy output file to partner's data directory
         updateLogFile(submission, "  ERROR!!! " + submission["FileName"] + " had a compile time error.",False)
     else:
-        if os.path.exists(os.path.join(latestResultsDir,submission["studentFirstNameL"] + "_compileError.txt")):
-            os.remove(os.path.join(latestResultsDir,submission["studentFirstNameL"] + "_compileError.txt"))
+        if os.path.exists(os.path.join(latestResultsDir,submission["nameForLatestDir"] + "_compileError.txt")):
+            os.remove(os.path.join(latestResultsDir,submission["nameForLatestDir"] + "_compileError.txt"))
         writeOrAppend = "w"
         timedOut = False
         for runCmd in runCmds:
@@ -667,19 +670,19 @@ def runProgram(submission, classRootDir):
         if errorRun:
             if os.path.exists(submission["outFileName"]):
                 os.remove(submission["outFileName"])
-            if os.path.exists(os.path.join(latestResultsDir,submission["studentFirstNameL"] + ".bat")):
-                os.remove(os.path.join(latestResultsDir,submission["studentFirstNameL"] + ".bat"))
-            with open(os.path.join(latestResultsDir,submission["studentFirstNameL"] + ".bat"), "w") as fbatch:
+            if os.path.exists(os.path.join(latestResultsDir,submission["nameForLatestDir"] + ".bat")):
+                os.remove(os.path.join(latestResultsDir,submission["nameForLatestDir"] + ".bat"))
+            with open(os.path.join(latestResultsDir,submission["nameForLatestDir"] + ".bat"), "w") as fbatch:
                 fbatch.write('"' + textEditorLoc + '"' + " -multiInst -nosession " + '"' + os.path.join(submission["studentDir"],submission["runErrFileName"]) + '"')
                 fbatch.write(bringUpIDEorDataFile)
-            copyfile(submission["errorFileName"], os.path.join(latestResultsDir,submission["studentFirstNameL"] + "_runTimeError.txt"))  # copy compile error file to class directory
+            copyfile(submission["errorFileName"], os.path.join(latestResultsDir,submission["nameForLatestDir"] + "_runTimeError.txt"))  # copy compile error file to class directory
             copyfile(submission["errorFileName"], os.path.join(submission["studentDir"],submission["runErrFileName"]))  # copy output file to data directory
             if submission["hasPartner"]:
                 copyfile(submission["errorFileName"],os.path.join(submission["partnerDir"],submission["runErrFileName"]))  # copy output file to partner's data directory
             updateLogFile(submission, "  ERROR!!! " + submission["FileName"] + " had a run time error.",False)
         else:
-            if os.path.exists(os.path.join(latestResultsDir,submission["studentFirstNameL"] + "_runTimeError.txt")):
-                os.remove(os.path.join(latestResultsDir,submission["studentFirstNameL"] + "_runTimeError.txt"))
+            if os.path.exists(os.path.join(latestResultsDir,submission["nameForLatestDir"] + "_runTimeError.txt")):
+                os.remove(os.path.join(latestResultsDir,submission["nameForLatestDir"] + "_runTimeError.txt"))
     error = errorCompile or errorRun
     if not error:
         goldFileMatches = filesMatch(submission["outputFile"],submission["goldFile"])
@@ -695,9 +698,9 @@ def runProgram(submission, classRootDir):
             with open(os.path.join(submission["studentPgmRunDir"], "diff.bat"), "w") as fdiff:
                 fdiff.write('"' + diffLoc + '"' + " " + submission["outFileName"] + " " + os.path.join(submission["goldenAssignmentDir"], "gold.txt"))
             # also write diff batch file to class directory (for quick access to each student's last run results)
-            if os.path.exists(os.path.join(latestResultsDir,submission["studentFirstNameL"] + ".bat")):
-                os.remove(os.path.join(latestResultsDir,submission["studentFirstNameL"] + ".bat"))
-            with open(os.path.join(latestResultsDir,submission["studentFirstNameL"] + ".bat"), "w") as fbatch:
+            if os.path.exists(os.path.join(latestResultsDir,submission["nameForLatestDir"] + ".bat")):
+                os.remove(os.path.join(latestResultsDir,submission["nameForLatestDir"] + ".bat"))
+            with open(os.path.join(latestResultsDir,submission["nameForLatestDir"] + ".bat"), "w") as fbatch:
                 fbatch.write('"' + diffLoc + '"' + " " + os.path.join(submission["studentPgmRunDir"],submission["outFileName"]) + " " + os.path.join(submission["goldenAssignmentDir"], "gold.txt"))
                 fbatch.write(bringUpIDEorDataFile)
     os.chdir(classRootDir)
@@ -834,8 +837,16 @@ def main():
         os.chdir(classRootDir)
 
         # initialize the dictionaries for the class
-        assignmentGroups = allAssignmentGroups[classPeriod]
-        assignments = allAssignments[classPeriod]
+        if classPeriod in allAssignmentGroups:
+           assignmentGroups = allAssignmentGroups[classPeriod]
+        else:
+           print("No assignment group found for class period",classPeriod)
+           break
+        if classPeriod in allAssignments:
+           assignments = allAssignments[classPeriod]
+        else:
+           print("No assignment found for class period",classPeriod)
+           break
         # get dictionary of all registered students and create student directory
         classRegistration = loadRegisteredStudents(assignmentGroups)
 
