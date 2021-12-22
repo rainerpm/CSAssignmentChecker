@@ -102,7 +102,7 @@ is displayed with the following options (NOTE: Be sure that you are done with th
 * **a** run the program again (runs all the checks again, retaining any edits that may have been made in the directory where the student program is run).
 * **i** show the data input file (@.dat file in assignment folder - @ is the **assignment name**) for the assignment (newline's are shown as ↵)
 * **o** print the student's output (newline's are shown as ↵)
-* **g** prompt for grade and note and write to grades.txt file in student's assignment folder 
+* **g** opens grades.txt file in student's assignment folder using the text editor.
 * **e** email the student with information regarding the assignment status.
 * **c** copy information about the assignment status to the Clipboard (be sure to enable Windows Clipboard History). This option is provided, since emailing directly from the program may not be allowed by the school network.
 * **m** move the student's program submission to the 00SAVE directory and then **move on** to the next student submission.
