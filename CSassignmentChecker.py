@@ -193,8 +193,7 @@ def emailStudent(submission, classRegistration):
     comment = commentFromFile(submission)
     response = ""
     if comment != "cancelComment":
-       if comment:
-           response = input("   from clipboard (y)? ")
+       response = input("  attach image from clipboard (y)? ")
        attachment = ""
        if response == "y":
            while True:
@@ -268,7 +267,7 @@ def commentFromFile(submission):
       askQuestion = False
       while not matchResponse:
          response = input("  Comment (g[#], l[#], (o)ne-time comment, (n)o comment, (c)ancel? ")
-         if matchResponse := re.match('([glon])(\d*)',response):
+         if matchResponse := re.match('([glonc])(\d*)',response):
             commentTypeResponse = matchResponse.group(1)
             commentNumResponse  = matchResponse.group(2)
       if commentTypeResponse == 'g':
@@ -731,16 +730,12 @@ def updateLogFile(submission, logMessage, alsoPrint = False, indent=True):
             fslog.write(indentSpaces + logMessage + "\n")
 
 def gradeSubmission(submission):
-    gradeFileName = os.path.join(submission["studentAssignmentDir"],"grades.txt")
-    if os.path.exists(gradeFileName): 
-        with open(gradeFileName) as gradeFile:
-            for line in gradeFile:
-                print("  " + line.rstrip())
-    grade = input("  enter Grade ")
-    note  = input("  enter Note  ")
-    with open(gradeFileName, "a") as gradeFile:
-        line2write = f'{grade.strip():<5s}' + " : " + submission["submissionDateTime"] + " : " + note.strip() + "\n"
-        gradeFile.write(line2write)
+    summary = "\n*** " + submission["Assignment"] + " (" + submission["result"] + ") " + submission["submissionDateTime"]
+    gradesFileName = os.path.join(submission["studentAssignmentDir"],"grades.txt")
+    with open(gradesFileName, "a") as gFile:
+        gFile.write(summary + "\n  ")
+    txtEditorCmd = [textEditorLoc,"-n1000000","-nosession",gradesFileName]      
+    result = subprocess.run(txtEditorCmd, shell=True)
 
 def submissionCorrect(submission):
     if not os.path.exists(os.path.join(submission["plagiarismAssignmentDir"],submission["submittedFileNameWithDate"])):
@@ -873,6 +868,7 @@ def main():
                    #######################################
                    listOfStudentDataFiles = glob.glob(submission["studentDir"] + '/' + submission["Assignment"] + r'_*.txt')
                    result,points,correctFound = assignmentResults(listOfStudentDataFiles)
+                   submission["result"] = result
                    print("\n"+ "*** " + submission["Assignment"] + " P" + submission["classPeriod"] + " (" + result + ") *** " + submission["FileName"] + ") " + submission["submissionDateTime"])
                    if doItAgain:
                       doitAgain = False
