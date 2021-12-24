@@ -40,6 +40,7 @@ Ideally students students have a way to submit a file in real time directly to t
          * **gold.txt** is the teacher provided golden output for the assignment
          * **checker.txt** is the teacher provided checker output for the assignment
          * **comments.txt** contains the assignment specific comments used in student emails or clipboard
+         * **timeout.txt** contains the amount of seconds the test should be given before timing out (optional: overrides the TIMEOUT_DEFAULT set in customize.py)
       * **periods.txt** indicates which class periods this assignment group is assigned to
     * **commentsJAVA.txt** and **commentsPYTHON.txt** contain the global comments used in student emails or clipboard
   * **1,4,5** (these are the class period folders, new files are submitted to these folders via something like a Dropbox File Request. Each assignment group has a folder here that has folders for each of the students containing folders for the student's program submissions.
