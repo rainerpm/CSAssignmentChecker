@@ -350,7 +350,7 @@ def checkErrorFileForErrors(errFile, errorType):
 
 def checkStudentRegistration(fname,name,code,classRegistration):
    foundNameInRegistration = True
-   if name != "TestTest":
+   if name != "Test Test":
       if (code not in classRegistration):
          print("  Code >" + code + "< is not registered " + "(" + fname +")") 
          foundNameInRegistration = False
@@ -487,6 +487,12 @@ def processCurrentSubmission(currentSubmission, assignmentGroups, assignments,cl
          submission["goldCheckFile"] = os.path.join(submission["goldenAssignmentDir"], "checker.txt")
          submission["dataInputFileExists"] = os.path.exists(os.path.join(submission["goldenAssignmentDir"],submission["Assignment"]+".dat"))
          submission["dataInputFileName"] = os.path.join(submission["goldenAssignmentDir"],submission["Assignment"]+".dat")
+         submission["timeoutFileName"] = os.path.join(submission["goldenAssignmentDir"],"timeout.txt")
+         if os.path.exists(submission["timeoutFileName"]):
+             with open(submission["timeoutFileName"]) as tfile:
+                submission["timeout"] = float(tfile.readline().strip())
+         else:
+           submission["timeout"] = TIMEOUT_DEFAULT
          submission["plagiarismAssignmentDir"] = os.path.join(assignmentGroup["plagiarismDir"],submission["Assignment"])
          ##RPM FIX Creating a plagiarism directory for each assignment should be done when setting up the class
          if not os.path.isdir(submission["plagiarismAssignmentDir"]):
@@ -644,9 +650,9 @@ def runProgram(submission, classRootDir):
                             fout.flush()
                             if not timedOut:
                                try:
-                                  result = subprocess.run(runCmd, stdin=runStdin, stdout=fout, stderr=ferr, timeout=TIMEOUT_DEFAULT)   # run submitted RUNNER or student program with a user input file (i.e. program reads from stdin)
+                                  result = subprocess.run(runCmd, stdin=runStdin, stdout=fout, stderr=ferr, timeout=submission["timeout"])   # run submitted RUNNER or student program with a user input file (i.e. program reads from stdin)
                                except:
-                                  print("  Timed Out (>" + str(TIMEOUT_DEFAULT) + "sec)!!! " + str(runCmd))
+                                  print("  Timed Out (>" + str(submission["timeout"]) + "sec)!!! " + str(runCmd))
                                   timedOut = True
                             writeOrAppend = "a"
                      runStdin.close()
@@ -655,9 +661,9 @@ def runProgram(submission, classRootDir):
                       with open(submission["errorFileName"], writeOrAppend) as ferr:
                             if not timedOut:
                                try:
-                                  result = subprocess.run(runCmd, stdin=runStdin, stdout=fout, stderr=ferr, timeout=TIMEOUT_DEFAULT)   # run submitted RUNNER or student program without a user input file      
+                                  result = subprocess.run(runCmd, stdin=runStdin, stdout=fout, stderr=ferr, timeout=submission["timeout"])   # run submitted RUNNER or student program without a user input file      
                                except:                         
-                                  print("  Timed Out (>" + str(TIMEOUT_DEFAULT) + "sec)!!! " + str(runCmd))
+                                  print("  Timed Out (>" + str(submission["timeout"]) + "sec)!!! " + str(runCmd))
                                   timedOut = True
                             writeOrAppend = "a"
             else:
@@ -869,7 +875,7 @@ def main():
                    listOfStudentDataFiles = glob.glob(submission["studentDir"] + '/' + submission["Assignment"] + r'_*.txt')
                    result,points,correctFound = assignmentResults(listOfStudentDataFiles)
                    submission["result"] = result
-                   print("\n"+ "*** " + submission["Assignment"] + " P" + submission["classPeriod"] + " (" + result + ") *** " + submission["FileName"] + ") " + submission["submissionDateTime"])
+                   print("\n"+ "*** " + submission["Assignment"] + " P" + submission["classPeriod"] + " (" + result + ") *** " + submission["FileName"] + ") " + submission["submissionDateTime"] + " [" + str(submission["timeout"]) + "sec]")
                    if doItAgain:
                       doitAgain = False
                    else:
