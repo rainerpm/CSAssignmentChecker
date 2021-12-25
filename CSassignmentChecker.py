@@ -138,7 +138,7 @@ def setup():
             if not os.path.isdir(classPeriodsDir):
                 os.mkdir(classPeriodsDir)
                 print("Created directory",classPeriodsDir)
-            classAssignmentGroupDir = os.path.join(rootDir,classPeriod,globalAssignmentGroupDirOnly)
+            classAssignmentGroupDir = os.path.abspath(os.path.join(rootDir,classPeriod,globalAssignmentGroupDirOnly))  # abspath necessary to open file explorer for main menu 'f' option
             if not os.path.isdir(classAssignmentGroupDir):
                 os.mkdir(classAssignmentGroupDir)
                 print("Created directory",classAssignmentGroupDir)
@@ -961,11 +961,8 @@ def main():
                            os.rename(os.path.join(classRootDir,submission["FileName"]),os.path.join(submission["saveDir"],submission["FileName"]))  # copy (replace if already there) pgm to 00SAVE directory
                            updateLogFile(submission, "  copied to " + os.path.join(submission["saveDir"],submission["FileName"]),True)
                            break
-                       elif answer == "f":  # files (show files in student directory)
-                           print("    " + submission["studentPgmRunDir"])
-                           # print("    " + '/'.join(submission["studentPgmRunDir"].split('/')[-3:]))   # print the last 3 folders in path
-                           for file in glob.glob(os.path.join(submission["studentPgmRunDir"],"*")):
-                               print("    " + os.path.basename(file))
+                       elif answer == "f":  # files (open Windows file explorer for student directory)
+                           subprocess.Popen('explorer "' + submission["studentPgmRunDir"] + '"')
                        elif answer == "l" or answer == 'ls':  # log, show the last lines of global log file (chosing l again will get the next earlier set of lines)
                            if answer == "l":
                               logfile2Show = os.path.join(rootDir,"logGlobal.txt")
