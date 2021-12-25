@@ -107,7 +107,7 @@ is displayed with the following options (NOTE: Be sure that you are done with th
 * **e** email the student with information regarding the assignment status.
 * **c** copy information about the assignment status to the Clipboard (be sure to enable Windows Clipboard History). This option is provided, since emailing directly from the program may not be allowed by the school network.
 * **m** move the student's program submission to the 00SAVE directory and then **move on** to the next student submission.
-* **f** print a list of the files in the student's assignment directory.
+* **f** opens Windows file explorer in the student's assignment directory.
 * **l** opens the global log file (logGlobal.txt) in the text editor.
 * **ls** opens the student's log file (log.txt) in the text editor.
 * **r** remove the submission from the class period directory and then move on to the next student's submission.
