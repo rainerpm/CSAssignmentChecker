@@ -101,8 +101,8 @@ is displayed with the following options (NOTE: Be sure that you are done with th
 * **s** show the student's program submission in the IDE.
 * **d** run diff program again
 * **a** run the program again (runs all the checks again, retaining any edits that may have been made in the directory where the student program is run).
-* **i** show the data input file (@.dat file in assignment folder - @ is the **assignment name**) for the assignment (newline's are shown as ↵)
-* **o** print the student's output (newline's are shown as ↵)
+* **i** open the data input file for the assignment in the text editor
+* **o** open the student's stdout in the text editor
 * **g** opens grades.txt file in student's assignment folder using the text editor.
 * **e** email the student with information regarding the assignment status.
 * **c** copy information about the assignment status to the Clipboard (be sure to enable Windows Clipboard History). This option is provided, since emailing directly from the program may not be allowed by the school network.
