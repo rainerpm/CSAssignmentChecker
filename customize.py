@@ -1,10 +1,11 @@
 # programs
-pythonIdeLoc = r'C:/Users/E151509/AppData/Local/Programs/Python/Python310/Lib/idlelib/idle.pyw'
-javaIdeLoc = r'c:/Program Files (x86)/jGRASP/bin/jgrasp.exe'      
-textEditorLoc = r'c:/Program Files (x86)/Notepad++/notepad++.exe'
-#diffLoc = r'c:/Program Files/TkDiff/tkdiff.exe'
-#diffLoc = r'c:/Program Files/KDiff3/kdiff3.exe'
-diffLoc = r'C:/Program Files (x86)/Meld/Meld.exe'
+pythonIde = r'C:/Users/E151509/AppData/Local/Programs/Python/Python310/Lib/idlelib/idle.pyw'
+javaIde = r'c:/Program Files (x86)/jGRASP/bin/jgrasp.exe'      
+textEditor = r'c:/Program Files (x86)/Notepad++/notepad++.exe'
+#diffPgm = r'c:/Program Files/TkDiff/tkdiff.exe'
+#diffPgm = r'c:/Program Files/KDiff3/kdiff3.exe'
+#diffPgm = r'C:/Program Files (x86)/Meld/Meld.exe'
+diffPgm = r'C:\Program Files\WinMerge/WinMergeU.exe'
 
 
 ##### For Demo

@@ -12,7 +12,7 @@ The following programs are required to be installed (the programs in parenthesis
       * pip install pillow (enables the program to "grab" an image from the most recent clipboard entry) 
   * JAVA (https://www.jgrasp.org/)
   * Text Editor (https://notepad-plus-plus.org/downloads/ **CSAssignmentChecker.py** uses a Notepad++ session file to open multiple files)
-  * diff program (https://meldmerge.org/).
+  * diff program (https://winmerge.org/?lang=en).
 
 ### Assignment Submission and Verification
 Student submit an assignment by submitting a single file to the class period folder on the teacher's computer that is running this program.
@@ -53,7 +53,7 @@ Ideally students students have a way to submit a file in real time directly to t
   * set the **javaIdeLoc** variable to the location of the JAVA IDE (e.g. jGrasp) executable.
     * NOTE: The program uses *-parameters* compile option to ensure that JAVA reflection reflects parameter types instead of just using arg0
   * set the **textEditorLoc** variable to the location of a text editor (e.g. Notepad++) executable.
-  * set the **diffLoc** variable to the location of the diff program (e.g. meld, kdiff, or tkdiff) executable.
+  * set the **diffLoc** variable to the location of the diff program (e.g. winMerge, meld, kdiff, or tkdiff) executable.
 * setup your email address and login in **login.py**
 ### Run the Demo
 Demo Video [download](https://drive.google.com/file/d/1o7TA-ym4WC4xezXcMf3mqvpzbMRN7Awm/view?usp=sharing) or [YouTube](https://youtu.be/Nr0t-hp050Y) The demo verifies two student assignments (1) [encryption](https://docs.google.com/document/d/1mr5FHL-cf3T1kRR0F10KCWwGGdjZC4Cj/edit?usp=sharing&ouid=117088614197672338242&rtpof=true&sd=true) (2) [GCD](https://docs.google.com/document/d/14nIXTUOr70_zRUZojzMZhbs9AmTWs5WxatsVtjNT_c4/edit?usp=sharing)
