@@ -25,13 +25,15 @@ def assignmentResults(listOfStudentDataFiles):
         result = "Er"
      elif newestStudentDataFile.endswith("presentationErr.txt"):
         result = "Ep"
+     elif newestStudentDataFile.endswith("manualCheck.txt"):
+        result = "Ea"        
      else:
         count = 0
         correctFound = False
         for studentDataFile in listOfStudentDataFiles:
-           if not studentDataFile.endswith("CORRECT.txt"):
+           if not (studentDataFile.endswith("CORRECT.txt") or studentDataFile.endswith("manualCheck.txt")):
               count += 1
-           else:
+           if studentDataFile.endswith("CORRECT.txt"):
               correctFound = True
         if correctFound:
            if count == 0:
@@ -45,6 +47,19 @@ def assignmentResults(listOfStudentDataFiles):
      return result,points,correctFound 
 
 def updateScoreboard(scoreboardDir,contestDataDir,assignmentGroupId,classId,listOfTestNames):
+   SCOREBOARD4EACHSTUDENT = True
+     
+   footer = """
+C#  = test ran successfully (was submitted incorrectly # of times)
+#x  = test never ran successfully, submitted # times.
+Ea  = latest submission was not 100% correct when using automatic judging (submission will be checked manually later)
+Ec  = latest submission had a compile or syntax error.
+Ep  = latest submission had a presentation error - e.g. incorrect spelling, missing text, spacing, capitalization, punctuation.
+Er  = latest submission had a run-time error - e.g. div by 0, index out range.
+
+The POINTS column indicates your UIL programming competition score (60 pts/problem, -5 pts for every incorrect submission)"""
+
+     
    currentDate = datetime.now().strftime("%m-%d-%y")
    if not os.path.isdir(scoreboardDir + '/annonymous/'):
       os.mkdir(scoreboardDir + '/annonymous/')
@@ -59,8 +74,7 @@ def updateScoreboard(scoreboardDir,contestDataDir,assignmentGroupId,classId,list
       else:
         fscoreboard = open(scoreboardFile,'w')
         spaces = ' '
-      fscoreboard.write(datetime.now().strftime("%c") + '  Period ' + classId + '  ' + assignmentGroupId)
-      fscoreboard.write('\n')
+      fscoreboard.write(datetime.now().strftime("%c") + '  Period ' + classId + '  ' + assignmentGroupId + '\n')
       i = 0
       for testName in listOfTestNames:
          i += 1
@@ -69,7 +83,7 @@ def updateScoreboard(scoreboardDir,contestDataDir,assignmentGroupId,classId,list
       j = 0
 
       if includeNames:
-        fscoreboard.write('TOTALS Code  ')      
+        fscoreboard.write('TOTALS  ')      
       while j < i:
          j += 1
          fscoreboard.write(f'({j:>2})')
@@ -78,13 +92,6 @@ def updateScoreboard(scoreboardDir,contestDataDir,assignmentGroupId,classId,list
       else:
          fscoreboard.write(' TOTALS POINTS\n')
       listOfStudentDirectories = getListOfStudentDirectories(contestDataDir)
-##      print("DBG0",contestDataDir)
-##      print("DBG1",listOfStudentDirectories)
-##      print("DBG2",includeNames)
-##      for x in listOfStudentDirectories:
-##        print("DBG3",x)
-##        print("DBG4",x.split('_')[1])
-##        print("DBG5",int(x.split('_')[1]))
       if not includeNames:
          listOfStudentDirectories.sort(key = lambda x: int(x.split('_')[1]))  # https://stackoverflow.com/questions/31306951/how-to-sort-a-list-by-last-character-of-string
       testsCorrect = {}
@@ -107,9 +114,30 @@ def updateScoreboard(scoreboardDir,contestDataDir,assignmentGroupId,classId,list
            studentResult = studentResult + f'{result:<2s}' + '  '
            countTestsInRow += 1
         if includeNames:
-           fscoreboard.write(f'{name:20s} {correctCount:>2d}   {code:<6s} {studentResult} {totalPoints:>4d}' + '\n')
+           fscoreboard.write(f'{name:20s} {correctCount:>2d}     {studentResult} {totalPoints:>4d}' + '\n')
         else:
            fscoreboard.write(f'{code:<6s}  {studentResult}  {correctCount:>2d}    {totalPoints:>4d}' + '\n')
+
+        # scoreboard file for each student/competitor
+        if SCOREBOARD4EACHSTUDENT:
+             if not os.path.isdir(scoreboardDir + '/Period' + classId):
+                os.mkdir(scoreboardDir + '/Period' + classId)
+             scoreboardFileForIndividual = scoreboardDir + '/Period' + classId + "/" + name + '_' + code + '.txt'
+             fscoreboardIndividual  = open(scoreboardFileForIndividual,'w')           
+             fscoreboardIndividual.write(datetime.now().strftime("%c") + '  Period ' + classId + '  ' + assignmentGroupId + '\n\n')
+             i = 0
+             j = 0
+             for testName in listOfTestNames:
+               i += 1
+               fscoreboardIndividual.write('(' + str(i) + ')' + testName + ' ')
+             fscoreboardIndividual.write('\n\n')  
+             while j < i:
+                j += 1
+                fscoreboardIndividual.write(f'({j:>2})')
+             fscoreboardIndividual.write(' POINTS\n')
+             fscoreboardIndividual.write(f' {studentResult} {totalPoints:>4d}' + '\n')
+             fscoreboardIndividual.write(footer)
+             fscoreboardIndividual.close()  
       totals = ''
       sumTotals = 0
       for test in listOfTestNames:
@@ -124,16 +152,11 @@ def updateScoreboard(scoreboardDir,contestDataDir,assignmentGroupId,classId,list
           totals = f'{totals}{testCorrectStr:>2}  '
 
       if includeNames:
-         fscoreboard.write('TOTALS             ' + f'{sumTotals:>4d}' + '          ' + totals + '\n\n')
+         fscoreboard.write('TOTALS             ' + f'{sumTotals:>4d}' + '     ' + totals + '\n\n')
       else:
          fscoreboard.write('TOTALS  ' + totals + f'{sumTotals:>4d}' + '\n\n')
-        
-      fscoreboard.write("Ec  = latest submission had a compile or syntax error.\n")
-      fscoreboard.write("Er  = latest submission had a run-time error - e.g. div by 0, index out range.\n")
-      fscoreboard.write("Ep  = latest submission had a presentation error - e.g. incorrect spelling, missing text, spacing, capitalization, punctuation.\n")
-      fscoreboard.write("C#  = test ran successfully, had # of incorrect submissions.\n")
-      fscoreboard.write("#x  = test never ran successfully, submitted # times.")
-      fscoreboard.write("\nThe POINTS column indicates your UIL programming competition score (60 pts/problem, -5 pts for every incorrect submission)")
+         
+      fscoreboard.write(footer)
       fscoreboard.close()  
 
          
