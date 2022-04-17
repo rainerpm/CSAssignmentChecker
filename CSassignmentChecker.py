@@ -1,13 +1,13 @@
 # summer improvements
-# 1) change pair programming to programming groups (separate 2 or more names with + sign)
-#    re-write the code that checks the file
-#    - correct name format, correct extension (.py, .java, or .zip only no .txt or .java.java)
+# 1) Deal with studnets submitting a file with a unsupported file extension(.py, .java, or .zip only no .txt or .java.java)
 # 2) MABYE: Move scoreboards into a class directory so all the scoreboards for a class are in one directory
-# 3) add a password to StudentDrop (maybe 6 digit secret code is good enough)
+# 3) add a password to StudentDrop (maybe not necessary since a 6 digit secret code should be good enough)
 # 4) Make a "contest" StudentDrop
 # 5) Put a code in the scoreboard for manually moving a program to manual judging. This already
 #    exists when autojudging, but not when chosing 'm' to move it manually.
 # 6) Combine zip files into 1 file (alphabetically) for 00PLAGIARISM (see combineJAVAFilesFromZIPFile.py)
+
+#DBG print(f'{getframeinfo(currentframe()).lineno}: {var=}')
 
 
 import scoreboard  # import the associated scoreboard.py which creates the scoreboard files
@@ -42,10 +42,10 @@ import pyperclip        # allows python to add things to the clipboard (so it ca
 import webbrowser
 import os
 from twilio.rest import Client
+# to get the line number of a Python statement
+from inspect import currentframe, getframeinfo
 
-
-
-validFileExtensions = [".py",".java",".zip","registerMe.txt"] # .py for python, .java/.zip for java, registerMe.txt for registration file
+validFileExtensions = [".py",".java",".zip",".txt"] # .py for python, .java/.zip for java, .txt for registration file
 
 # Check variables set in customize.py
 initError = False
@@ -108,9 +108,9 @@ def check4Activity():
             files =[p for p in Path(rootDir,classPeriod).iterdir() if p.is_file()]
             for file in files:
                if file.name != "REGISTER.txt":
-                  if file.name.endswith("registerMe.txt"):
-                     print(" ", datetime.fromtimestamp(file.stat().st_mtime).strftime("%b%d %Hh%Mm"), "REGISTER",">"+file.name+"<")
-                  elif file.suffix not in validFileExtensions:
+                  ##RPM1 if file.name.endswith("registerMe.txt"):
+                  ##RPM1   print(" ", datetime.fromtimestamp(file.stat().st_mtime).strftime("%b%d %Hh%Mm"), "REGISTER",">"+file.name+"<")
+                  if file.suffix not in validFileExtensions:
                      print(" ","File with incorrect extension",">" + file.name + "<")
                   else:
                      print(" ", datetime.fromtimestamp(file.stat().st_mtime).strftime("%b%d %Hh%Mm"), ">"+file.name+"<")
@@ -413,11 +413,13 @@ def openErrorFile(submission,errorType):
      return True
    return False
 
-def checkStudentRegistration(fname,name,code,classRegistration):
+def checkStudentRegistration(fname,nameLast,nameFirst,code,classRegistration):
    foundNameInRegistration = True
+   name = nameLast + " " + nameFirst
    if name != "Test Test":
       if (code not in classRegistration):
-         print("  Code >" + code + "< is not registered " + "(" + fname +")") 
+         #print("  Code >" + code + "< is not registered " + "(" + fname +")")
+         print(f'  Code >{code}< is not registered for {nameFirst} {nameLast}!!!') 
          foundNameInRegistration = False
       elif classRegistration[code][0] != name:
          print("  Name mismatch!!! >" + code + "< code registered as",classRegistration[code][0],"and not",name)
@@ -426,30 +428,18 @@ def checkStudentRegistration(fname,name,code,classRegistration):
 
 def processFileName(fname):
    nameLast = nameFirst = code = nameLastPartner = nameFirstPartner = codePartner = assignment = ""
-   # One Person Submission:   LastName FirstName Code - assignmentName.ext
-   match1 = re.search("^([-\w]+) ([-\w]+) (\d+) - (\w+)\.(\w+)$",fname)
-   if match1:
-      nameLast = match1.group(1).strip()
-      nameFirst = match1.group(2).strip()
-      code = match1.group(3).strip()
-      namePartner = ""
-      codePartner = ""
-      assignment = match1.group(4).strip()
-
-   # Pair Programming Submission:  LastName LastNamePartner FirstName FirstNamePartner Code CodePartner - assignmentName.ext
-   match2 = re.search("^([-\w]+) ([-\w]+) ([-\w]+) ([-\w]+) (\d+) (\d+) - (\w+)\.(\w+)$",fname)
-   if match2:
-      nameLast = match2.group(1).strip()
-      nameFirst = match2.group(3).strip()
-      code = match2.group(5).strip()
-      nameLastPartner = match2.group(2).strip()
-      nameFirstPartner = match2.group(4).strip()
-      codePartner = match2.group(6).strip()
-      assignment = match2.group(7).strip()
-
-   validFname = match1 or match2
-
-   return validFname,nameLast,nameFirst,nameLastPartner,nameFirstPartner,code,codePartner,assignment
+   # File Submission:   LastName FirstName Code - assignmentName.ext
+   # For group submissions LastName FirstNamae Code will contain a + sign between
+   #   individual student's names/codes.
+   validFname = re.search("^([-+\w]+) ([-+\w]+) ([+\d]+) - (\w+)\.(\w+)$",fname)
+   if validFname:
+      nameLast = validFname.group(1).strip()
+      nameFirst = validFname.group(2).strip()
+      code = validFname.group(3).strip()
+      assignment = validFname.group(4).strip()
+      suffix = validFname.group(5).strip()
+      #DBG print(f'{getframeinfo(currentframe()).lineno}: {nameLast=} {nameFirst=} {code=} {assignment=} {suffix=}')
+   return validFname,nameLast,nameFirst,code,assignment
    
 def processCurrentSubmission(currentSubmission, assignmentGroups, assignments,classRootDir):
    submission = {}
@@ -460,22 +450,32 @@ def processCurrentSubmission(currentSubmission, assignmentGroups, assignments,cl
    submission["submissionDateTime"] = datetime.fromtimestamp(Path(submission["FileName"]).stat().st_mtime).strftime("%b_%d_%Hh%Mm%Ss")
    submission["classDir"] = classRootDir;
    # check submission
-   validFileName, nameLast, nameFirst, nameLastPartner, nameFirstPartner, code, codePartner, assignment = processFileName(submission["FileName"])
+   validFileName, nameLast, nameFirst, code, assignment = processFileName(submission["FileName"])
 
-   name = nameLast + " " + nameFirst
-   namePartner = nameLastPartner + nameFirstPartner   # will be an empty string if this is not a pair programming submission
-   if namePartner:
-      namePartner = nameLastPartner + " " + nameFirstPartner
+   submission["groupSubmission"] = False
+
+   if nameLast.find('+') != -1 or nameFirst.find('+') != -1 or code.find('+') != -1:
+      submission["groupSubmission"] = True
+      submission["groupLastNames"] = nameLast.split('+')
+      submission["groupFirstNames"] = nameFirst.split('+')
+      submission["groupCodes"] = code.split('+')
+      if (len(submission["groupLastNames"])== len(submission["groupFirstNames"])) and (len(submission["groupLastNames"])== len(submission["groupCodes"])):
+         submission["groupNumbersOK"] = True
+      else:
+         submission["groupNumbersOK"] = False
+         
    submission["classRegistration"] = loadRegisteredStudents(submission["classPeriodDir"],assignmentGroups)
 
    if assignment == "registerMe":
-      studentRegistered = True
-      partnerRegistered = True    
+      registrationOK = True
    else:
-      studentRegistered = checkStudentRegistration(submission["FileName"],name,code,submission["classRegistration"])
-      partnerRegistered = True    
-      if namePartner:
-         partnerRegistered = checkStudentRegistration(submission["FileName"],namePartner,codePartner,submission["classRegistration"])
+      if submission["groupSubmission"]:
+         registrationOK = True
+         for i in range(len(submission["groupLastNames"])):
+            studentRegistered = checkStudentRegistration(submission["FileName"],submission["groupLastNames"][i],submission["groupFirstNames"][i],submission["groupCodes"][i],submission["classRegistration"])
+            registrationOK = registrationOK and studentRegistered
+      else:
+         registrationOK = checkStudentRegistration(submission["FileName"],nameLast,nameFirst,code,submission["classRegistration"])
 
    if (assignment in assignments):   
        submission["assignmentGroupId"] = assignments[assignment]  # assignment group assignment belongs to
@@ -489,15 +489,16 @@ def processCurrentSubmission(currentSubmission, assignmentGroups, assignments,cl
    if validFileName and not((assignment in assignments) or (assignment == "registerMe")):
       print("  Invalid Assignment Name: >"+assignment+"<")
       
-   if validFileName and ((assignment in assignments) or (assignment == "registerMe")) and (studentRegistered and partnerRegistered) and (assignment == "registerMe" or (assignment in submission["listOfAssignments"])):
+   if validFileName and ((assignment in assignments) or (assignment == "registerMe")) and registrationOK and (assignment == "registerMe" or (assignment in submission["listOfAssignments"])):
       submission["Assignment"]  = assignment
       submission["registration"] = submission["Assignment"] == "registerMe"  # student submitted a registration request
-      submission["studentName"] = name
-      submission["nameForLatestDir"] = nameFirst + nameLast[0:2]
-      submission["studentCode"] = code
-      submission["hasPartner"] = (namePartner != "")
-      submission["partnerName"] = namePartner.strip() 
-      submission["partnerCode"] = codePartner.strip()
+      if submission["groupSubmission"]:
+         submission["studentName"] = submission["groupLastNames"][0] + " " + submission["groupFirstNames"][0]  # for a group submission the student run directory is in the 1st student of the groups student directory
+         submission["studentCode"] = submission["groupCodes"][0]
+      else:
+         submission["studentName"] = nameLast + " " + nameFirst
+         submission["studentCode"] = code
+      submission["nameForLatestDir"] = submission["studentName"]
 
       if submission["registration"]:   
          if submission["studentCode"] in submission["classRegistration"]:
@@ -517,7 +518,7 @@ def processCurrentSubmission(currentSubmission, assignmentGroups, assignments,cl
                        freg.write(f'{submission["studentCode"]} {submission["studentName"]} {submission["classPeriod"]} {email}\n')
                        print('  ' + submission["studentName"] + ' was registered (' + submission["studentCode"] + ' ' + email + ')')
                     else:
-                       print("  student code in the submitted registerMe.txt file (" + registrationCode + ") does not match one in submission (" + submission["studentCode"] + ")")
+                       print("  " + registrationCode + "code in the REGISTER.txt file does not match one in submission (" + submission["studentCode"] + ")")
                        input("Incorrect registration. Press any key to delete current submission and continue ... ") 
                  else:
                     print("  Registration code and email not found on first two lines of " + submission["FileName"])
@@ -537,7 +538,6 @@ def processCurrentSubmission(currentSubmission, assignmentGroups, assignments,cl
            submission["assignmentFileName"] = submission["Assignment"] + ".java"
          else:
            submission["assignmentFileName"] = submission["Assignment"] + submission["FileExtension"]
-
          submission["submittedFileNameWithDate"] = submission["FileNameRoot"] + "_" + submission["submissionDateTime"] + submission["FileExtension"]
          submission["outFileName"] = submission["Assignment"] + "_out.txt"
          submission["outCheckFileName"] = submission["Assignment"] + "_check.txt"
@@ -575,26 +575,40 @@ def processCurrentSubmission(currentSubmission, assignmentGroups, assignments,cl
          if not os.path.isdir(submission["studentAssignmentDir"]):
            os.mkdir(submission["studentAssignmentDir"])
          submission["studentPgmRunDir"] = os.path.join(submission["studentAssignmentDir"],submission["submissionDateTime"])
-         submission["outputFile"] = os.path.join(submission["studentPgmRunDir"],submission["outFileName"])
          if not os.path.isdir(submission["studentPgmRunDir"]):
-           os.mkdir(submission["studentPgmRunDir"])          
-         if submission["hasPartner"]:
-           submission["partnerDir"] = os.path.join(submission["assignmentGroupDir"],submission["partnerName"] + "_" + submission["partnerCode"])
-           if not os.path.isdir(submission["partnerDir"]):
-               os.mkdir(submission["partnerDir"])
+              os.mkdir(submission["studentPgmRunDir"])
+         submission["outputFile"] = os.path.join(submission["studentPgmRunDir"],submission["outFileName"])
+         if submission["groupSubmission"]:
+           partnersDirs = []
+           for i in range(len(submission["groupLastNames"])):
+              partnerName = submission["groupLastNames"][i] + " " + submission["groupFirstNames"][i]
+              partnerCode = submission["groupCodes"][i]
+              print(f'{getframeinfo(currentframe()).lineno}: {partnerName=} {partnerCode=}')
+              partnerDir = os.path.join(submission["assignmentGroupDir"],partnerName + "_" + partnerCode)
+              partnersDirs.append(partnerDir)
+              if not os.path.isdir(partnerDir):
+                 os.mkdir(partnerDir)                
+           submission["partnersDirs"] = partnersDirs
+
    else:
       updateLogFile(submission, "  File submission error (" + submission["FileName"] + ")",True)
       pyperclip.copy(submission["FileName"])
       time.sleep(0.5)
-      response = input("  New name (clipboard), (r)emove submission (m)ove to manual check? ")
-      if response == 'r':
-         os.remove(submission["FileName"])
-         updateLogFile(submission, "  removed "  + os.path.join(classRootDir,submission["FileName"]),True)
-      elif response == 'm':
-         os.rename(os.path.join(classRootDir,submission["FileName"]),os.path.join(submission["classDir"],"00ManualCheck",submission["FileName"]))  #move to 00ManualCheck
-         updateLogFile(submission, "  copied to " + os.path.join(submission["classDir"],"00ManualCheck",submission["FileName"]),True)                        
-      else:
-         os.rename(submission["FileName"], response)  # rename to new name
+      for key,value in submission["classRegistration"].items():
+         print(f'    {key} {value[0]}')
+      while True:
+         response = input("  New name (clipboard), (r)emove submission (m)ove to manual check? ")
+         if response == 'r':
+            os.remove(submission["FileName"])
+            updateLogFile(submission, "  removed "  + os.path.join(classRootDir,submission["FileName"]),True)
+            break
+         elif response == 'm':
+            os.rename(os.path.join(classRootDir,submission["FileName"]),os.path.join(submission["classDir"],"00ManualCheck",submission["FileName"]))  #move to 00ManualCheck
+            updateLogFile(submission, "  copied to " + os.path.join(submission["classDir"],"00ManualCheck",submission["FileName"]),True)
+            break
+         elif response != '':
+            os.rename(submission["FileName"], response)  # rename to new name
+            break
          
    return submission
 
@@ -709,8 +723,9 @@ def runProgram(submission, classRootDir):
     if errorCompile:
         copyfile(submission["compileErrorFileName"], os.path.join(latestResultsDir,submission["nameForLatestDir"] + "_compileError.txt"))  # copy compile error file to class directory
         copyfile(submission["compileErrorFileName"], os.path.join(submission["studentDir"],submission["compileErrFileName"]))  # copy output file to data directory
-        if submission["hasPartner"]:
-            copyfile(submission["compileErrorFileName"],os.path.join(submission["partnerDir"],submission["compileErrFileName"]))  # copy output file to partner's data directory
+        if submission["groupSubmission"]:
+           for partnerDir in submission["partnersDirs"]:
+              copyfile(submission["compileErrorFileName"],os.path.join(partnerDir,submission["compileErrFileName"]))  # copy output file to all partners data directories        
         updateLogFile(submission, "  ERROR!!! " + submission["FileName"] + " had a compile time error.",False)
     else:
         if os.path.exists(os.path.join(latestResultsDir,submission["nameForLatestDir"] + "_compileError.txt")):
@@ -767,8 +782,9 @@ def runProgram(submission, classRootDir):
                 fbatch.write(bringUpIDEorDataFile)
             copyfile(submission["runTimeErrorFileName"], os.path.join(latestResultsDir,submission["nameForLatestDir"] + "_runTimeError.txt"))  # copy compile error file to class directory
             copyfile(submission["runTimeErrorFileName"], os.path.join(submission["studentDir"],submission["runErrFileName"]))  # copy output file to data directory
-            if submission["hasPartner"]:
-                copyfile(submission["runTimeErrorFileName"],os.path.join(submission["partnerDir"],submission["runErrFileName"]))  # copy output file to partner's data directory
+            if submission["groupSubmission"]:
+               for partnerDir in submission["partnersDirs"]:
+                  copyfile(submission["runTimeErrorFileName"],os.path.join(partnerDir,submission["runErrFileName"]))  # copy output file to all partners data directories
             updateLogFile(submission, "  ERROR!!! " + submission["FileName"] + " had a run time error.",False)
         else:
             if os.path.exists(os.path.join(latestResultsDir,submission["nameForLatestDir"] + "_runTimeError.txt")):
@@ -802,6 +818,7 @@ def getSubmissions(extensions):
     listOfSubmissions = []
     for extension in extensions:
         listOfSubmissions = listOfSubmissions + glob.glob(r"*" + extension)
+    listOfSubmissions.remove("REGISTER.txt")
     return listOfSubmissions
 
 def updateLogFile(submission, logMessage, alsoPrint = False, indent=True):
@@ -879,12 +896,14 @@ def submissionCorrect(submission):
         os.remove(submission["FileName"])       # remove submission file (this only happens if the same file with the same time stamp is copied into class directory)
     if Path(submission["studentPgmRunDir"],submission["outFileName"]).is_file():  
        copyfile(os.path.join(submission["studentPgmRunDir"],submission["outFileName"]), os.path.join(submission["studentDir"],submission["outCorrectFileName"]))  # copy output file to data directory
-       if submission["hasPartner"]:
-          copyfile(os.path.join(submission["studentPgmRunDir"],submission["outFileName"]), os.path.join(submission["partnerDir"],submission["outCorrectFileName"]))  # copy output file to partner's data directory
+       if submission["groupSubmission"]:
+          for partnerDir in submission["partnersDirs"]:
+             copyfile(os.path.join(submission["studentPgmRunDir"],submission["outFileName"]), os.path.join(partnerDir,submission["outCorrectFileName"]))  # copy output file to partner's data directory
     else:     # (outFileName file may not exist (maybe program was manually deemed to be correct)
-        copyfile(os.path.join(submission["goldFile"]), os.path.join(submission["studentDir"],submission["outCorrectFileName"]))  # copy output file to data directory
-        if submission["hasPartner"]:
-           copyfile(os.path.join(submission["studentPgmRunDir"],submission["outFileName"]), os.path.join(submission["partnerDir"],submission["outCorrectFileName"]))  # copy output file to partner's data directory
+       copyfile(os.path.join(submission["goldFile"]), os.path.join(submission["studentDir"],submission["outCorrectFileName"]))  # copy output file to data directory
+       if submission["groupSubmission"]:
+          for partnerDir in submission["partnersDirs"]:
+             copyfile(os.path.join(submission["goldFile"]), os.path.join(partnerDir,submission["outCorrectFileName"]))  # copy output file to all partners data directories
     scoreboard.updateScoreboard(scoreboardDir,submission["assignmentGroupDir"],submission["assignmentGroupId"],submission["classPeriod"],submission["listOfAssignments"])
     updateLogFile(submission, "  *** CORRECT *** ")
 
@@ -903,20 +922,13 @@ def submissionIncorrect(submission,reason=""):
     if True or submission["valid"]:
         if os.path.exists(os.path.join(submission["studentPgmRunDir"],submission["outFileName"])):
             copyfile(os.path.join(submission["studentPgmRunDir"],submission["outFileName"]),os.path.join(submission["studentDir"],outFileName))  # copy output file to data directory
-            if submission["hasPartner"]:
-                copyfile(os.path.join(submission["studentPgmRunDir"],submission["outFileName"]),os.path.join(submission["partnerDir"],outFileName))  # copy output file to partner's data directory
+            if submission["groupSubmission"]:
+              for partnerDir in submission["partnersDirs"]:
+                 copyfile(os.path.join(submission["studentPgmRunDir"],submission["outFileName"]),os.path.join(partnerDir,outFileName))  # copy output file to all partners data directories
         scoreboard.updateScoreboard(scoreboardDir,submission["assignmentGroupDir"],submission["assignmentGroupId"],submission["classPeriod"],submission["listOfAssignments"])
         updateLogFile(submission, "  >>> INCORRECT <<< ")
     else:
         updateLogFile(submission, "  >>> INVALID SUBMISSION <<< ")
-##    if autoJudging and moveTo00ManualCheck:
-##S      killProcesses(submission)
-##      print("DBG removing ->",submission["studentPgmRunDir"])
-##      if os.path.isdir(submission["studentPgmRunDir"]):
-##         for f in os.listdir(submission["studentPgmRunDir"]):
-##            print("DBG removing ->", f)
-##            os.remove(os.path.join(submission["studentPgmRunDir"], f))         
-##         rmtree(submission["studentPgmRunDir"])
     os.remove(submission["FileName"])
 
 def generateIdeCommands(submission):
