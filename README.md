@@ -123,3 +123,6 @@ When sending an email or using the clipboard, you can choose to include a local 
 
 ### Batch Files
 The latestResults directory inside the class directory will contain a batch file for each student's last submission. If the submission compiled & ran the batch file will run diff and then offer to open the IDE and input data files. If the submission did not compile or run, instead of running diff, the batch file will open the error file.
+ 
+ ### Live Scoreboard
+ I use Notepad++ to display the scoreboard (see https://www.raymond.cc/blog/monitor-log-or-text-file-changes-in-real-time-with-notepad/ on how to make Notepad++ display live results).
