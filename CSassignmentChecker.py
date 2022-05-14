@@ -37,6 +37,7 @@ from   email.mime.multipart import MIMEMultipart # for outlook
 from   email.mime.base      import MIMEBase      # for outlook
 from   email                import encoders      # for outlook
 from   PIL      import ImageGrab                 # pip install pillow
+import win32com.client  # for email using Outlook Windows 10 app (https://github.com/mhammond/pywin32)
 import pyperclip        # allows python to add things to the clipboard (so it can be quickly pasted)
 #from icecream import ic
 import webbrowser
@@ -93,6 +94,7 @@ registrationRequired = True
 
 # Use Ctrl-C to stop waiting for new submissions
 def signal_handler(signal, frame):
+    print("signal handler")
     global interrupted
     interrupted = True
 
@@ -217,17 +219,34 @@ def setup():
     return allAssignmentGroups, allAssignments
 
 def emailStudent(submission):
+    emailCodes = []
+    if submission["groupSubmission"]:
+        print("  Group submission.  Choose student(s) to send email to.")
+        choice = 1
+        validResponses = ['a']
+        for code in submission["groupCodes"]:
+            print("    (" + str(choice) + ") " + submission["classRegistration"][code][0])
+            validResponses.append(str(choice))
+            choice = choice + 1
+        response = input("  Choose (1-"+str(choice-1)+"), (a)ll? ")
+        while response not in validResponses:
+           response = input("  Choose (1-"+str(choice-1)+"), (a)ll? ")
+        if response == 'a':
+            emailCodes = submission["groupCodes"]
+        else:
+            emailCodes = [submission["groupCodes"][int(response)-1]]
+    else:
+        emailCodes = [submission["studentCode"]]
     receiverEmailAddress = ""
-    if "studentCode" in submission and submission["studentCode"] in submission["classRegistration"]:
-        if len(submission["classRegistration"][submission["studentCode"]]) > 2:  # email address was manually added to REGISTER.txt
-            receiverEmailAddress = submission["classRegistration"][submission["studentCode"]][2]
-    if not receiverEmailAddress:  # student is in classRegistration dictionary but email is blank OR student is not in dictionary
-        receiverEmailAddress = input("  enter student's email address -> ")
+#     if "studentCode" in submission and submission["studentCode"] in submission["classRegistration"]:
+#         if len(submission["classRegistration"][submission["studentCode"]]) > 2:  # email address was manually added to REGISTER.txt
+#             receiverEmailAddress = submission["classRegistration"][submission["studentCode"]][2]
+#     if not receiverEmailAddress:  # student is in classRegistration dictionary but email is blank OR student is not in dictionary
+#         receiverEmailAddress = input("  enter student's email address -> ")
     if "Assignment" in submission:
         subject = "P"+ submission["classPeriod"] + " StudentDrop (" + submission["Assignment"] + ")"
     else:
         subject = "StudentDrop Error"
-    print("  Preparing to send", subject, "email to", receiverEmailAddress)
     comment = commentFromFile(submission)
     response = ""
     if comment != "cancelComment":
@@ -252,9 +271,13 @@ def emailStudent(submission):
               comment = comment + "\nBe sure to look at the e-mail attachment."
        updateLogFile(submission, "  email msg -> " + comment)
        message = comment + emailSignature
-       emailSent = emailWithOutlook(emailSendFromAddress,emailSendFromPassword,receiverEmailAddress,subject,message,attachment)
-       if emailSent:
-          print("  Email sent.")
+       # emailSent = emailWithOutlookViaSMTP(emailSendFromAddress,emailSendFromPassword,receiverEmailAddress,subject,message,attachment)
+       for emailCode in emailCodes:
+           receiverEmailAddress = submission["classRegistration"][emailCode][2]
+           # print("  Preparing to send", subject, "email to", receiverEmailAddress)
+           emailSent = emailWithOutlook(receiverEmailAddress,subject,message,attachment)
+           if emailSent:
+              print("  Email sent.")
 
 # https://realpython.com/python-send-email/#option-1-setting-up-a-gmail-account-for-development
 # NOTE: DOES NOT CURRENTLY HANDLE ATTACHMENTS
@@ -267,8 +290,21 @@ def emailWithGmail(senderEmailAddress, senderPassword, receiverEmailAddress, sub
         server.login(senderEmailAddress, senderPassword)
         server.sendmail(senderEmailAddress, receiverEmailAddress, msgToSend)
 
+# send email using the Windows 10 Outlook App
+def emailWithOutlook(email_recipient,email_subject,email_message,attachment_location=""):
+    outlook=win32com.client.Dispatch("Outlook.Application")
+    email=outlook.CreateItem(0)
+    email.To = email_recipient
+    email.Subject = email_subject
+    email.Body = email_message
+    if attachment_location != "":
+        email.Attachments.Add(attachment_location)
+    email.send
+    return True
+
+# send email via Outlook using SMTP (blocked by school district now)
 # https://medium.com/@neonforge/how-to-send-emails-with-attachments-with-python-by-using-microsoft-outlook-or-office365-smtp-b20405c9e63a
-def emailWithOutlook(email_sender,email_password,email_recipient,email_subject,email_message,attachment_location=""):
+def emailWithOutlookViaSMTP(email_sender,email_password,email_recipient,email_subject,email_message,attachment_location=""):
     success = True
     msg = MIMEMultipart()
     msg["From"] = email_sender
@@ -471,9 +507,13 @@ def processCurrentSubmission(currentSubmission, assignmentGroups, assignments,cl
    else:
       if submission["groupSubmission"]:
          registrationOK = True
-         for i in range(len(submission["groupLastNames"])):
-            studentRegistered = checkStudentRegistration(submission["FileName"],submission["groupLastNames"][i],submission["groupFirstNames"][i],submission["groupCodes"][i],submission["classRegistration"])
-            registrationOK = registrationOK and studentRegistered
+         if (len(submission["groupLastNames"]) == len(submission["groupFirstNames"])) and (len(submission["groupLastNames"]) == len(submission["groupCodes"])):
+            for i in range(len(submission["groupLastNames"])):
+                studentRegistered = checkStudentRegistration(submission["FileName"],submission["groupLastNames"][i],submission["groupFirstNames"][i],submission["groupCodes"][i],submission["classRegistration"])
+                registrationOK = registrationOK and studentRegistered
+         else:
+            registrationOK = False
+            print("  Different number of last names, first names, and eecret codes.");
       else:
          registrationOK = checkStudentRegistration(submission["FileName"],nameLast,nameFirst,code,submission["classRegistration"])
 
@@ -486,7 +526,8 @@ def processCurrentSubmission(currentSubmission, assignmentGroups, assignments,cl
        if validFileName and not(assignment in submission["listOfAssignments"]):
           print("  Assignment >"+assignment+"< is not in group "+submission["listOfAssignments"])   
 
-   if validFileName and not((assignment in assignments) or (assignment == "registerMe")):
+   submission["invalidAssignment"] = validFileName and not((assignment in assignments) or (assignment == "registerMe"))
+   if submission["invalidAssignment"]:
       print("  Invalid Assignment Name: >"+assignment+"<")
       
    if validFileName and ((assignment in assignments) or (assignment == "registerMe")) and registrationOK and (assignment == "registerMe" or (assignment in submission["listOfAssignments"])):
@@ -583,7 +624,7 @@ def processCurrentSubmission(currentSubmission, assignmentGroups, assignments,cl
            for i in range(len(submission["groupLastNames"])):
               partnerName = submission["groupLastNames"][i] + " " + submission["groupFirstNames"][i]
               partnerCode = submission["groupCodes"][i]
-              print(f'{getframeinfo(currentframe()).lineno}: {partnerName=} {partnerCode=}')
+              #print(f'{getframeinfo(currentframe()).lineno}: {partnerName=} {partnerCode=}')
               partnerDir = os.path.join(submission["assignmentGroupDir"],partnerName + "_" + partnerCode)
               partnersDirs.append(partnerDir)
               if not os.path.isdir(partnerDir):
@@ -594,8 +635,9 @@ def processCurrentSubmission(currentSubmission, assignmentGroups, assignments,cl
       updateLogFile(submission, "  File submission error (" + submission["FileName"] + ")",True)
       pyperclip.copy(submission["FileName"])
       time.sleep(0.5)
-      for key,value in submission["classRegistration"].items():
-         print(f'    {key} {value[0]}')
+      if not submission["invalidAssignment"]:    # if not invalid assignment
+         for key,value in submission["classRegistration"].items():
+           print(f'    {key} {value[0]}')
       while True:
          response = input("  New name (clipboard), (r)emove submission (m)ove to manual check? ")
          if response == 'r':
@@ -957,7 +999,7 @@ def setFileTimestampToNow(file):
 def killProcesses(submission):
     for process in submission["processes"]:
         try:
-            subprocess.call(['taskkill', '/F', '/T', '/PID', str(process.pid)])
+            subprocess.call(['taskkill', '/F', '/T', '/PID', str(process.pid)],stdout=devnull, stderr=devnull)
         except:
             pass
     submission["processes"] = []
