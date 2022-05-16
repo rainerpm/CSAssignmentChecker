@@ -2,11 +2,13 @@
 
 ### Overview
 
-The **CSAssignmentChecker.py** program verifies python or java assignments submitted by students. This program currently supports basic verification for Python programs and more advanced verification for JAVA programs. Student assignments are organized into assignment groups, each of which has a "scoreboard" file showing the results for each student. The program supports directly emailing a teacher comment to a student.
+The **CSAssignmentChecker.py** (**CSAC**) program verifies python or java assignments submitted by students. **CSAC** currently supports basic verification for Python programs and more advanced verification for JAVA programs. Student assignments are organized into assignment groups, each of which has a "scoreboard" file showing the results for each student. The program supports directly emailing a teacher comment to a student.
 
 ### Requirements
-The following programs are required to be installed (the programs in parenthesis are what I use, but can be replaced with something equivilant).
+The following programs are required to be installed (the programs in parenthesis are what I use, but can be replaced with something equivalant).
   * Python (https://www.python.org/downloads/)
+    * The following is required to email via the Windows Outlook app
+      * pip install pywin32
     * The following are only required for providing a student feeback comment via email or the clipboard and can be installed later
       * pip install pyperclip (enables the program to access the clipboard)
       * pip install pillow (enables the program to "grab" an image from the most recent clipboard entry) 
@@ -15,16 +17,15 @@ The following programs are required to be installed (the programs in parenthesis
   * diff program (https://winmerge.org/?lang=en).
 
 ### Assignment Submission and Verification
-Student submit an assignment by submitting a single file to the class period folder on the teacher's computer that is running this program.
-The submitted file must be named **Last First ? - @.$** (where **Last** student's last name, **First** student's first name,  **?** unique student number, **@** assignment name, **$** file extension: either py, java for individual files or zip for multiple files). For JAVA, the class in the **Last First ? - @.$** file must be named @. An example of a valid filename is **Shotwell Gwynne 4381 - encryption.py**.
+To submit an assignment a student submits a single file, which must be named **Last First ? - @.$** (where **Last** student's last name, **First** student's first name,  **?** unique student number, **@** assignment name, **$** file extension: either py, java for individual files or zip for multiple files). For JAVA, the class in the **Last First ? - @.$** file must be named @. An example of a valid filename is **Shotwell Gwynne 4381 - encryption.py**.
 
-Ideally students students have a way to submit a file in real time directly to the class period folder on the teacher's hard drive (one way to do this is to have the students submit to an online folder that is automatically synched to the teacher's PC - e.g. [Dropbox File Request feature](https://fileinbox.com/articles/dropbox-file-requests-ultimate-guide#:~:text=Unfortunately%2C%20Dropbox%20File%20Requests%20don,to%20create%20a%20Dropbox%20account.).
+The submitted file must be accessible to the **CSAssignmentChecker.py** program.  Ideally the assignment is submitted in real time directly to the class period folder on the teacher's hard drive (one way to do this is to have the students submit to an online folder that is automatically synched to the teacher's PC - e.g. [Dropbox File Request feature](https://fileinbox.com/articles/dropbox-file-requests-ultimate-guide#:~:text=Unfortunately%2C%20Dropbox%20File%20Requests%20don,to%20create%20a%20Dropbox%20account.)).
 
-* **Basic Verification**  When the student submits a Python or JAVA program that simply prints its output, this program runs the student's program and compares the program's generated output to the teacher provided "golden" output.  The student's program can optionally read test data from a file named **@.dat**. As part of an assignment, student's are usually provided a **@.dat** file with a few basic test cases. A teacher will typically provides a **@.dat** file with more comprehensive test cases to this program.  The student's program can optionally prompt the user for input - e.g. Python: input() JAVA: scan.nextInt().  To provide this user input, the teacher provides this program with one or more **pgmUserInput&.txt** files (& is a unique identifier, usually 1,2,3, ...). The submitted program is run once for each user input file.
+* **Basic Verification**  When the student submits a Python or JAVA program that simply prints its output, **CSAC** runs the student's program and compares the program's generated output to the teacher provided "golden" output.  The student's program can optionally read test data from a file named **@.dat**. As part of an assignment, student's are usually provided a **@.dat** file with a few basic test cases. A teacher will typically provide **CSAC** a **@.dat** file with more comprehensive test cases to **CSAC**.  The student's program can optionally prompt the user for input - e.g. Python: input() JAVA: scan.nextInt().  To provide this user input, the teacher provides **CSAC** with one or more **pgmUserInput&.txt** files (& is a unique identifier, usually 1,2,3, ...). The submitted program is run once for each user input file.
 
-* **Advanced Verification (JAVA only)** This program runs any or all of these OPTIONAL programs 
+* **Advanced Verification (JAVA only)** **CSAC** runs any or all of these OPTIONAL programs 
   * **@Checker.java**  [provided by teacher] Code provided by the teacher to check the contents of the student's program (number and type of instance variables as well as details on the constructors and methods in the student's program). The output is compared to the **checker.txt** file provided by the teacher. 
-  * **@Runner.java**  [submitted by students] Code that the student wrote that uses the class(es) they wrote. The output is compared to the  **gold.txt** output file provided by the teacher. The @Runner.java program can optionally prompt the user for input. To provide this user input to this program, the teacher provides one or more runnerUserInput&.txt files (& is a unique identifier, usually 1,2,3, ...). The @Runner.java program will be run once for each user input file.
+  * **@Runner.java**  [submitted by students] Code that the student wrote that uses the class(es) they wrote. The output is compared to the  **gold.txt** output file provided by the teacher. The @Runner.java program can optionally prompt the user for input. To provide this user input to **CSAC**, the teacher provides one or more runnerUserInput&.txt files (& is a unique identifier, usually 1,2,3, ...). The @Runner.java program will be run once for each user input file.
   * **@Tester.java**  [provided by teacher] Code provided by the teacher that tests the program submitted by the student. The output is compared to the  **gold.txt** output file provided by the teacher.    
 
 ### Program (and Demo) Setup
