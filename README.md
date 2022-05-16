@@ -17,7 +17,7 @@ The following programs are required to be installed (the programs in parenthesis
   * diff program (https://winmerge.org/?lang=en).
 
 ### Assignment Submission and Verification
-To submit an assignment a student submits a single file.  An example of a valid filename is **Shotwell Gwynne 4381 - encryption.py** folowing the naming convention **Last First ? - @.$** (where **Last** = student's last name, **First** = student's first name,  **?** = unique student number, **@** = assignment name, **$** = file extension: either py, java for individual files or zip for multiple files). For JAVA, the class in the **Last First ? - @.$** file must be named **@**.
+To submit an assignment a student submits a single file.  An example of a valid filename is **Shotwell Gwynne 4381 - encryption.py**. The naming convention for the file is **Last First ? - @.$** (where **Last** = student's last name, **First** = student's first name,  **?** = unique student number, **@** = assignment name, **$** = file extension: either py, java for individual files or zip for multiple files). For JAVA, the class in the **Last First ? - @.$** file must be named **@**.
 
 The submitted file must be accessible to **CSAC**.  Ideally the assignment is submitted in real time directly to the class period folder on the teacher's hard drive (one way to do this is to have the students submit to an online folder that is automatically synched to the teacher's PC - e.g. [Dropbox File Request feature](https://fileinbox.com/articles/dropbox-file-requests-ultimate-guide#:~:text=Unfortunately%2C%20Dropbox%20File%20Requests%20don,to%20create%20a%20Dropbox%20account.)).
 
