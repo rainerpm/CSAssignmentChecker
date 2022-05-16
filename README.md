@@ -29,7 +29,7 @@ The submitted file must be accessible to **CSAC**.  Ideally the assignment is su
   * **@Tester.java**  [provided by teacher] Code provided by the teacher that tests the program submitted by the student. The output is compared to the  **gold.txt** output file provided by the teacher.    
 
 ### Program (and Demo) Setup
-* unzip demo.zip to a folder on your hard drive (i.e. C:/YourPathToDemoDir/demo)
+* unzip demo.zip to a folder on your hard drive (e.g. C:/YourPathToDemoDir/demo)
   * **ASSIGNMENT_GROUPS** folder
     * **first6weeksAssignments, pythonAssignments** (these folders contain a group of related assignments, each of which will have it's own scoreboard file)
       * **GCD, encryption** (these are the assignment folders  - the name of the assignment folder **is** the **assignment name**, assignment names must be unique)
@@ -49,13 +49,12 @@ The submitted file must be accessible to **CSAC**.  Ideally the assignment is su
   * set the **rootDir** variable to the location of the unzipped demo folder - C:/YourPathToDemoDir/demo 
   * set the **scoreboardDir** variable to C:/YourPathToDemoDir/demo/scoreboard
   * hereafter C:/YourPathToDemoDir/demo is abbreviated /demo.
-* set the following executable variables
+* set the following variables in **customize.py**
   * set the **pythonIdeLoc** variable to the location of the Python IDE (e.g. IDLE) executable.
   * set the **javaIdeLoc** variable to the location of the JAVA IDE (e.g. jGrasp) executable.
     * NOTE: The program uses *-parameters* compile option to ensure that JAVA reflection reflects parameter types instead of just using arg0
   * set the **textEditorLoc** variable to the location of a text editor (e.g. Notepad++) executable.
   * set the **diffLoc** variable to the location of the diff program (e.g. winMerge, meld, kdiff, or tkdiff) executable.
-* setup your email address and login in **login.py**
 ### Run the Demo
 Demo Video [download](https://drive.google.com/file/d/1o7TA-ym4WC4xezXcMf3mqvpzbMRN7Awm/view?usp=sharing) or [YouTube](https://youtu.be/Nr0t-hp050Y) The demo verifies two student assignments (1) [encryption](https://docs.google.com/document/d/1mr5FHL-cf3T1kRR0F10KCWwGGdjZC4Cj/edit?usp=sharing&ouid=117088614197672338242&rtpof=true&sd=true) (2) [GCD](https://docs.google.com/document/d/14nIXTUOr70_zRUZojzMZhbs9AmTWs5WxatsVtjNT_c4/edit?usp=sharing)
 * run CSassignmentChecker.py  
@@ -120,7 +119,7 @@ is displayed with the following options (NOTE: Be sure that you are done with th
 To register each student submits a text file with the assignment name **registerMe**. This file must contain the student's unique student number on line 1 and email address on line 2.
  
 ### Sending Emails or using the Clipboard 
-When sending an email or using the clipboard, you can choose to include a local (i.e. assignment specific) comment from the comments.txt file in the assignments folder or general comment from ASSIGNMENT_GROUPS/commentsLANGUAGE.txt. From the comment menu **Comment (g[#], l[#], (o)ne-time comment, (n)o comment)?** choose **g** or **l** to open the global or local comment file in the text editor.  Append a number to select one of the comments (e.g. **l2** selects **comment 2** from the local comments.txt).
+**CSAC** currently uses the Windows Outlook app (see **emailWithOutlook** function) to email students. I used to use the Outlook web app (see **emailWithOutlookSMTP** function), but our school district blocked that functionality.  The **emailWithGmail** function is also provided. The information content of the **CSAC** email can also be accessed via the Windows clipboard (which for a while has had the capability to store multiple items). When sending an email or using the clipboard, you can choose to include a local (i.e. assignment specific) comment from the comments.txt file in the assignments folder or general comment from ASSIGNMENT_GROUPS/commentsLANGUAGE.txt. From the comment menu **Comment (g[#], l[#], (o)ne-time comment, (n)o comment)?** choose **g** or **l** to open the global or local comment file in the text editor.  Append a number to select one of the comments (e.g. **l2** selects **comment 2** from the local comments.txt.  
  
 ### Group submission
 A group of 2 or more students can submit an assignment. For example three students can submit an assignment by submitting a file named **Last1+Last2+Last3 First1+First2+First3 ?1+?2+?3 - @.$** (where **Last1** **Last2** **Last3** are their last names, **First1** **First2** **First3** are their first names,  **?1**  **?2**  **?3** are their unique student numbers, **@** assignment name, **$** file extension: either py, java for individual files, or zip for multiple files).
