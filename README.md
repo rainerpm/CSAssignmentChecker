@@ -1,11 +1,11 @@
-# CSAssignmentChecker (CSAC)
+# CSAssignmentChecker
 
 ### Overview
 
-The **CSAssignmentChecker.py** (**CSAC**) program verifies python or java assignments submitted by students. **CSAC** currently supports basic verification for Python programs and more advanced verification for JAVA programs. Student assignments are organized into assignment groups, each of which has a "scoreboard" file showing the results for each student. The program supports directly emailing a teacher comment to a student.
+The **CSAssignmentChecker.py** (aka **CSAC**) program verifies python or java assignments submitted by students. **CSAC** supports basic verification for Python programs and more advanced verification for JAVA programs. Student assignments are organized into assignment groups, each of which has a "scoreboard" file showing the results for each student. The program supports directly emailing a teacher comment to a student.
 
 ### Requirements
-The following programs are required to be installed (the programs in parenthesis are what I use, but can be replaced with something equivalant).
+The following programs are required to be installed (the programs in parenthesis are what I use, but can be replaced with something equivalent by updating the customize.py file).
   * Python (https://www.python.org/downloads/)
     * The following is required to email via the Windows Outlook app
       * pip install pywin32
@@ -13,11 +13,11 @@ The following programs are required to be installed (the programs in parenthesis
       * pip install pyperclip (enables the program to access the clipboard)
       * pip install pillow (enables the program to "grab" an image from the most recent clipboard entry) 
   * JAVA (https://www.jgrasp.org/)
-  * Text Editor (https://notepad-plus-plus.org/downloads/ **CSAssignmentChecker.py** uses a Notepad++ session file to open multiple files)
+  * Text Editor (https://notepad-plus-plus.org/downloads/ **CSAC** uses a Notepad++ session file to open multiple files)
   * diff program (https://winmerge.org/?lang=en).
 
 ### Assignment Submission and Verification
-To submit an assignment a student submits a single file named **Last First ? - @.$** (where **Last** = student's last name, **First** = student's first name,  **?** = unique student number, **@** = assignment name, **$** = file extension: either py, java for individual files or zip for multiple files). For JAVA, the class in the **Last First ? - @.$** file must be named **@**. An example of a valid filename is **Shotwell Gwynne 4381 - encryption.py**.
+To submit an assignment a student submits a single file.  An example of a valid filename is **Shotwell Gwynne 4381 - encryption.py** folowing the naming convention **Last First ? - @.$** (where **Last** = student's last name, **First** = student's first name,  **?** = unique student number, **@** = assignment name, **$** = file extension: either py, java for individual files or zip for multiple files). For JAVA, the class in the **Last First ? - @.$** file must be named **@**.
 
 The submitted file must be accessible to **CSAC**.  Ideally the assignment is submitted in real time directly to the class period folder on the teacher's hard drive (one way to do this is to have the students submit to an online folder that is automatically synched to the teacher's PC - e.g. [Dropbox File Request feature](https://fileinbox.com/articles/dropbox-file-requests-ultimate-guide#:~:text=Unfortunately%2C%20Dropbox%20File%20Requests%20don,to%20create%20a%20Dropbox%20account.)).
 
