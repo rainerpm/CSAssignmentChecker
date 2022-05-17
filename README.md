@@ -55,8 +55,8 @@ The submitted file must be accessible to **CSAC**.  Ideally the assignment is su
     * NOTE: The program uses *-parameters* compile option to ensure that JAVA reflection reflects parameter types instead of just using arg0
   * set the **textEditorLoc** variable to the location of a text editor (e.g. Notepad++) executable.
   * set the **diffLoc** variable to the location of the diff program (e.g. winMerge, meld, kdiff, or tkdiff) executable.
-### Run the Demo
-Demo Video [download](https://drive.google.com/file/d/1o7TA-ym4WC4xezXcMf3mqvpzbMRN7Awm/view?usp=sharing) or [YouTube](https://youtu.be/Nr0t-hp050Y) The demo verifies two student assignments (1) [encryption](https://docs.google.com/document/d/1mr5FHL-cf3T1kRR0F10KCWwGGdjZC4Cj/edit?usp=sharing&ouid=117088614197672338242&rtpof=true&sd=true) (2) [GCD](https://docs.google.com/document/d/14nIXTUOr70_zRUZojzMZhbs9AmTWs5WxatsVtjNT_c4/edit?usp=sharing)
+### Demo
+The demo verifies two student assignments (1) [encryption](https://docs.google.com/document/d/1mr5FHL-cf3T1kRR0F10KCWwGGdjZC4Cj/edit?usp=sharing&ouid=117088614197672338242&rtpof=true&sd=true) (2) [GCD](https://docs.google.com/document/d/14nIXTUOr70_zRUZojzMZhbs9AmTWs5WxatsVtjNT_c4/edit?usp=sharing). Follow the below steps and/or wath the demo video [download](https://drive.google.com/file/d/1o7TA-ym4WC4xezXcMf3mqvpzbMRN7Awm/view?usp=sharing) or [YouTube](https://youtu.be/Nr0t-hp050Y) 
 * run CSassignmentChecker.py  
   * since this is the first time the program has been run, the program creates some required directories.
   * You should now see the Main Menu\
@@ -93,7 +93,7 @@ has the following options
 
 ### Assignment Menu
 In manual mode after a student's program submission has been run and either the program was correct or the program was incorrect and the **diff window** has been closed, the Assignment Menu\
-**y/n/p [s d a h i o g e c m f l ls k](r){x}?**\
+**y/n/p [s d a b h i o g e c m f l ls k w ?](r){x}**\
 is displayed with the following options (NOTE: Be sure that you are done with the current assignment submission before answering y n m r as this will make program proceed to the next submission)
 * **y** judge the student's program as correct, update the program's status in /demo/scoreboard/, and then **move on** to the next student submission. The teacher can choose to ignore inconsequential differences in the output shown in the **diff window** and still count the program correct.
 * **n** judge the student's program as incorrect, update the program's status in /demo/scoreboard/, and then **move on** to the next student submission.
@@ -101,16 +101,18 @@ is displayed with the following options (NOTE: Be sure that you are done with th
 * **s** show the student's program submission in the IDE.
 * **d** run diff program again
 * **a** run the program again (runs all the checks again, retaining any edits that may have been made in the directory where the student program is run).
+* **b** bring up file explorer in the scoreboard directory.
 * **i** open the data input file for the assignment in the text editor
 * **o** open the student's stdout in the text editor
 * **g** opens grades.txt file in student's assignment folder using the text editor.
 * **e** email the student with information regarding the assignment status.
 * **c** copy information about the assignment status to the Clipboard (be sure to enable Windows Clipboard History). This option is provided, since emailing directly from the program may not be allowed by the school network.
-* **m** move the student's program submission to the 00SAVE directory and then **move on** to the next student submission.
+* **m** move the student's program submission to the 00MANUAL directory (so it may be run manually later) and then **move on** to the next student submission.
 * **f** opens Windows file explorer in the student's assignment directory.
 * **l** opens the global log file (logGlobal.txt) in the text editor.
 * **ls** opens the student's log file (log.txt) in the text editor.
 * **k** kill any open texteditor, IDE, or diff processes (does not work on file explorer - couldn't figure out why).
+* **w** set the timestamp of the submission to NOW (this will make the file the lowest priority of the submitted files in the queue and thus run after all the others).
 * **r** remove the submission from the class period directory and then move on to the next student's submission.
 * **x** exit the program.
 * **h** open web browser showing this page
