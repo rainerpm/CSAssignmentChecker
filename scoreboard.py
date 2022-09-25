@@ -47,7 +47,7 @@ def assignmentResults(listOfStudentDataFiles):
      return result,points,correctFound 
 
 def updateScoreboard(scoreboardDir,contestDataDir,assignmentGroupId,classId,listOfTestNames):
-   SCOREBOARD4EACHSTUDENT = True
+   SCOREBOARD4EACHSTUDENT = False   # only use this for a contest, so that there is a scoreboard for each team
      
    footer = """
 C#  = test ran successfully (was submitted incorrectly # of times)
@@ -61,12 +61,28 @@ The POINTS column indicates your UIL programming competition score (60 pts/probl
 
      
    currentDate = datetime.now().strftime("%m-%d-%y")
-   if not os.path.isdir(scoreboardDir + '/annonymous/'):
-      os.mkdir(scoreboardDir + '/annonymous/')
-   scoreboardFile = scoreboardDir + '/annonymous/' + 'Period' + classId + "_" + assignmentGroupId + '.txt'
-   if not os.path.isdir(scoreboardDir + '/withNames/'):
-      os.mkdir(scoreboardDir + '/withNames/')
-   scoreboardFileWithNames = scoreboardDir + '/withNames/' + 'Period' + classId + "_" + assignmentGroupId + '.txt'
+   directories1 = [scoreboardDir, scoreboardDir + '/annonymous/', scoreboardDir + '/annonymous/Period' + classId,  scoreboardDir + '/annonymous/Period' + classId + '/noFooterForLiveMonitoring']
+   for directory in directories1:
+     if not os.path.isdir(directory):
+       os.mkdir(directory)
+   directories2 = [scoreboardDir, scoreboardDir + '/withNames/', scoreboardDir + '/withNames/Period' + classId,  scoreboardDir + '/withNames/Period' + classId + '/noFooterForLiveMonitoring']
+   for directory in directories2:
+     if not os.path.isdir(directory):
+       os.mkdir(directory)   
+##   if not os.path.isdir(scoreboardDir):
+##      os.mkdir(scoreboardDir)
+##   if not os.path.isdir(scoreboardDir + '/annonymous/'):
+##      os.mkdir(scoreboardDir + '/annonymous/')
+##   if not os.path.isdir(scoreboardDir + '/annonymous/'):
+##      os.mkdir(scoreboardDir + '/annonymous/Period' + classId)
+##      os.mkdir(scoreboardDir + '/annonymous/Period' + classId + '/noFooterForLiveMonitoring')
+   scoreboardFile = scoreboardDir + '/annonymous/Period' + classId + "/" + assignmentGroupId + '.txt'
+   scoreboardFileNoFooter = scoreboardDir + '/annonymous/Period' + classId + '/noFooterForLiveMonitoring' + "/" + assignmentGroupId + '.txt'
+##   if not os.path.isdir(scoreboardDir + '/withNames/'):
+##      os.mkdir(scoreboardDir + '/withNames/')
+##      os.mkdir(scoreboardDir + '/withNames/Period' + classId)
+##      os.mkdir(scoreboardDir + '/withNames/Period' + classId + '/noFooterForLiveMonitoring')
+   scoreboardFileWithNames = scoreboardDir + '/withNames/Period' + classId + "/" + assignmentGroupId + '.txt'
    for includeNames in [True,False]:
       if includeNames:
         fscoreboard  = open(scoreboardFileWithNames,'w')
@@ -152,12 +168,19 @@ The POINTS column indicates your UIL programming competition score (60 pts/probl
           totals = f'{totals}{testCorrectStr:>2}  '
 
       if includeNames:
-         fscoreboard.write('TOTALS             ' + f'{sumTotals:>4d}' + '     ' + totals + '\n\n')
+         fscoreboard.write('TOTALS             ' + f'{sumTotals:>4d}' + '     ' + totals)
       else:
-         fscoreboard.write('TOTALS  ' + totals + f'{sumTotals:>4d}' + '\n\n')
-         
-      fscoreboard.write(footer)
-      fscoreboard.close()  
+         fscoreboard.write('TOTALS  ' + totals + f'{sumTotals:>4d}')
+
+      if includeNames:
+         fscoreboard.write('\n' + footer)
+         fscoreboard.close()
+      else:   # annonymous scoreboard
+         fscoreboard.close()
+         copyfile(scoreboardFile,scoreboardFileNoFooter)  # the NoFooter Scoreboard is the right size for live monitoring of the score with Notepad++'s Document Monitor plugin (since the plugin scrolls to the end you can't fit the whole file on the screen if it has the footer lines)
+         fscoreboard = open(scoreboardFile,'a')
+         fscoreboard.write('\n' + footer)
+         fscoreboard.close()         
 
          
 def lastname(directoryName):
