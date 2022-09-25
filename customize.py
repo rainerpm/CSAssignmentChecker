@@ -7,15 +7,29 @@ textEditor = r'c:/Program Files (x86)/Notepad++/notepad++.exe'
 #diffPgm = r'C:/Program Files (x86)/Meld/Meld.exe'
 diffPgm = r'C:\Program Files\WinMerge/WinMergeU.exe'
 
-
-##### For Demo
 # java and python class periods
-validClassPeriods = ["1","4","5"]
+validClassPeriods = ["4","5","7","9"]
 
 # directories
-rootDir = r'C:/Users/E151509/Downloads/demo'
-scoreboardDir = r'C:/Users/E151509/Downloads/demo/scoreboard'
+rootDir = r'C:/Users/E151509/Dropbox/Apps/StudentFiles'
+#scoreboardDir = r'C:/Users/E151509/Google Drive/Course Materials/Introduction to Computer Science/10.Python/scoreboard'
+#scoreboardDirAlt = r'C:/Users/E151509/My Drive/Course Materials/Introduction to Computer Science/10.Python/scoreboard'
+scoreboardDir = r'C:\Users\E151509\Google Drive\My LASA\scoreboard'
+scoreboardDirAlt = r'C:\Users\E151509\My Drive\My LASA\scoreboard'
+mossDir = r'C:\Users\E151509\Google Drive\My LASA\misc\tools\moss plagiarize checking'
 
 # email (email login is in login.py)
-emailSignature = "/nYour Teacher/n"
-emailAttachmentFile = r"C:/Users/E151509/Downloads/CSassignmentChecker.jpg"
+emailSignature = "\n\nMr. Mueller\n"
+emailAttachmentFile = r"C:/Users/E151509/Documents/CSassignmentChecker.jpg"
+
+# timeout (default time in seconds for student assignment to time out - protects against endless loops
+TIMEOUT_DEFAULT = 5
+
+
+##### For Demo (simply uncomment the below, leave above alone)
+##validClassPeriods = ["1","4","5"]
+##rootDir = r'C:/Users/E151509/Downloads/demo'
+##scoreboardDir = r'C:/Users/E151509/Downloads/demo/scoreboard'
+##scorebardDirAlt = r''
+##emailSignature = "/nYour Teacher/n"
+##emailAttachmentFile = r"C:/Users/E151509/Downloads/CSassignmentChecker.jpg"
