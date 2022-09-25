@@ -2,33 +2,34 @@
 
 ### Overview
 
-The **CSAssignmentChecker.py** program verifies python or java assignments submitted by students. This program currently supports basic verification for Python programs and more advanced verification for JAVA programs. Student assignments are organized into assignment groups, each of which has a "scoreboard" file showing the results for each student. The program supports directly emailing a teacher comment to a student.
+The **CSAssignmentChecker.py** (aka **CSAC**) program verifies python or java assignments submitted by students. **CSAC** supports basic verification for Python programs and more advanced verification for JAVA programs. Student assignments are organized into assignment groups, each of which has a "scoreboard" file showing the results for each student. The program supports directly emailing a teacher comment to a student.
 
 ### Requirements
-The following programs are required to be installed (the programs in parenthesis are what I use, but can be replaced with something equivilant).
+The following programs are required to be installed (the programs in parenthesis are what I use, but can be replaced with something equivalent by updating the customize.py file).
   * Python (https://www.python.org/downloads/)
+    * The following is required to email via the Windows Outlook app
+      * pip install pywin32
     * The following are only required for providing a student feeback comment via email or the clipboard and can be installed later
       * pip install pyperclip (enables the program to access the clipboard)
       * pip install pillow (enables the program to "grab" an image from the most recent clipboard entry) 
   * JAVA (https://www.jgrasp.org/)
-  * Text Editor (https://notepad-plus-plus.org/downloads/ **CSAssignmentChecker.py** uses a Notepad++ session file to open multiple files)
+  * Text Editor (https://notepad-plus-plus.org/downloads/ **CSAC** uses a Notepad++ session file to open multiple files)
   * diff program (https://winmerge.org/?lang=en).
 
 ### Assignment Submission and Verification
-Student submit an assignment by submitting a single file to the class period folder on the teacher's computer that is running this program.
-The submitted file must be named **Last First ? - @.$** (where **Last** student's last name, **First** student's first name,  **?** unique student number, **@** assignment name, **$** file extension: either py, java for individual files or zip for multiple files). For JAVA, the class in the **Last First ? - @.$** file must be named @. An example of a valid filename is **Shotwell Gwynne 4381 - encryption.py**.
+To submit an assignment a student submits a single file.  An example of a valid filename is **Shotwell Gwynne 4381 - encryption.py** as per the **CSAC** naming convention **Last First ? - @.$** (where **Last** = student's last name, **First** = student's first name,  **?** = unique student number, **@** = assignment name, **$** = file extension: either py, java for individual files or zip for multiple files). For JAVA, the class in the **Last First ? - @.$** file must be named **@**.
 
-Ideally students students have a way to submit a file in real time directly to the class period folder on the teacher's hard drive (one way to do this is to have the students submit to an online folder that is automatically synched to the teacher's PC - e.g. [Dropbox File Request feature](https://fileinbox.com/articles/dropbox-file-requests-ultimate-guide#:~:text=Unfortunately%2C%20Dropbox%20File%20Requests%20don,to%20create%20a%20Dropbox%20account.).
+The submitted file must be accessible to **CSAC**.  Ideally the assignment is submitted in real time directly to the class period folder on the teacher's hard drive (one way to do this is to have the students submit to an online folder that is automatically synched to the teacher's PC - e.g. [Dropbox File Request feature](https://fileinbox.com/articles/dropbox-file-requests-ultimate-guide#:~:text=Unfortunately%2C%20Dropbox%20File%20Requests%20don,to%20create%20a%20Dropbox%20account.)).
 
-* **Basic Verification**  When the student submits a Python or JAVA program that simply prints its output, this program runs the student's program and compares the program's generated output to the teacher provided "golden" output.  The student's program can optionally read test data from a file named **@.dat**. As part of an assignment, student's are usually provided a **@.dat** file with a few basic test cases. A teacher will typically provides a **@.dat** file with more comprehensive test cases to this program.  The student's program can optionally prompt the user for input - e.g. Python: input() JAVA: scan.nextInt().  To provide this user input, the teacher provides this program with one or more **pgmUserInput&.txt** files (& is a unique identifier, usually 1,2,3, ...). The submitted program is run once for each user input file.
+* **Basic Verification**  When the student submits a Python or JAVA program that simply prints its output, **CSAC** runs the student's program and compares the program's generated output to a teacher provided "golden" output file.  The student's program may also read test data from a file named **@.dat** (as part of an assignment, student's are usually provided a **@.dat** file with a few basic test cases; typically a teacher will provide **CSAC** a **@.dat** file with more comprehensive test cases).  The student's program may prompt the user for input - e.g. Python: input() JAVA: scan.nextInt().  To provide this user input, the teacher provides **CSAC** with one or more **pgmUserInput&.txt** files (& is a unique identifier, usually 1,2,3, ...) and **CSAC** runs the submitted program once for each  user input file.
 
-* **Advanced Verification (JAVA only)** This program runs any or all of these OPTIONAL programs 
+* **Advanced Verification (JAVA only)** **CSAC** runs any or all of these OPTIONAL programs 
   * **@Checker.java**  [provided by teacher] Code provided by the teacher to check the contents of the student's program (number and type of instance variables as well as details on the constructors and methods in the student's program). The output is compared to the **checker.txt** file provided by the teacher. 
-  * **@Runner.java**  [submitted by students] Code that the student wrote that uses the class(es) they wrote. The output is compared to the  **gold.txt** output file provided by the teacher. The @Runner.java program can optionally prompt the user for input. To provide this user input to this program, the teacher provides one or more runnerUserInput&.txt files (& is a unique identifier, usually 1,2,3, ...). The @Runner.java program will be run once for each user input file.
+  * **@Runner.java**  [submitted by students] Code that the student wrote that uses the class(es) they wrote. The output is compared to the  **gold.txt** output file provided by the teacher. The @Runner.java program can optionally prompt the user for input. To provide this user input to **CSAC**, the teacher provides one or more runnerUserInput&.txt files (& is a unique identifier, usually 1,2,3, ...). The @Runner.java program will be run once for each user input file.
   * **@Tester.java**  [provided by teacher] Code provided by the teacher that tests the program submitted by the student. The output is compared to the  **gold.txt** output file provided by the teacher.    
 
 ### Program (and Demo) Setup
-* unzip demo.zip to a folder on your hard drive (i.e. C:/YourPathToDemoDir/demo)
+* unzip demo.zip to a folder on your hard drive (e.g. C:/YourPathToDemoDir/demo)
   * **ASSIGNMENT_GROUPS** folder
     * **first6weeksAssignments, pythonAssignments** (these folders contain a group of related assignments, each of which will have it's own scoreboard file)
       * **GCD, encryption** (these are the assignment folders  - the name of the assignment folder **is** the **assignment name**, assignment names must be unique)
@@ -48,15 +49,14 @@ Ideally students students have a way to submit a file in real time directly to t
   * set the **rootDir** variable to the location of the unzipped demo folder - C:/YourPathToDemoDir/demo 
   * set the **scoreboardDir** variable to C:/YourPathToDemoDir/demo/scoreboard
   * hereafter C:/YourPathToDemoDir/demo is abbreviated /demo.
-* set the following executable variables
+* set the following variables in **customize.py**
   * set the **pythonIdeLoc** variable to the location of the Python IDE (e.g. IDLE) executable.
   * set the **javaIdeLoc** variable to the location of the JAVA IDE (e.g. jGrasp) executable.
     * NOTE: The program uses *-parameters* compile option to ensure that JAVA reflection reflects parameter types instead of just using arg0
   * set the **textEditorLoc** variable to the location of a text editor (e.g. Notepad++) executable.
   * set the **diffLoc** variable to the location of the diff program (e.g. winMerge, meld, kdiff, or tkdiff) executable.
-* setup your email address and login in **login.py**
-### Run the Demo
-Demo Video [download](https://drive.google.com/file/d/1o7TA-ym4WC4xezXcMf3mqvpzbMRN7Awm/view?usp=sharing) or [YouTube](https://youtu.be/Nr0t-hp050Y) The demo verifies two student assignments (1) [encryption](https://docs.google.com/document/d/1mr5FHL-cf3T1kRR0F10KCWwGGdjZC4Cj/edit?usp=sharing&ouid=117088614197672338242&rtpof=true&sd=true) (2) [GCD](https://docs.google.com/document/d/14nIXTUOr70_zRUZojzMZhbs9AmTWs5WxatsVtjNT_c4/edit?usp=sharing)
+### Demo
+The demo verifies two student assignments (1) [encryption](https://docs.google.com/document/d/1mr5FHL-cf3T1kRR0F10KCWwGGdjZC4Cj/edit?usp=sharing&ouid=117088614197672338242&rtpof=true&sd=true) (2) [GCD](https://docs.google.com/document/d/14nIXTUOr70_zRUZojzMZhbs9AmTWs5WxatsVtjNT_c4/edit?usp=sharing). Follow the below steps and/or watch the demo video: [download](https://drive.google.com/file/d/1o7TA-ym4WC4xezXcMf3mqvpzbMRN7Awm/view?usp=sharing) or [YouTube](https://youtu.be/Nr0t-hp050Y) 
 * run CSassignmentChecker.py  
   * since this is the first time the program has been run, the program creates some required directories.
   * You should now see the Main Menu\
@@ -93,7 +93,7 @@ has the following options
 
 ### Assignment Menu
 In manual mode after a student's program submission has been run and either the program was correct or the program was incorrect and the **diff window** has been closed, the Assignment Menu\
-**y/n/p [s d a h i o g e c m f l ls k](r){x}?**\
+**y/n/p [s d a b h i o g e c m f l ls k w ?](r){x}**\
 is displayed with the following options (NOTE: Be sure that you are done with the current assignment submission before answering y n m r as this will make program proceed to the next submission)
 * **y** judge the student's program as correct, update the program's status in /demo/scoreboard/, and then **move on** to the next student submission. The teacher can choose to ignore inconsequential differences in the output shown in the **diff window** and still count the program correct.
 * **n** judge the student's program as incorrect, update the program's status in /demo/scoreboard/, and then **move on** to the next student submission.
@@ -101,16 +101,18 @@ is displayed with the following options (NOTE: Be sure that you are done with th
 * **s** show the student's program submission in the IDE.
 * **d** run diff program again
 * **a** run the program again (runs all the checks again, retaining any edits that may have been made in the directory where the student program is run).
+* **b** bring up file explorer in the scoreboard directory.
 * **i** open the data input file for the assignment in the text editor
 * **o** open the student's stdout in the text editor
 * **g** opens grades.txt file in student's assignment folder using the text editor.
 * **e** email the student with information regarding the assignment status.
 * **c** copy information about the assignment status to the Clipboard (be sure to enable Windows Clipboard History). This option is provided, since emailing directly from the program may not be allowed by the school network.
-* **m** move the student's program submission to the 00SAVE directory and then **move on** to the next student submission.
+* **m** move the student's program submission to the 00MANUAL directory (so it may be run manually later) and then **move on** to the next student submission.
 * **f** opens Windows file explorer in the student's assignment directory.
 * **l** opens the global log file (logGlobal.txt) in the text editor.
 * **ls** opens the student's log file (log.txt) in the text editor.
 * **k** kill any open texteditor, IDE, or diff processes (does not work on file explorer - couldn't figure out why).
+* **w** set the timestamp of the submission to NOW (this will make the file the lowest priority of the submitted files in the queue and thus run after all the others).
 * **r** remove the submission from the class period directory and then move on to the next student's submission.
 * **x** exit the program.
 * **h** open web browser showing this page
@@ -119,7 +121,7 @@ is displayed with the following options (NOTE: Be sure that you are done with th
 To register each student submits a text file with the assignment name **registerMe**. This file must contain the student's unique student number on line 1 and email address on line 2.
  
 ### Sending Emails or using the Clipboard 
-When sending an email or using the clipboard, you can choose to include a local (i.e. assignment specific) comment from the comments.txt file in the assignments folder or general comment from ASSIGNMENT_GROUPS/commentsLANGUAGE.txt. From the comment menu **Comment (g[#], l[#], (o)ne-time comment, (n)o comment)?** choose **g** or **l** to open the global or local comment file in the text editor.  Append a number to select one of the comments (e.g. **l2** selects **comment 2** from the local comments.txt).
+**CSAC** currently uses the Windows Outlook app (see **emailWithOutlook** function) to email students. I used to use the Outlook web app (see **emailWithOutlookSMTP** function), but our school district blocked that functionality.  The **emailWithGmail** function is also provided. The information content of the **CSAC** email can also be accessed via the Windows clipboard (Windows 10 and Windows 11 have a [“Clipboard History” tool](https://www.popsci.com/diy/windows-clipboard-manager/) that allows the Clipboard to store multiple items). When sending an email or using the clipboard, you can choose to include a local (i.e. assignment specific) comment from the comments.txt file in the assignments folder or general comment from ASSIGNMENT_GROUPS/commentsLANGUAGE.txt. From the comment menu **Comment (g[#], l[#], (o)ne-time comment, (n)o comment)?** choose **g** or **l** to open the global or local comment file in the text editor.  Append a number to select one of the comments (e.g. **l2** selects **comment 2** from the local comments.txt.  
  
 ### Group submission
 A group of 2 or more students can submit an assignment. For example three students can submit an assignment by submitting a file named **Last1+Last2+Last3 First1+First2+First3 ?1+?2+?3 - @.$** (where **Last1** **Last2** **Last3** are their last names, **First1** **First2** **First3** are their first names,  **?1**  **?2**  **?3** are their unique student numbers, **@** assignment name, **$** file extension: either py, java for individual files, or zip for multiple files).
