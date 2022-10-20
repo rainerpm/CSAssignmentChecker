@@ -17,7 +17,7 @@ The following programs are required to be installed (the programs in parenthesis
   * diff program (https://winmerge.org/?lang=en).
 
 ### Assignment Submission and Verification
-To submit an assignment a student submits a single file.  An example of a valid filename is **Shotwell Gwynne 4381 - encryption.py** as per the **CSAC** naming convention **Last First ? - @.$** (where **Last** = student's last name, **First** = student's first name,  **?** = unique student number, **@** = assignment name, **$** = file extension: either py, java for individual files or zip for multiple files). For JAVA, the class in the **Last First ? - @.$** file must be named **@**.
+To submit an assignment a student submits a single file.  An example of a valid filename is **Shotwell Gwynne 4381 - encryption.py** as per the **CSAC** naming convention **Last First ?_@.$** (where **Last** = student's last name, **First** = student's first name,  **?** = unique student number, **@** = assignment name, **$** = file extension: either py, java for individual files or zip for multiple files). For JAVA, the class in the **Last First ?_@.$** file must be named **@**.
 
 The submitted file must be accessible to **CSAC**.  Ideally the assignment is submitted in real time directly to the class period folder on the teacher's hard drive (one way to do this is to have the students submit to an online folder that is automatically synched to the teacher's PC - e.g. [Dropbox File Request feature](https://fileinbox.com/articles/dropbox-file-requests-ultimate-guide#:~:text=Unfortunately%2C%20Dropbox%20File%20Requests%20don,to%20create%20a%20Dropbox%20account.)).
 
@@ -96,6 +96,7 @@ In manual mode after a student's program submission has been run and either the 
 **y/n/p [s d a b h i o g e c m f l ls k w ?](r){x}**\
 is displayed with the following options (NOTE: Be sure that you are done with the current assignment submission before answering y n m r as this will make program proceed to the next submission)
 * **y** judge the student's program as correct, update the program's status in /demo/scoreboard/, and then **move on** to the next student submission. The teacher can choose to ignore inconsequential differences in the output shown in the **diff window** and still count the program correct.
+* **l** same as y above, but submission is marked as being LATE
 * **n** judge the student's program as incorrect, update the program's status in /demo/scoreboard/, and then **move on** to the next student submission.
 * **p** judge the student's program as incorrect due to a presentation error (e.g. incorrect spacing,punctuation,capitalization), update the program's status in /demo/scoreboard/, and then **move on** to the next student submission.
 * **s** show the student's program submission in the IDE.
