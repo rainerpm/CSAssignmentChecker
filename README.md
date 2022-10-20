@@ -93,7 +93,7 @@ has the following options
 
 ### Assignment Menu
 In manual mode after a student's program submission has been run and either the program was correct or the program was incorrect and the **diff window** has been closed, the Assignment Menu\
-**y/n/p [s d a b h i o g e c m f l ls k w ?](r){x}**\
+**y/l/n/p [s d a b h i o g e c m f k t ?](r){x}**\
 is displayed with the following options (NOTE: Be sure that you are done with the current assignment submission before answering y n m r as this will make program proceed to the next submission)
 * **y** judge the student's program as correct, update the program's status in /demo/scoreboard/, and then **move on** to the next student submission. The teacher can choose to ignore inconsequential differences in the output shown in the **diff window** and still count the program correct.
 * **l** same as y above, but submission is marked as being LATE
@@ -103,6 +103,7 @@ is displayed with the following options (NOTE: Be sure that you are done with th
 * **d** run diff program again
 * **a** run the program again (runs all the checks again, retaining any edits that may have been made in the directory where the student program is run).
 * **b** bring up file explorer in the scoreboard directory.
+* **h** open web browser showing this page
 * **i** open the data input file for the assignment in the text editor
 * **o** open the student's stdout in the text editor
 * **g** opens grades.txt file in student's assignment folder using the text editor.
@@ -110,13 +111,11 @@ is displayed with the following options (NOTE: Be sure that you are done with th
 * **c** copy information about the assignment status to the Clipboard (be sure to enable Windows Clipboard History). This option is provided, since emailing directly from the program may not be allowed by the school network.
 * **m** move the student's program submission to the 00MANUAL directory (so it may be run manually later) and then **move on** to the next student submission.
 * **f** opens Windows file explorer in the student's assignment directory.
-* **l** opens the global log file (logGlobal.txt) in the text editor.
-* **ls** opens the student's log file (log.txt) in the text editor.
 * **k** kill any open texteditor, IDE, or diff processes (does not work on file explorer - couldn't figure out why).
+* **t** set the timestamp of the current file to NOW (so program will process all other currently pending submissions before this one)
 * **w** set the timestamp of the submission to NOW (this will make the file the lowest priority of the submitted files in the queue and thus run after all the others).
 * **r** remove the submission from the class period directory and then move on to the next student's submission.
 * **x** exit the program.
-* **h** open web browser showing this page
  
 ### Student Registration
 To register each student submits a text file with the assignment name **registerMe**. This file must contain the student's unique student number on line 1 and email address on line 2.
