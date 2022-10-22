@@ -30,17 +30,22 @@ def assignmentResults(listOfStudentDataFiles):
      else:
         count = 0
         correctFound = False
+        resultChar = 'C'
+        late = False
         for studentDataFile in listOfStudentDataFiles:
-           if not (studentDataFile.endswith("CORRECT.txt") or studentDataFile.endswith("manualCheck.txt")):
+           if not (studentDataFile.endswith("CORRECT.txt") or studentDataFile.endswith("CORRECT_LATE.txt") or studentDataFile.endswith("manualCheck.txt")):
               count += 1
-           if studentDataFile.endswith("CORRECT.txt"):
+           if studentDataFile.endswith("CORRECT.txt") or studentDataFile.endswith("CORRECT_LATE.txt"):
               correctFound = True
+              if not late and studentDataFile.endswith("CORRECT_LATE.txt"):
+                 late = True
+                 resultChar = 'L'
         if correctFound:
            if count == 0:
-              result = "C"
+              result = resultChar
               points = 60
            else:
-              result = "C" + str(count)
+              result = resultChar + str(count)
               points = 60 - (count*5)
         else:
            result = str(count) + 'x'
@@ -51,6 +56,7 @@ def updateScoreboard(scoreboardDir,contestDataDir,assignmentGroupId,classId,list
      
    footer = """
 C#  = test ran successfully (was submitted incorrectly # of times)
+L#  = test ran successfully (was submitted incorrectly # of times) but was LATE
 #x  = test never ran successfully, submitted # times.
 Ea  = latest submission was not 100% correct when using automatic judging (submission will be checked manually later)
 Ec  = latest submission had a compile or syntax error.
