@@ -65,7 +65,7 @@ The demo verifies two student assignments (1) [encryption](https://docs.google.c
   Since there is currently no submission to process, the program prints a period every 2 seconds to let you know it is alive. Leave the program running (and printing periods) for now
 * For this demo, instead of students submitting files to the class period folder, *we will simply copy example files from /demo/sampleSubmissions/*
 * To demo the basic verification of a student program, copy **/demo/sampleSubmissions/studentProblems/Shotwell Gwynne 4381_encryption.py** to the class period 4 folder **/demo/4/**. This file is Period 4's student Gwynne Shotwell's (student code 4381) submission of the encryption assignment. The program (which up to now had been printing periods) will detect this file and run the program. 
-   * Since this student program has an error, the program will use the diff program to display the differences between the students program output and the expected "gold" output.
+   * Since this student's program output does not match the expected "gold" output, CSAC will use the diff program to display the differences between the students program output and the expected "gold" output.
    * After you've had a chance to look at the difference, close the diff window. The program now displays the Assignment Menu **y/n/p [s d a h i o g e c m f l ls k](r){x}?**
      * **Answer s** to show/see the program in the Python IDE. After you've run and/or inspected the program, close the IDE.
      * **Answer n** to judge the program as incorrect. The student's program status is reflected in /demo/scoreboard/ (one file with the student's name and one that is annoymized using the student's code that can be made accessible to the class).
