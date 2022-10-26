@@ -195,12 +195,13 @@ def setup():
     for globalAssignmentGroupDirOnly in listOfGlobalAssignmentGroupDirectories:  # iterate over assignment group directories in ASSIGNMENT_GROUPS directory
         globalAssignmentGroupDir = os.path.join(rootDir,"ASSIGNMENT_GROUPS",globalAssignmentGroupDirOnly)
         classesFile = os.path.join(globalAssignmentGroupDir,"periods.txt")
+        classPeriods = []
         if os.path.exists(classesFile): 
            with open(classesFile, "r") as cfile:
                classPeriods = cfile.read().replace("\n"," ").split()
         else:
            #RPM sthorten to parent and basename
-           print("Did not find file period.txt in",globalAssignmentGroupDir)
+           print("ERROR!!! Did not find file period.txt in",globalAssignmentGroupDir)
         for classPeriod in classPeriods:
             classPeriodsDir = os.path.join(rootDir,classPeriod)
             if not os.path.isdir(classPeriodsDir):
@@ -1132,9 +1133,15 @@ def main():
         else:
            print("No assignment found for class period",classPeriod)
            break
-        # get dictionary of all registered students and create student directory
-        # NOW part of submission["classRegistration"] dictionary
-        # classRegistration = loadRegisteredStudents(classRootDir,assignmentGroups)
+
+        # update scoreboard for every assignment group in the class
+        aKeys = list(assignmentGroups.keys())
+        aKeys.sort()
+        for aGroupId in aKeys:
+            aDict = assignmentGroups[aGroupId]
+            aGroupDir = aDict["assignmentGroupDir"]
+            listOfAssignments = aDict["listOfAssignments"]
+            scoreboard.updateScoreboard(scoreboardDir,aGroupDir,aGroupId,classPeriod,listOfAssignments)      
       
         doItAgain = False
         while True:  # loop over each program, run the oldest first

@@ -15,6 +15,7 @@ validClassPeriods = ["4","5","7","9"]
 
 # directories
 rootDir = r'C:/Users/E151509/Dropbox/Apps/StudentFiles'
+#rootDir = r'C:\Users\E151509\Downloads\demo'
 #scoreboardDir = r'C:/Users/E151509/Google Drive/Course Materials/Introduction to Computer Science/10.Python/scoreboard'
 #scoreboardDirAlt = r'C:/Users/E151509/My Drive/Course Materials/Introduction to Computer Science/10.Python/scoreboard'
 scoreboardDir = r'C:\Users\E151509\My Drive\My LASA\scoreboard'
