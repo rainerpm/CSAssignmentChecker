@@ -54,7 +54,7 @@ can be submitted directly to that folder in real time by the students (one way t
          * **timeout.txt** contains the amount of seconds the test should be given before timing out (optional: overrides the TIMEOUT_DEFAULT set in customize.py)
       * **periods.txt** indicates which class periods this assignment group is assigned to
     * **commentsJAVA.txt** and **commentsPYTHON.txt** contain the global comments used in student emails or clipboard
-  * **1,4,5** (these are the class period folders to which student assignment files are either explicitly copied or directly submitted  via something like a Dropbox File Request. Inside each folder is a folder for each assignment group that contains folders for each of the students which contain folders for the student's program submissions. 
+  * **1,4,5** (these are the class period folders to which student assignment files are either explicitly copied or directly submitted  via something like a Dropbox File Request. Inside each folder you will find the REGISTER.txt file containing the students registered to this class (for each student: a unique ID, last name, first name, class period, email address). Also in this folder is a folder for each assignment group that contains folders for each of the students which contain folders for the student's program submissions. 
   * **scoreboard_for_demo** This folder will contain the results for the student's assignments.
   * **sampleSubmissions** Example submissions for the demo.  Both registration with APSC and assignment.
   * **dueDates.txt** Optional file that contains the assigment name and its due date in a simple two column format.
@@ -65,10 +65,9 @@ The demo verifies two student assignments (1) [encryption](https://docs.google.c
   * since this is the first time the program has been run, the program creates some required directories.
   * You should now see the Main Menu\
     **(1 4 5)judge (a)utojudge score(b)oard (l)og e(x)it (\<ENTER\>=check)?**\
-  **Answer 4** to have the program enter the manual judging mode for class period 4. In this mode, the program continually checks for new submissions to the class period folder /demo/4/. The program creates the directories for the two students have been registered with this class period.
-  Since there is currently no submission to process, the program prints a period every 2 seconds to let you know it is alive. Leave the program running (and printing periods) for now
-* For this demo, instead of students submitting files to the class period folder, *we will simply copy example files from /demo/sampleSubmissions/*
-* To demo the basic verification of a student program, copy **/demo/sampleSubmissions/studentProblems/Shotwell Gwynne 4381_encryption.py** to the class period 4 folder **/demo/4/**. This file is Period 4's student Gwynne Shotwell's (student code 4381) submission of the encryption assignment. The program (which up to now had been printing periods) will detect this file and run the program. 
+  **Answer 4** to have the program enter the manual judging mode for class period 4. In this mode, the program continually checks for new submissions to the class period folder /demo/4/.
+  Since there is currently no submission to process, the program prints a period every 2 seconds to let you know it is waiting for submissions.
+* For this demo, instead of students submitting files directly to the class period folder via something like a Dropbox File Request, *we will simply copy example files from /demo/sampleSubmissions/*.  To demo the basic verification of a student program, copy **/demo/sampleSubmissions/studentProblems/Shotwell Gwynne 4381_encryption.py** to the class period 4 folder **/demo/4/**. This file is Period 4's student Gwynne Shotwell's (student code 4381) submission of the encryption assignment. The program (which up to now had been printing periods) will detect this file and run the program. 
    * Since this student's program output does not match the expected "gold" output, CSAC will use the diff program to display the differences between the students program output and the expected "gold" output.
    * After you've had a chance to look at the difference, close the diff window. The program now displays the Assignment Menu**y/l/n/p \[s d a b h i o g e c m f k t ?\](r){x}#**
      * **Answer s** to show/see the program in the Python IDE. After you've run and/or inspected the program, close the IDE.
