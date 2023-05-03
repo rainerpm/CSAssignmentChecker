@@ -2,24 +2,25 @@
 
 ### Overview
 
-The **CSAssignmentChecker.py** (aka **CSAC**) program verifies python or java assignments submitted by students. **CSAC** supports basic verification for Python programs and more advanced verification for JAVA programs. Student assignments are organized into assignment groups, each of which has a "scoreboard" file showing the results for each student. The program supports directly emailing a teacher comment to a student.
+The **CSAssignmentChecker.py** (aka **CSAC**) program verifies python or java assignments submitted by students. **CSAC** supports basic verification for Python programs and more advanced verification for JAVA programs. Student assignments are organized into assignment groups, each of which has a "scoreboard" file showing the results for each student. The program supports directly emailing a teacher comment to a student.  [video Demo](https://youtu.be/Nr0t-hp050Y) 
 
 ### Requirements
-The following programs are required to be installed (the programs in parenthesis are what I use, but can be replaced with something equivalent by updating the customize.py file).
+The following programs are required to be installed on your computer (the programs in parenthesis are what I use, but can be replaced with something equivalent by updating the customize.py file).
   * Python (https://www.python.org/downloads/)
-    * The following is required to email via the Windows Outlook app
+    * The following is only required if you want to use the option to email students directly from the program by having the program use the Windows Outlook app
       * pip install pywin32
     * The following are only required for providing a student feeback comment via email or the clipboard and can be installed later
       * pip install pyperclip (enables the program to access the clipboard)
       * pip install pillow (enables the program to "grab" an image from the most recent clipboard entry) 
   * JAVA (https://www.jgrasp.org/)
-  * Text Editor (https://notepad-plus-plus.org/downloads/ **CSAC** uses a Notepad++ session file to open multiple files)
+  * Text Editor (https://notepad-plus-plus.org/downloads/)
   * diff program (https://winmerge.org/?lang=en).
 
 ### Assignment Submission and Verification
-To submit an assignment a student submits a single file.  An example of a valid filename is **Shotwell Gwynne 4381_encryption.py** as per the **CSAC** naming convention **Last First ?_@.$** (where **Last** = student's last name, **First** = student's first name,  **?** = unique student number, **@** = assignment name, **$** = file extension: either py, java for individual files or zip for multiple files). For JAVA, the class in the **Last First ?_@.$** file must be named **@**.
+To submit an assignment a student submits a single file using the naming convention **Last First ?_@.$** (where **Last** = student's last name, **First** = student's first name,  **?** = unique student number, **@** = assignment name, **$** = file extension: either py, java for individual files or zip for multiple files). For JAVA, the class in the **Last First ?_@.$** file must be named **@**.  An example of a valid filename is **Shotwell Gwynne 4381_encryption.py**.
 
-The submitted file must be accessible to **CSAC**.  Ideally the assignment is submitted in real time directly to the class period folder on the teacher's hard drive (one way to do this is to have the students submit to an online folder that is automatically synched to the teacher's PC - e.g. [Dropbox File Request feature](https://fileinbox.com/articles/dropbox-file-requests-ultimate-guide#:~:text=Unfortunately%2C%20Dropbox%20File%20Requests%20don,to%20create%20a%20Dropbox%20account.)).
+The submitted file must be accessible to **CSAC**. The student's assignment files can be explicitly copied to the class period folder or 
+can be submitted in real time by the students directly to the class period folder on the teacher's computer (one way to do this is to have the students submit to an online folder that is automatically synched to the teacher's PC - e.g. [Dropbox File Request feature](https://fileinbox.com/articles/dropbox-file-requests-ultimate-guide#:~:text=Unfortunately%2C%20Dropbox%20File%20Requests%20don,to%20create%20a%20Dropbox%20account.)).
 
 * **Basic Verification**  When the student submits a Python or JAVA program that simply prints its output, **CSAC** runs the student's program and compares the program's generated output to a teacher provided "golden" output file.  The student's program may also read test data from a file named **@.dat** (as part of an assignment, student's are usually provided a **@.dat** file with a few basic test cases; typically a teacher will provide **CSAC** a **@.dat** file with more comprehensive test cases).  The student's program may prompt the user for input - e.g. Python: input() JAVA: scan.nextInt().  To provide this user input, the teacher provides **CSAC** with one or more **pgmUserInput&.txt** files (& is a unique identifier, usually 1,2,3, ...) and **CSAC** runs the submitted program once for each  user input file.
 
