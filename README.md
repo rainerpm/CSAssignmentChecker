@@ -84,10 +84,10 @@ The demo verifies two student assignments (1) [encryption](https://docs.google.c
   
 ### Main Menu  
 The program's Main Menu\
-**(? ? ?)judge (a)utojudge score(b)oard (l)og e(x)it (ENTER=check)?**\
+**(? ? ?)judge (a)utojudge score(b)oard (l)og e(x)it (\<ENTER\>=check)?**\
 has the following options
 * **(? ? ?)** A choice of class period numbers which cause the program to enter manual mode and monitor that class period's folder for student program submissions.  The program processes any current (and future) program submissions to that class period's folder - oldest submission is processed first. Incorrect output differences will be shown in **diff window** after which the **Assignment Menu** is displayed.
-* **(a)utojuge** Brings up the Autojudge Menu **(? ? ?)autojudge (m)ultiple (ENTER=all periods)?**. Specified class period folders are checked and any current (and future) program submissions are processed and automatically judged - if program output is not correct, the submission is counted as incorrect. 
+* **(a)utojuge** Brings up the Autojudge Menu **(? ? ?)autojudge (m)ultiple (\<ENTER\>=all periods)?**. Specified class period folders are checked and any current (and future) program submissions are processed and automatically judged - if program output is not correct, the submission is counted as incorrect. 
 * **(l)og** Program opens the global log file (logGlobal.txt in **rootDir**) in the text editor. 
 * **e(x)it** Exits the program
 * **ENTER** Pressing the *Enter* key causes the program to check all class periods for submissions and then returns to the Main Menu.
@@ -117,6 +117,7 @@ is displayed with the following options (NOTE: Be sure that you are done with th
 * **w** set the timestamp of the submission to NOW (this will make the file the lowest priority of the submitted files in the queue and thus run after all the others).
 * **r** remove the submission from the class period directory and then move on to the next student's submission.
 * **x** exit the program.
+* **#** number of submissions currently waiting to be run
  
 ### Student Registration
 To register each student submits a text file with the assignment name **registerMe**. This file must contain the student's unique student number on line 1 and email address on line 2.
@@ -125,7 +126,7 @@ To register each student submits a text file with the assignment name **register
 **CSAC** currently uses the Windows Outlook app (see **emailWithOutlook** function) to email students. I used to use the Outlook web app (see **emailWithOutlookSMTP** function), but our school district blocked that functionality.  The **emailWithGmail** function is also provided. The information content of the **CSAC** email can also be accessed via the Windows clipboard (Windows 10 and Windows 11 have a [“Clipboard History” tool](https://www.popsci.com/diy/windows-clipboard-manager/) that allows the Clipboard to store multiple items). When sending an email or using the clipboard, you can choose to include a local (i.e. assignment specific) comment from the comments.txt file in the assignments folder or general comment from ASSIGNMENT_GROUPS/commentsLANGUAGE.txt. From the comment menu **Comment (g[#], l[#], (o)ne-time comment, (n)o comment)?** choose **g** or **l** to open the global or local comment file in the text editor.  Append a number to select one of the comments (e.g. **l2** selects **comment 2** from the local comments.txt.  
  
 ### Group submission
-A group of 2 or more students can submit an assignment. For example three students can submit an assignment by submitting a file named **Last1+Last2+Last3 First1+First2+First3 ?1+?2+?3 - @.$** (where **Last1** **Last2** **Last3** are their last names, **First1** **First2** **First3** are their first names,  **?1**  **?2**  **?3** are their unique student numbers, **@** assignment name, **$** file extension: either py, java for individual files, or zip for multiple files).
+A group of 2 or more students can submit an assignment. For example three students can submit an assignment by submitting a file named **Last1+Last2+Last3 First1+First2+First3 ?1+?2+?3_@.$** (where **Last1** **Last2** **Last3** are their last names, **First1** **First2** **First3** are their first names,  **?1**  **?2**  **?3** are their unique student numbers, **@** assignment name, **$** file extension: either py, java for individual files, or zip for multiple files).
 
 ### Batch Files
 The latestResults directory inside the class directory will contain a batch file for each student's last submission. If the submission compiled & ran the batch file will run diff and then offer to open the IDE and input data files. If the submission did not compile or run, instead of running diff, the batch file will open the error file.
