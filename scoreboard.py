@@ -105,7 +105,7 @@ The POINTS column indicates your UIL programming competition score (60 pts/probl
       j = 0
 
       if includeNames:
-        fscoreboard.write('TOTALS  ')      
+        fscoreboard.write('  CODE  TOTALS  ')      
       while j < i:
          j += 1
          fscoreboard.write(f'({j:>2})')
@@ -136,7 +136,7 @@ The POINTS column indicates your UIL programming competition score (60 pts/probl
            studentResult = studentResult + f'{result:<2s}' + '  '
            countTestsInRow += 1
         if includeNames:
-           fscoreboard.write(f'{name:20s} {correctCount:>2d}     {studentResult} {totalPoints:>4d}' + '\n')
+           fscoreboard.write(f'{name[0:19]:20s} {code:<6s} {correctCount:>2d}     {studentResult} {totalPoints:>4d}' + '\n')
         else:
            fscoreboard.write(f'{code:<6s}  {studentResult}  {correctCount:>2d}    {totalPoints:>4d}' + '\n')
 
@@ -174,7 +174,7 @@ The POINTS column indicates your UIL programming competition score (60 pts/probl
           totals = f'{totals}{testCorrectStr:>2}  '
 
       if includeNames:
-         fscoreboard.write('TOTALS             ' + f'{sumTotals:>4d}' + '     ' + totals)
+         fscoreboard.write('TOTALS                    ' + f'{sumTotals:>4d}' + '     ' + totals)
       else:
          fscoreboard.write('TOTALS  ' + totals + f'{sumTotals:>4d}')
 
