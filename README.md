@@ -33,13 +33,13 @@ can be submitted directly to that folder in real time by the students (one way t
 * unzip demo.zip to a folder on your hard drive (e.g. C:/YourPathToDemoDir/demo)
 * in **customize.py**
   * set the **rootDir** variable to the location of the unzipped demo folder - C:/YourPathToDemoDir/demo 
-  * set the **scoreboardDir** variable to C:/YourPathToDemoDir/demo/scoreboard
-  * hereafter C:/YourPathToDemoDir/demo is abbreviated /demo.
+  * set the **scoreboardDir** variable to C:/YourPathToDemoDir/demo/scoreboard_for_demo
   * set the **pythonIdeLoc** variable to the location of the Python IDE (e.g. IDLE) executable.
   * set the **javaIdeLoc** variable to the location of the JAVA IDE (e.g. jGrasp) executable.
     * NOTE: The program uses *-parameters* compile option to ensure that JAVA reflection reflects parameter types instead of just using arg0
   * set the **textEditorLoc** variable to the location of a text editor (e.g. Notepad++) executable.
   * set the **diffLoc** variable to the location of the diff program (e.g. winMerge, meld, kdiff, or tkdiff) executable.
+* inside of demo/ you will also find the below (which do not need to be initialized or modified for the demo). 
   * **ASSIGNMENT_GROUPS** folder
     * **first6weeksAssignments, pythonAssignments** (these folders contain a group of related assignments, each of which will have it's own scoreboard file)
       * **GCD, encryption** (these are the assignment folders  - the name of the assignment folder **is** the **assignment name**, assignment names must be unique)
@@ -54,7 +54,10 @@ can be submitted directly to that folder in real time by the students (one way t
          * **timeout.txt** contains the amount of seconds the test should be given before timing out (optional: overrides the TIMEOUT_DEFAULT set in customize.py)
       * **periods.txt** indicates which class periods this assignment group is assigned to
     * **commentsJAVA.txt** and **commentsPYTHON.txt** contain the global comments used in student emails or clipboard
-  * **1,4,5** (these are the class period folders, new files are submitted to these folders via something like a Dropbox File Request. Each assignment group has a folder here that has folders for each of the students containing folders for the student's program submissions.  
+  * **1,4,5** (these are the class period folders, new files are submitted to these folders via something like a Dropbox File Request. Each assignment group has a folder here that has folders for each of the students which contain folders for the student's program submissions. 
+  * **scoreboard_for_demo** This folder will contain the results for the student's assignments.
+  * **sampleSubmissions** Example submissions for the demo.  Both registration with APSC and assignment.
+  * **dueDates.txt** Optional file that contains the assigment name and its due date in a simple two column format.
   
 ### Demo
 The demo verifies two student assignments (1) [encryption](https://docs.google.com/document/d/1mr5FHL-cf3T1kRR0F10KCWwGGdjZC4Cj/edit?usp=sharing&ouid=117088614197672338242&rtpof=true&sd=true) (2) [GCD](https://docs.google.com/document/d/14nIXTUOr70_zRUZojzMZhbs9AmTWs5WxatsVtjNT_c4/edit?usp=sharing). Follow the below steps and/or watch the demo video: [download](https://drive.google.com/file/d/1o7TA-ym4WC4xezXcMf3mqvpzbMRN7Awm/view?usp=sharing) or [YouTube](https://youtu.be/Nr0t-hp050Y) 
