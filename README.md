@@ -61,7 +61,7 @@ The demo verifies two student assignments (1) [encryption](https://docs.google.c
 * run CSassignmentChecker.py  
   * since this is the first time the program has been run, the program creates some required directories.
   * You should now see the Main Menu\
-    **(1 4 5)judge (a)utojudge score(b)oard (l)og e(x)it (<ENTER>=check)?**\
+    **(1 4 5)judge (a)utojudge score(b)oard (l)og e(x)it (\<ENTER\>=check)?**\
   **Answer 4** to have the program enter the manual judging mode for class period 4. In this mode, the program continually checks for new submissions to the class period folder /demo/4/. The program creates the directories for the two students have been registered with this class period.
   Since there is currently no submission to process, the program prints a period every 2 seconds to let you know it is alive. Leave the program running (and printing periods) for now
 * For this demo, instead of students submitting files to the class period folder, *we will simply copy example files from /demo/sampleSubmissions/*
@@ -84,17 +84,17 @@ The demo verifies two student assignments (1) [encryption](https://docs.google.c
   
 ### Main Menu  
 The program's Main Menu\
-**(? ? ?)judge (a)utojudge score(b)oard (l)og e(x)it (<ENTER>=check)?**\
+**(? ? ?)judge (a)utojudge score(b)oard (l)og e(x)it (ENTER=check)?**\
 has the following options
 * **(? ? ?)** A choice of class period numbers which cause the program to enter manual mode and monitor that class period's folder for student program submissions.  The program processes any current (and future) program submissions to that class period's folder - oldest submission is processed first. Incorrect output differences will be shown in **diff window** after which the **Assignment Menu** is displayed.
-* **(a)utojuge** Brings up the Autojudge Menu **(? ? ?)autojudge (m)ultiple (<ENTER>=all periods)?**. Specified class period folders are checked and any current (and future) program submissions are processed and automatically judged - if program output is not correct, the submission is counted as incorrect. 
+* **(a)utojuge** Brings up the Autojudge Menu **(? ? ?)autojudge (m)ultiple (ENTER=all periods)?**. Specified class period folders are checked and any current (and future) program submissions are processed and automatically judged - if program output is not correct, the submission is counted as incorrect. 
 * **(l)og** Program opens the global log file (logGlobal.txt in **rootDir**) in the text editor. 
 * **e(x)it** Exits the program
 * **ENTER** Pressing the *Enter* key causes the program to check all class periods for submissions and then returns to the Main Menu.
 
 ### Assignment Menu
 In manual mode after a student's program submission has been run and either the program was correct or the program was incorrect and the **diff window** has been closed, the Assignment Menu\
-**y/l/n/p [s d a b h i o g e c m f k t ?](r){x}**\
+**y/l/n/p \[s d a b h i o g e c m f k t ?\](r){x}#**\
 is displayed with the following options (NOTE: Be sure that you are done with the current assignment submission before answering y n m r as this will make program proceed to the next submission)
 * **y** judge the student's program as correct, update the program's status in /demo/scoreboard/, and then **move on** to the next student submission. The teacher can choose to ignore inconsequential differences in the output shown in the **diff window** and still count the program correct.
 * **l** same as y above, but submission is marked as being LATE
