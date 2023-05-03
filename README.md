@@ -61,8 +61,8 @@ The demo verifies two student assignments (1) [encryption](https://docs.google.c
 * run CSassignmentChecker.py  
   * since this is the first time the program has been run, the program creates some required directories.
   * You should now see the Main Menu\
-    **(1 4 5)manual (a)utojudge (l)og e(x)it (ENTER=check)?**\
-  **Answer 4** to have the program enter the manual mode for class period 4. In this mode, the program continually checks for new submissions to the class period folder /demo/4/. The program creates the directories for the two students have been registered with this class period.
+    **(1 4 5)judge (a)utojudge score(b)oard (l)og e(x)it (<ENTER>=check)?**\
+  **Answer 4** to have the program enter the manual judging mode for class period 4. In this mode, the program continually checks for new submissions to the class period folder /demo/4/. The program creates the directories for the two students have been registered with this class period.
   Since there is currently no submission to process, the program prints a period every 2 seconds to let you know it is alive. Leave the program running (and printing periods) for now
 * For this demo, instead of students submitting files to the class period folder, *we will simply copy example files from /demo/sampleSubmissions/*
 * To demo the basic verification of a student program, copy **/demo/sampleSubmissions/studentProblems/Shotwell Gwynne 4381_encryption.py** to the class period 4 folder **/demo/4/**. This file is Period 4's student Gwynne Shotwell's (student code 4381) submission of the encryption assignment. The program (which up to now had been printing periods) will detect this file and run the program. 
@@ -84,7 +84,7 @@ The demo verifies two student assignments (1) [encryption](https://docs.google.c
   
 ### Main Menu  
 The program's Main Menu\
-**(? ? ?)manual (a)utojudge (l)og e(x)it (ENTER=check)?**\
+**(? ? ?)judge (a)utojudge score(b)oard (l)og e(x)it (<ENTER>=check)?**\
 has the following options
 * **(? ? ?)** A choice of class period numbers which cause the program to enter manual mode and monitor that class period's folder for student program submissions.  The program processes any current (and future) program submissions to that class period's folder - oldest submission is processed first. Incorrect output differences will be shown in **diff window** after which the **Assignment Menu** is displayed.
 * **(a)utojuge** Brings up the Autojudge Menu **(? ? ?)autojudge (m)ultiple (<ENTER>=all periods)?**. Specified class period folders are checked and any current (and future) program submissions are processed and automatically judged - if program output is not correct, the submission is counted as incorrect. 
