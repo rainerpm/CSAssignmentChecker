@@ -54,7 +54,7 @@ can be submitted directly to that folder in real time by the students (one way t
          * **timeout.txt** contains the amount of seconds the test should be given before timing out (optional: overrides the TIMEOUT_DEFAULT set in customize.py)
       * **periods.txt** indicates which class periods this assignment group is assigned to
     * **commentsJAVA.txt** and **commentsPYTHON.txt** contain the global comments used in student emails or clipboard
-  * **1,4,5** (these are the class period folders, new files are submitted to these folders via something like a Dropbox File Request. Each assignment group has a folder here that has folders for each of the students which contain folders for the student's program submissions. 
+  * **1,4,5** (these are the class period folders to which student assignment files are either explicitly copied or directly submitted  via something like a Dropbox File Request. Inside each folder is a folder for each assignment group that contains folders for each of the students which contain folders for the student's program submissions. 
   * **scoreboard_for_demo** This folder will contain the results for the student's assignments.
   * **sampleSubmissions** Example submissions for the demo.  Both registration with APSC and assignment.
   * **dueDates.txt** Optional file that contains the assigment name and its due date in a simple two column format.
