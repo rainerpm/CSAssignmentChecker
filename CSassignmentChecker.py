@@ -17,7 +17,6 @@
 
 import scoreboard  # import the associated scoreboard.py which creates the scoreboard files
 from scoreboard import assignmentResults    
-from login import emailSendFromAddress, emailSendFromPassword # ????
 from customize import validClassPeriods,rootDir,scoreboardDir,scoreboardDirAlt,mossDir,pythonIde,javaIde,diffPgm,diffPgmAlt,textEditor,textEditorAlt,emailSignature,emailAttachmentFile, TIMEOUT_DEFAULT
 
 # import python libraries (using Python 3.10 only ones that need to be installed
@@ -275,7 +274,7 @@ def emailStudent(submission):
 #     if not receiverEmailAddress:  # student is in classRegistration dictionary but email is blank OR student is not in dictionary
 #         receiverEmailAddress = input("  enter student's email address -> ")
     if "Assignment" in submission:
-        subject = "P"+ submission["classPeriod"] + " StudentDrop (" + submission["Assignment"] + ")"
+        subject = "P"+ submission["classPeriod"] + " StudentDrop (" + submission["Assignment"] + " - " + submission["submissionDateTime"] + ")"
     else:
         subject = "StudentDrop Error"
     comment = commentFromFile(submission)
@@ -544,9 +543,11 @@ def processCurrentSubmission(currentSubmission, assignmentGroups, assignments,cl
    if validAssignmentName:  
        submission["Assignment"]  = assignment
        lateStr = ""
-       if dueDates and (assignment in dueDates):
+       if assignment in dueDates:
            if dueDates[assignment] > 0:
                lateStr = str(dueDates[assignment]) + " days LATE"
+       else:
+           lateStr = "NoDueDate"
        submission["lateMsg"] = lateStr
        submission["FileExtension"] = os.path.splitext(submission["FileName"])[1]
        if submission["FileExtension"] == ".zip":
@@ -686,13 +687,20 @@ def processCurrentSubmission(currentSubmission, assignmentGroups, assignments,cl
       if not submission["invalidAssignment"]:    # if not invalid assignment
         response = input("  Print out class registration (y)? ")
         if response == 'y':
-          for key,value in submission["classRegistration"].items():
-            print(f'    {key} {value[0]}')
+            registrationsStr = '    '
+            count = 0
+            for key,value in submission["classRegistration"].items():
+                count = count + 1
+                registrationsStr += f'{key:6} {value[0][:15]:16}'
+                if count % 4 == 0:
+                    registrationsStr += '\n    '
+            print(registrationsStr)      
       while True:
          response = input("  New name (clipboard), (r)emove submission, (m)ove to manual check (e)mail? ")
          if response == 'r':
-            os.remove(submission["FileName"])
-            updateLogFile(submission, "  removed "  + os.path.join(classRootDir,submission["FileName"]),True)
+            if os.path.exists(submission["FileName"]):
+                os.remove(submission["FileName"])
+                updateLogFile(submission, "  removed "  + os.path.join(classRootDir,submission["FileName"]),True)
             break
          elif response == 'm':
             os.rename(os.path.join(classRootDir,submission["FileName"]),os.path.join(submission["classDir"],"00ManualCheck",submission["FileName"]))  #move to 00ManualCheck
@@ -717,10 +725,15 @@ def copyFilesToProgramRunDirectory(submission, classRootDir):
     if submission["FileExtension"] == ".zip":
        result = subprocess.run(["tar", "-xf", submission["FileName"]])  # EXTRACT/Unzip zip file
        files = [p for p in Path('.').iterdir() if p.is_file()]
+       javaFilesFound = False
        for file in files:
-           if file.suffix != ".java" and file.suffix != ".zip":
+           if (file.suffix == ".java"):
+               javaFilesFound = True
+           if not(file.suffix == ".java" or file.suffix == ".zip"):
               print("  Error!!! Student zip file contains something other than a .java file (" + file.name + ")")
               break
+       if not javaFilesFound:
+              print("  Error!!! The zip file did not contain any java files.")
     goldenDirFiles = os.listdir(goldenAssignmentDir)
     for goldenDirFile in goldenDirFiles:
         if goldenDirFile != "gold.txt" or goldenDirFile != "checker.txt":
@@ -752,6 +765,7 @@ def checkProgram(submission, classRootDir):
     os.chdir(submission["studentPgmRunDir"])
     if os.path.exists(os.path.join(submission["Assignment"] + "Checker.java")):
        compileCmd = ["javac", "-parameters", submission["Assignment"] + "Checker.java"]
+       #print("    DBG1a",submission["Assignment"],compileCmd)
        with open("CompilerOutput.txt", "w") as fout:
            with open(submission["compileErrorFileName"], "w") as ferr:
                result = subprocess.run(compileCmd, stdout=fout, stderr=ferr)  #COMPILE CHECKER
@@ -784,6 +798,7 @@ def runProgram(submission, classRootDir):
         runCmds = [["python", submission["FileName"]]]
     elif submission["language"] == "java":
         compileCmd = ["javac", "-parameters", "*.java"]
+        #print("    DBG1b",compileCmd,">"+ submission["studentPgmRunDir"])        
         runCmds = []
         tester = False
         runner = False
@@ -860,8 +875,13 @@ def runProgram(submission, classRootDir):
                             writeOrAppend = "a"
             else:
                with open(submission["outFileName"], writeOrAppend) as fout:
-                   with open(submission["runTimeErrorFileName"], writeOrAppend) as ferr: 
-                      result = subprocess.run(runCmd, stdin=runStdin, stdout=fout, stderr=ferr)   # run Tester
+                   with open(submission["runTimeErrorFileName"], writeOrAppend) as ferr:
+                      if not timedOut:
+                          try:
+                             result = subprocess.run(runCmd, stdin=runStdin, stdout=fout, stderr=ferr, timeout=submission["timeout"])   # run Tester    
+                          except:                         
+                             print("  Timed Out (>" + str(submission["timeout"]) + "sec)!!! " + str(runCmd))
+                             timedOut = True                          
                       writeOrAppend = "a"
         errorRun = openErrorFile(submission,"runtime")
         if errorRun:
@@ -987,15 +1007,17 @@ def submissionCorrect(submission,reason=""):
        #   combineFilesInZipFile(submission["plagiarismAssignmentDir"],submission["submittedFileNameWithDate"])
     else:
         os.remove(submission["FileName"])       # remove submission file (this only happens if the same file with the same time stamp is copied into class directory)
+    correctFileName = submission["outCorrectFileName"]
     if Path(submission["studentPgmRunDir"],submission["outFileName"]).is_file():
-       correctFileName = submission["outCorrectFileName"]
        if reason == 'late':
            correctFileName = submission["outCorrectButLateFileName"]
        copyfile(os.path.join(submission["studentPgmRunDir"],submission["outFileName"]), os.path.join(submission["studentDir"],correctFileName))  # copy output file to data directory
        if submission["groupSubmission"]:
           for partnerDir in submission["partnersDirs"]:
              copyfile(os.path.join(submission["studentPgmRunDir"],submission["outFileName"]), os.path.join(partnerDir,correctFileName))  # copy output file to partner's data directory
-    else:     # (outFileName file may not exist (maybe program was manually deemed to be correct)
+    else:     # (outFileName file may not exist - maybe program was manually deemed to be correct)
+       if reason == 'late':
+           correctFileName = submission["outCorrectButLateFileName"]
        copyfile(os.path.join(submission["goldFile"]), os.path.join(submission["studentDir"],correctFileName))  # copy output file to data directory
        if submission["groupSubmission"]:
           for partnerDir in submission["partnersDirs"]:
@@ -1035,11 +1057,11 @@ def generateIdeCommands(submission):
        ideCmd = [pythonIde,os.path.join(submission["studentPgmRunDir"],submission["FileName"])]
        ideCmds.append(ideCmd)
     elif submission["language"] == "java":
-        ideCmd = [javaIde,os.path.join(submission["studentPgmRunDir"],submission["Assignment"] + ".java")]
-        ideCmds.append(ideCmd)
         if os.path.exists(os.path.join(submission["studentPgmRunDir"],submission["Assignment"] + "Tester.java")):
             ideCmd = [javaIde,os.path.join(submission["studentPgmRunDir"],submission["Assignment"] + "Tester.java")]
             ideCmds.append(ideCmd)
+        ideCmd = [javaIde,os.path.join(submission["studentPgmRunDir"],submission["Assignment"] + ".java")]
+        ideCmds.append(ideCmd)
     return ideCmds
 
 def setFileTimestampToNow(file):
@@ -1152,6 +1174,7 @@ def main():
                 currentSubmission = min(currentSubmissions, key=os.path.getmtime)
                 currentSubmissions.remove(currentSubmission)
                 submission = processCurrentSubmission(currentSubmission, assignmentGroups, assignments,classRootDir)
+                #print("    DBG1c",currentSubmission,doItAgain)
                 if submission["valid"]:
                    updateLogFile(submission,"(P" + submission["classPeriod"] + " " + submission["Assignment"] + ")" + ' ' + submission["FileName"] + ' * ' + submission["submissionDateTime"] + ' *',False,False)
                    ####################################### 
@@ -1161,6 +1184,7 @@ def main():
                    result,points,correctFound = assignmentResults(listOfStudentDataFiles)
                    submission["result"] = result
                    print("\n"+ "*** " + submission["Assignment"] + " P" + submission["classPeriod"] + " (" + result + ") " + submission["assignmentGroupId"] + " *** " + submission["FileName"] + ") " + submission["submissionDateTime"] + " [" + str(submission["timeout"]) + "sec]")
+                   #print("    DBG1d",doItAgain)
                    if doItAgain:
                       doitAgain = False
                    else:
@@ -1199,10 +1223,14 @@ def main():
                            submissionCorrect(submission)
                            killProcesses(submission)
                            break
-                       if answer == "l":  # submission correct but LATE. UPDATE scoreboard, CONTINUE to next submission.
+                       elif answer == "l":  # submission correct but LATE. UPDATE scoreboard, CONTINUE to next submission.
                            submissionCorrect(submission,"late")
                            killProcesses(submission)
                            break
+                       elif answer.isnumeric():    # submission gets partial credit. UPDATE scoreboard, CONTINUE to next submission.
+                           submissionCorrect(submission,"partial"+answer)
+                           killProcesses(submission)
+                           break        
                        elif answer == "n":  # submission incorrect. UPDATE scoreboard, CONTINUE to next submission.
                            submissionIncorrect(submission)
                            killProcesses(submission)
