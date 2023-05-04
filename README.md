@@ -2,7 +2,7 @@
 
 ### Overview
 
-The **CSAssignmentChecker.py** (aka **CSAC**) program verifies python or java assignments submitted by students. **CSAC** supports basic verification for Python programs and more advanced verification for JAVA programs. Student assignments are organized into assignment groups, each of which has a "scoreboard" file showing the results for each student. The program supports directly emailing a teacher comment to a student.  [video Demo](https://youtu.be/Nr0t-hp050Y) 
+The **CSAssignmentChecker.py** (aka **CSAC**) program verifies python or java assignments submitted by students. **CSAC** supports basic verification for Python programs and more advanced verification for JAVA programs. Student assignments are organized into assignment groups, each of which has a "scoreboard" file showing the results for each student. The program supports directly emailing a teacher comment to a student.  [demo video](https://youtu.be/Nr0t-hp050Y) 
 
 ### Requirements
 The following programs are required to be installed on your computer (the programs in parenthesis are what I use, but can be replaced with something equivalent by updating the customize.py file).
@@ -31,6 +31,15 @@ can be submitted directly to that folder in real time by the students (one way t
 
 ### Program (and Demo) Setup
 * unzip demo.zip to a folder on your hard drive (e.g. C:/YourPathToDemoDir/demo)
+* in **customize.py**
+  * set the **rootDir** variable to the location of the unzipped demo folder - C:/YourPathToDemoDir/demo 
+  * set the **scoreboardDir** variable to C:/YourPathToDemoDir/demo/scoreboard_for_demo
+  * set the **pythonIdeLoc** variable to the location of the Python IDE (e.g. IDLE) executable.
+  * set the **javaIdeLoc** variable to the location of the JAVA IDE (e.g. jGrasp) executable.
+    * NOTE: The program uses *-parameters* compile option to ensure that JAVA reflection reflects parameter types instead of just using arg0
+  * set the **textEditorLoc** variable to the location of a text editor (e.g. Notepad++) executable.
+  * set the **diffLoc** variable to the location of the diff program (e.g. winMerge, meld, kdiff, or tkdiff) executable.
+* inside of demo/ you will also find the below (which do not need to be initialized or modified for the demo). 
   * **ASSIGNMENT_GROUPS** folder
     * **first6weeksAssignments, pythonAssignments** (these folders contain a group of related assignments, each of which will have it's own scoreboard file)
       * **GCD, encryption** (these are the assignment folders  - the name of the assignment folder **is** the **assignment name**, assignment names must be unique)
@@ -45,31 +54,24 @@ can be submitted directly to that folder in real time by the students (one way t
          * **timeout.txt** contains the amount of seconds the test should be given before timing out (optional: overrides the TIMEOUT_DEFAULT set in customize.py)
       * **periods.txt** indicates which class periods this assignment group is assigned to
     * **commentsJAVA.txt** and **commentsPYTHON.txt** contain the global comments used in student emails or clipboard
-  * **1,4,5** (these are the class period folders, new files are submitted to these folders via something like a Dropbox File Request. Each assignment group has a folder here that has folders for each of the students containing folders for the student's program submissions.
-* set the following folder/directory variables in **customize.py**
-  * set the **rootDir** variable to the location of the unzipped demo folder - C:/YourPathToDemoDir/demo 
-  * set the **scoreboardDir** variable to C:/YourPathToDemoDir/demo/scoreboard
-  * hereafter C:/YourPathToDemoDir/demo is abbreviated /demo.
-* set the following variables in **customize.py**
-  * set the **pythonIdeLoc** variable to the location of the Python IDE (e.g. IDLE) executable.
-  * set the **javaIdeLoc** variable to the location of the JAVA IDE (e.g. jGrasp) executable.
-    * NOTE: The program uses *-parameters* compile option to ensure that JAVA reflection reflects parameter types instead of just using arg0
-  * set the **textEditorLoc** variable to the location of a text editor (e.g. Notepad++) executable.
-  * set the **diffLoc** variable to the location of the diff program (e.g. winMerge, meld, kdiff, or tkdiff) executable.
+  * **1,4,5** (these are the class period folders to which student assignment files are either explicitly copied or directly submitted  via something like a Dropbox File Request. Inside each folder you will find the REGISTER.txt file containing the students registered to this class (for each student: a unique ID, last name, first name, class period, email address). Also in this folder is a folder for each assignment group that contains folders for each of the students which contain folders for the student's program submissions. 
+  * **scoreboard_for_demo** This folder will contain the results for the student's assignments.
+  * **sampleSubmissions** Example submissions for the demo.  Both registration with APSC and assignment.
+  * **dueDates.txt** Optional file that contains the assigment name and its due date in a simple two column format.
+  
 ### Demo
 The demo verifies two student assignments (1) [encryption](https://docs.google.com/document/d/1mr5FHL-cf3T1kRR0F10KCWwGGdjZC4Cj/edit?usp=sharing&ouid=117088614197672338242&rtpof=true&sd=true) (2) [GCD](https://docs.google.com/document/d/14nIXTUOr70_zRUZojzMZhbs9AmTWs5WxatsVtjNT_c4/edit?usp=sharing). Follow the below steps and/or watch the demo video: [download](https://drive.google.com/file/d/1o7TA-ym4WC4xezXcMf3mqvpzbMRN7Awm/view?usp=sharing) or [YouTube](https://youtu.be/Nr0t-hp050Y) 
 * run CSassignmentChecker.py  
   * since this is the first time the program has been run, the program creates some required directories.
   * You should now see the Main Menu\
     **(1 4 5)judge (a)utojudge score(b)oard (l)og e(x)it (\<ENTER\>=check)?**\
-  **Answer 4** to have the program enter the manual judging mode for class period 4. In this mode, the program continually checks for new submissions to the class period folder /demo/4/. The program creates the directories for the two students have been registered with this class period.
-  Since there is currently no submission to process, the program prints a period every 2 seconds to let you know it is alive. Leave the program running (and printing periods) for now
-* For this demo, instead of students submitting files to the class period folder, *we will simply copy example files from /demo/sampleSubmissions/*
-* To demo the basic verification of a student program, copy **/demo/sampleSubmissions/studentProblems/Shotwell Gwynne 4381_encryption.py** to the class period 4 folder **/demo/4/**. This file is Period 4's student Gwynne Shotwell's (student code 4381) submission of the encryption assignment. The program (which up to now had been printing periods) will detect this file and run the program. 
+  **Answer 4** to have the program enter the manual judging mode for class period 4. In this mode, the program continually checks for new submissions to the class period folder /demo/4/.
+  Since there is currently no submission to process, the program prints a period every 2 seconds to let you know it is waiting for submissions.
+* For this demo, instead of students submitting files directly to the class period folder via something like a Dropbox File Request, *we will simply copy example files from /demo/sampleSubmissions/*.  To demo the basic verification of a student program, copy **/demo/sampleSubmissions/studentProblems/Shotwell Gwynne 4381_encryption.py** to the class period 4 folder **/demo/4/**. This file is Period 4's student Gwynne Shotwell's (student code 4381) submission of the encryption assignment. The program (which up to now had been printing periods) will detect this file and run the program. 
    * Since this student's program output does not match the expected "gold" output, CSAC will use the diff program to display the differences between the students program output and the expected "gold" output.
-   * After you've had a chance to look at the difference, close the diff window. The program now displays the Assignment Menu**y/l/n/p \[s d a b h i o g e c m f k t ?\](r){x}#**
+   * After you've had a chance to look at the difference, close the diff window. The program now displays the Assignment Menu **y/l/n/p \[s d a b h i o g e c m f k t ?\](r){x}#**
      * **Answer s** to show/see the program in the Python IDE. After you've run and/or inspected the program, close the IDE.
-     * **Answer n** to judge the program as incorrect. The student's program status is reflected in /demo/scoreboard/ (one file with the student's name and one that is annoymized using the student's code that can be made accessible to the class).
+     * **Answer n** to judge the program as incorrect. The student's program status is reflected in /demo/scoreboard/ (one file with the student's name and one that is annoymized using the student's code that can be made accessible to the class). The result is reflected in the scoreboard file for that assignment group which is somwhat buried in the C:/YourPathToDemoDir/demo/scoreboard_for_demo/ folder.
    * Since the output was incorrect, the program also created a file (ShotwellGwynne.bat) in the latestResults folder inside the class period folder that enables the teacher to easily run diff program for the student's last incorrect submission and optionally bring up the program in the IDE or look at the data input file in the text editor.
    * Edit **/demo/sampleSubmissions/studentProblems/Shotwell Gwynne 4381_encryption.py** and fix the error on line 21 (changing thing[1] to thing[0]) and then once again copy the file to the class period 4 folder **/demo/4/**. 
     * Since the student's program output matches the assignments gold.txt file the program reports *** CORRECT ***. NOTE: The program ignores any whitespace at the end of a line or the end of the output when comparing the student's output to the expected output in the assignment's gold.txt file.
@@ -77,7 +79,7 @@ The demo verifies two student assignments (1) [encryption](https://docs.google.c
    * NOTE: This particular student program when run with the teacher supplied input file /demo/ASSIGNMENT_GROUPS/pythonAssignments/encryption/encryption.dat is expected to print out exactly what's found in /demo/ASSIGNMENT_GROUPS/pythonAssignments/encryption/gold.txt. 
 * The program is once again in the mode of continually checking for new submissions to the class period folder **/demo/4/**. 
   * Use Ctrl-C to go back to the Main Menu.
-* The class Period directories for Period 4 & 5 (**/demo/4/** and **/demo/5/**) already contained student registrations in the REGISTER.txt file. For class Period 1, we will now register two students in the **/demo/1/Register.txt** file. To register the students copy the two files in demo/sampleSubmissions/studentRegistrations/ to  **/demo/1/**.
+* The class Period directories for Period 4 & 5 (**/demo/4/** and **/demo/5/**) already contained student registrations in the REGISTER.txt file. For class Period 1, we will now register two students in the **/demo/1/REGISTER.txt** file. You can manually edit this file to add students or to have **CSAC** register the students copy the two files in demo/sampleSubmissions/studentRegistrations/ to  **/demo/1/**.
 * **Answer 1** in the Main Menu.  The program detects the registration files in **/demo/1/** and registers the 2 students by creating/updating the file REGISTER.txt in the student's class period folder.
 * To demo the more advanced verification of a JAVA program, copy the student program /demo/sampleSubmissions/studentProblems/Lovelace Ada 1234 - GCD.zip to the class period 1 folder /demo/1/.
   This represents the student's code for an assignment named "GCD". The student submitted a zip file containing **GCD.java** (definining the GCD object) and the test code for that object that the student wrote in **GCDRunner.java**. In addition to the expected output file gold.txt, the teacher has also supplied a specific test program called **GCDTester.java** in the folder **/demo/ASSIGNMENT_GROUPS/first6weeksAssignments/GCD/** as well as **runnerUserInput&.txt** files to provide user input to GCDRunner.java. The program runs the GCDTester program and should report *** CORRECT *** since the program's output matches the expected output in gold.txt.  Selecting **d** in the assignment menu shows the program and expected output in the diff program. This is the output from the runs of GCDTester.java and GCDRunner.java (with the runnerUserInput*.txt files providing the user input).
@@ -120,7 +122,7 @@ is displayed with the following options (NOTE: Be sure that you are done with th
 * **#** number of submissions currently waiting to be run
  
 ### Student Registration
-To register each student submits a text file with the assignment name **registerMe**. This file must contain the student's unique student number on line 1 and email address on line 2.
+The easiest way to register students with **CSAC** is to simply create a REGISTER.txt file in each class directory like the one in demo/4/REGISTER.txt. Students can also register with **CSAC** by submitting a text file in the format **lastName FirstName ID_emailAddress.py**. The contents of the file are irrelevant.
  
 ### Sending Emails or using the Clipboard 
 **CSAC** currently uses the Windows Outlook app (see **emailWithOutlook** function) to email students. I used to use the Outlook web app (see **emailWithOutlookSMTP** function), but our school district blocked that functionality.  The **emailWithGmail** function is also provided. The information content of the **CSAC** email can also be accessed via the Windows clipboard (Windows 10 and Windows 11 have a [“Clipboard History” tool](https://www.popsci.com/diy/windows-clipboard-manager/) that allows the Clipboard to store multiple items). When sending an email or using the clipboard, you can choose to include a local (i.e. assignment specific) comment from the comments.txt file in the assignments folder or general comment from ASSIGNMENT_GROUPS/commentsLANGUAGE.txt. From the comment menu **Comment (g[#], l[#], (o)ne-time comment, (n)o comment)?** choose **g** or **l** to open the global or local comment file in the text editor.  Append a number to select one of the comments (e.g. **l2** selects **comment 2** from the local comments.txt.  
