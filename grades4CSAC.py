@@ -168,12 +168,12 @@ while True:
     for period in classPeriods.keys():
         print(f'  {period:2s} {classPeriods[period]}')
     print('  x  to exit')
-    userInput = input('  Enter 1 or more period numbers (separate with space): ')
+    userInput = input('  Enter one or more period numbers (separate with space): ').strip()
     #print(">" + userInput + "<");
     if userInput == 'x':
         exit() 
     elif not userInput == "":   # 2nd time through if user just hits enter use the same class period(s)
-        periodsPicked = userInput.split(' ')
+        periodsPicked = userInput.split()
 
     #print(periodsPicked)
 
@@ -189,7 +189,7 @@ while True:
                    num = num + 1
                    print(f' {num:2d} {assignment}')
                    assignmentsList.append(assignment)
-    userInput = input(f'Choose 0 or one or more 1-{num} (separate with space): ')
+    userInput = input(f'Choose 0 or one or more 1-{num} (separate with space): ').strip()
     pickSingleStudent = False
     if userInput == '0':
         pickSingleStudent = True
@@ -203,7 +203,7 @@ while True:
 
     writeToGradesDir = False
     if not pickSingleStudent:    
-        userInput = input('Write grade files to ' + gradesDir + '(y)? ');
+        userInput = input('Write grade files to ' + gradesDir + '(y)? ').strip();
         if userInput == 'y':
             writeToGradesDir = True
 
@@ -232,7 +232,7 @@ while True:
                         registrationOrder.append((fields[0], fields[1], fields[2]))
                 # print(code2ID)
                 if pickSingleStudent and not printedStudents:
-                    userInput = input('  Enter number of student: ')
+                    userInput = input('  Enter number of student: ').strip()
                     singleStudentName = singleStudentNames[int(userInput)-1]
             
             with open(Path(scoreboardDir,'Period'+period,assignmentGroup + '.txt'), "r") as sb:
