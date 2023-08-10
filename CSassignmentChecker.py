@@ -21,35 +21,35 @@ from customize import validClassPeriods,rootDir,scoreboardDir,scoreboardDirAlt,m
 
 # import python libraries (using Python 3.10 only ones that need to be installed
 # using 'pip install' appear to be pyperclip and pillow).
-import os
-import glob
-import subprocess
-import re
-import time
-import sys
-import signal  # for interrupting waiting for submissions with CTRL-C
-import json   # for pretty printing dictionaries
-from   datetime import datetime
-from   datetime import date
-from   pathlib  import Path
-from   shutil   import copyfile
-from   shutil   import copy
-from   shutil   import rmtree
-import ssl     # for gmail
-import smtplib # for gmail & outlook
-from   email.mime.text      import MIMEText      # for outlook
-from   email.mime.multipart import MIMEMultipart # for outlook
-from   email.mime.base      import MIMEBase      # for outlook
-from   email                import encoders      # for outlook
+import os               # module is in python standard library 
+import glob             # module is in python standard library
+import subprocess       # module is in python standard library
+import re               # module is in python standard library
+import time             # module is in python standard library
+import sys              # module is in python standard library
+import signal           # module is in python standard library
+import json             # module is in python standard library
+from   datetime import datetime  # module is in python standard library
+from   datetime import date      # module is in python standard library
+from   pathlib  import Path      # module is in python standard library
+from   shutil   import copyfile  # module is in python standard library
+from   shutil   import copy      # module is in python standard library
+from   shutil   import rmtree    # module is in python standard library
+import ssl              # module is in python standard library
+import smtplib          # module is in python standard library
+from   email.mime.text      import MIMEText      # module is in python standard library
+from   email.mime.multipart import MIMEMultipart # module is in python standard library
+from   email.mime.base      import MIMEBase      # module is in python standard library
+from   email                import encoders      # module is in python standard library
 from   PIL      import ImageGrab                 # pip install pillow  (on Thonny also look for PIL)
 import win32com.client  # pip install pywin32 (close and reopen Python after install) [for email using Outlook Windows 10 app (https://github.com/mhammond/pywin32)]           
 import pyperclip        # allows python to add things to the clipboard (so it can be quickly pasted)
 #from icecream import ic
-import webbrowser
-import os
+import webbrowser           # module is in python standard library
+import os                   # module is in python standard library
 from twilio.rest import Client  # pip install twilio
 # to get the line number of a Python statement
-from inspect import currentframe, getframeinfo
+from inspect import currentframe, getframeinfo  # module is in python standard library
 
 validFileExtensions = [".py",".java",".zip",".txt"] # .py for python, .java/.zip for java, .txt for registration file
 
@@ -1375,3 +1375,6 @@ def main():
                 break
 
 main()
+
+
+
