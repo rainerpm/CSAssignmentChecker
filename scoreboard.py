@@ -30,16 +30,20 @@ def assignmentResults(listOfStudentDataFiles):
      else:
         count = 0
         correctFound = False
-        resultChar = 'C'
+        resultChar = 'C'     
         late = False
+        toolate = False
         for studentDataFile in listOfStudentDataFiles:
-           if not (studentDataFile.endswith("CORRECT.txt") or studentDataFile.endswith("CORRECT_LATE.txt") or studentDataFile.endswith("manualCheck.txt")):
+           if not (studentDataFile.endswith("CORRECT.txt") or studentDataFile.endswith("CORRECT_LATE.txt") or studentDataFile.endswith("CORRECT_2LATE.txt") or studentDataFile.endswith("manualCheck.txt")):
               count += 1
-           if studentDataFile.endswith("CORRECT.txt") or studentDataFile.endswith("CORRECT_LATE.txt"):
+           if studentDataFile.endswith("CORRECT.txt") or studentDataFile.endswith("CORRECT_LATE.txt") or studentDataFile.endswith("CORRECT_2LATE.txt"):
               correctFound = True
               if not late and studentDataFile.endswith("CORRECT_LATE.txt"):
                  late = True
                  resultChar = 'L'
+              if not toolate and studentDataFile.endswith("CORRECT_2LATE.txt"):
+                 toolate = True
+                 resultChar = 'T'              
         if correctFound:
            if count == 0:
               result = resultChar
@@ -57,6 +61,7 @@ def updateScoreboard(scoreboardDir,contestDataDir,assignmentGroupId,classId,list
    footer = """
 C#  = test ran successfully (was submitted incorrectly # of times)
 L#  = test ran successfully (was submitted incorrectly # of times) but was LATE
+T#  = test ran successfully (was submitted incorrectly # of times) but was TOO LATE for a grade.
 #x  = test never ran successfully, submitted # times.
 Ea  = latest submission was not 100% correct when using automatic judging (submission will be checked manually later)
 Ec  = latest submission had a compile or syntax error.
@@ -105,7 +110,7 @@ The POINTS column indicates your UIL programming competition score (60 pts/probl
       j = 0
 
       if includeNames:
-        fscoreboard.write('  CODE  TOTALS  ')      
+        fscoreboard.write('  CODE  TOTALS ')      
       while j < i:
          j += 1
          fscoreboard.write(f'({j:>2})')
