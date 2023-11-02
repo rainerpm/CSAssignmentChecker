@@ -17,7 +17,7 @@
 
 import scoreboard  # import the associated scoreboard.py which creates the scoreboard files
 from scoreboard import assignmentResults    
-from customize import validClassPeriods,rootDir,scoreboardDir,scoreboardDirAlt,mossDir,pythonIde,javaIde,diffPgm,diffPgmAlt,textEditor,textEditorAlt,emailSignature,emailAttachmentFile, TIMEOUT_DEFAULT
+from customize import validClassPeriods,rootDir,scoreboardDir,mossDir,pythonIde,javaIde,diffPgm,textEditor,emailSignature,emailAttachmentDir, TIMEOUT_DEFAULT
 
 # import python libraries (using Python 3.10 only ones that need to be installed
 # using 'pip install' appear to be pyperclip and pillow).
@@ -41,15 +41,29 @@ from   email.mime.text      import MIMEText      # module is in python standard 
 from   email.mime.multipart import MIMEMultipart # module is in python standard library
 from   email.mime.base      import MIMEBase      # module is in python standard library
 from   email                import encoders      # module is in python standard library
-from   PIL      import ImageGrab                 # pip install pillow  (on Thonny also look for PIL)
-import win32com.client  # pip install pywin32 (close and reopen Python after install) [for email using Outlook Windows 10 app (https://github.com/mhammond/pywin32)]           
-import pyperclip        # allows python to add things to the clipboard (so it can be quickly pasted)
+from   PIL      import ImageGrab                 # pip install pillow  (on Thonny install Pillow)
+import win32com.client  # pip install pywin32 (close and reopen Python after install) [for email using Outlook Windows 10 app (https://github.com/mhammond/pywin32)] (Thonny install pywin32)          
+import pyperclip        # allows python to add things to the clipboard (so it can be quickly pasted)  (Thonny install pyperclip)
 #from icecream import ic
 import webbrowser           # module is in python standard library
 import os                   # module is in python standard library
-from twilio.rest import Client  # pip install twilio
+from twilio.rest import Client  # pip install twilio (Thonny install twilio)
 # to get the line number of a Python statement
 from inspect import currentframe, getframeinfo  # module is in python standard library
+
+class bcolors:
+    HEADER = '\033[95m'
+    BLUE = '\033[94m'
+    CYAN = '\033[96m'
+    GREEN = '\033[92m'
+    WARNING = '\033[93m'
+    RED = '\033[91m'
+    ENDC = '\033[0m'
+    BOLD = '\033[1m'
+    UNDERLINE = '\033[4m'
+    LIGHTGRAY = '\033[37m'
+    ORANGE = '\033[33m'
+    BLACK = '\033[30m'
 
 validFileExtensions = [".py",".java",".zip",".txt"] # .py for python, .java/.zip for java, .txt for registration file
 
@@ -64,12 +78,17 @@ else:
         initError = True
         print("ERROR!!! ASSIGNMENT_GROUPS directory does not exist in " + rootDir)
 
-if not Path(scoreboardDir).is_dir(): 
-    if Path(scoreboardDirAlt).is_dir():
-        scoreboardDir = scoreboardDirAlt
-    else:
-        initError = True
-        print("ERROR!!! scoreboard directory does not exist (" + scoreboardDir + " or " + scoreboardDirAlt)
+if not Path(scoreboardDir).is_dir():
+    initError = True
+    print("ERROR!!! scoreboard directory does not exist @" + scoreboardDir)
+    
+if not Path(mossDir).is_dir():
+    initWarning = True
+    print("ERROR!!! moss plagiarism directory does not exist @" + mossDir)
+    
+if not Path(emailAttachmentDir).is_dir():
+    initError = True
+    print("ERROR!!! email attachment directory does not exist @" + emailAttachmentDir)  
 
 if pythonIde:
     if not Path(pythonIde).is_file(): 
@@ -86,20 +105,13 @@ else:
     print("WARNING!! No JAVA IDE was specified")      
 
 if not Path(diffPgm).is_file():
-    if Path(diffPgmAlt).is_file():
-        diffPgm = diffPgmAlt
-    else:
-        initError = True
-        print("ERROR!!! Diff program not found @ " + diffPgm + " or " + diffPgmAlt)
+    initError = True
+    print("ERROR!!! Diff program not found @ " + diffPgm)
 
 if not Path(textEditor).is_file():
-    if Path(textEditorAlt).is_file():
-        textEditor = textEditorAlt
-    else:
-        initError = True
-        print("ERROR!!! TextEditor not found @ " + textEditor + " or " + textEditorAlt)
+    initError = True
+    print("ERROR!!! TextEditor not found @ " + textEditor)
 textEditorCmdOpt1 = [textEditor,r'-nosession',r'-multiInst',r'-n1000000']
-#textEditorCmdOpt1 = [textEditor,r'-nosession',r'-n1000000']
 
 if initError:
     exit()
@@ -296,9 +308,10 @@ def emailStudent(submission):
                  break
            if haveImage:
               imageJpg = image.convert('RGB')
-              imageJpg.save(emailAttachmentFile,'JPEG')
-              attachment = emailAttachmentFile
-              comment = comment + "\nBe sure to look at the e-mail attachment."
+              imageJpg.save(os.path.join(emailAttachmentDir,'CSassignmentChecker.jpg'),'JPEG')
+              attachment = emailAttachmentDir + '\CSassignmentChecker.jpg'
+              # print(f'{attachment = }')
+              comment = comment + "\nBe sure to look at the e-mail attachment.\n"
        updateLogFile(submission, "  email msg -> " + comment)
        message = comment + emailSignature
        # emailSent = emailWithOutlookViaSMTP(emailSendFromAddress,emailSendFromPassword,receiverEmailAddress,subject,message,attachment)
@@ -307,7 +320,7 @@ def emailStudent(submission):
            #print("  Preparing to send", subject, "email to", receiverEmailAddress)
        emailSent = emailWithOutlook(receiverEmailAddress,subject,message,attachment)
        if emailSent:
-          print("  Email sent to " + receiverEmailAddress)
+          print("  email sent to " + receiverEmailAddress)
 
 # https://realpython.com/python-send-email/#option-1-setting-up-a-gmail-account-for-development
 # NOTE: DOES NOT CURRENTLY HANDLE ATTACHMENTS
@@ -460,7 +473,7 @@ def commentFromFile(submission):
          comment = ""
       elif commentTypeResponse == 'c':
          comment = "cancelComment"
-   print("  comment -> " + comment[:40].rstrip() + " ...")
+   print("  comment -> " + comment[:80].rstrip() + " ...")
    return comment
 
 def openErrorFile(submission,errorType):
@@ -485,10 +498,10 @@ def checkStudentRegistration(fname,nameLast,nameFirst,code,classRegistration):
    if name != "Test Test":
       if (code not in classRegistration):
          #print("  Code >" + code + "< is not registered " + "(" + fname +")")
-         print(f'  Code >{code}< is not registered for {nameFirst} {nameLast}!!!') 
+         print('\n' + bcolors.RED + f'  Code >{code}< is not registered for {nameFirst} {nameLast}!!!' + bcolors.ENDC) 
          foundNameInRegistration = False
       elif classRegistration[code][0] != name:
-         print("  Name mismatch!!! >" + code + "< code registered as",classRegistration[code][0],"and not",name)
+         print('\n' + bcolors.RED + f'  Name mismatch!!! >{code}< code registered as {classRegistration[code][0]} and not {name}' + bcolors.ENDC)
          foundNameInRegistration = False
    return foundNameInRegistration
 
@@ -511,7 +524,7 @@ def processFileName(fname):
       suffix = validAssignmentName.group(5).strip()
       #DBG print(f'{getframeinfo(currentframe()).lineno}: {nameLast=} {nameFirst=} {code=} {assignment=} {suffix=}')
    else:
-      print("  Incorrect file name format >" + fname + "<")
+      print('\n' + bcolors.RED + f'  Incorrect file name format >{fname}<' + bcolors.ENDC)
    return validNameAndCode,validAssignmentName,nameLast,nameFirst,code,assignment
    
 def processCurrentSubmission(currentSubmission, assignmentGroups, assignments,classRootDir):
@@ -580,7 +593,7 @@ def processCurrentSubmission(currentSubmission, assignmentGroups, assignments,cl
                     registrationOK = registrationOK and studentRegistered
              else:
                 registrationOK = False
-                print("  Different number of last names, first names, and secret codes.");
+                print('\n' + bcolors.RED + f'  Different number of last names, first names, and secret codes.' + bcolors.ENDC);
           else:
              registrationOK = checkStudentRegistration(submission["FileName"],nameLast,nameFirst,code,submission["classRegistration"])
 
@@ -594,7 +607,7 @@ def processCurrentSubmission(currentSubmission, assignmentGroups, assignments,cl
           print("  Assignment >"+assignment+"< is not in group "+submission["listOfAssignments"])   
    submission["invalidAssignment"] = validFileSubmission and not((assignment in assignments) or submission["registration"])
    if submission["invalidAssignment"]:
-      print("  Invalid Assignment Name: >"+assignment+"<")
+      print('\n' + bcolors.RED + f'  Invalid Assignment Name: >{assignment}<' + bcolors.ENDC)
       
    if validFileSubmission and ((assignment in assignments) or submission["registration"]) and registrationOK and (submission["registration"] or (assignment in submission["listOfAssignments"])):
       submission["nameForLatestDir"] = submission["studentName"]
@@ -629,6 +642,7 @@ def processCurrentSubmission(currentSubmission, assignmentGroups, assignments,cl
          submission["outCheckFileName"] = submission["Assignment"] + "_check.txt"
          submission["outCorrectFileName"] = submission["Assignment"] + "_" + submission["submissionDateTime"] + "_out_CORRECT.txt"
          submission["outCorrectButLateFileName"] = submission["Assignment"] + "_" + submission["submissionDateTime"] + "_out_CORRECT_LATE.txt"
+         submission["outCorrectBut2LateFileName"] = submission["Assignment"] + "_" + submission["submissionDateTime"] + "_out_CORRECT_2LATE.txt"
          submission["outLongFileName"] = submission["Assignment"] + "_" + submission["submissionDateTime"] + "_out.txt"
          submission["outFileNamePresentationErr"] = submission["Assignment"] + "_" + submission["submissionDateTime"] + "_presentationErr.txt"
          submission["outFileNameManualCheckAuto"] = submission["Assignment"] + "_" + submission["submissionDateTime"] + "_manualCheckAuto.txt"
@@ -700,17 +714,21 @@ def processCurrentSubmission(currentSubmission, assignmentGroups, assignments,cl
          if response == 'r':
             if os.path.exists(submission["FileName"]):
                 os.remove(submission["FileName"])
-                updateLogFile(submission, "  removed "  + os.path.join(classRootDir,submission["FileName"]),True)
+                updateLogFile(submission, "  removed "  + os.path.abspath(os.path.join(classRootDir,submission["FileName"])),True)
             break
          elif response == 'm':
             os.rename(os.path.join(classRootDir,submission["FileName"]),os.path.join(submission["classDir"],"00ManualCheck",submission["FileName"]))  #move to 00ManualCheck
-            updateLogFile(submission, "  copied to " + os.path.join(submission["classDir"],"00ManualCheck",submission["FileName"]),True)
+            updateLogFile(submission, "  copied to " + os.path.abspath(os.path.join(submission["classDir"],"00ManualCheck",submission["FileName"])),True)
             break
          elif response == 'e':
             emailStudent(submission)
             break
          elif response != '':
-            os.rename(submission["FileName"], response)  # rename to new name
+            if not os.path.exists(response):
+                os.rename(submission["FileName"], response)  # rename to new name
+            else:
+                print("    File " + response + " already exists!")
+                print("    Looks like student already resubmitted with the correct name and you can remove this file.")
             break
    return submission
 
@@ -765,7 +783,6 @@ def checkProgram(submission, classRootDir):
     os.chdir(submission["studentPgmRunDir"])
     if os.path.exists(os.path.join(submission["Assignment"] + "Checker.java")):
        compileCmd = ["javac", "-parameters", submission["Assignment"] + "Checker.java"]
-       #print("    DBG1a",submission["Assignment"],compileCmd)
        with open("CompilerOutput.txt", "w") as fout:
            with open(submission["compileErrorFileName"], "w") as ferr:
                result = subprocess.run(compileCmd, stdout=fout, stderr=ferr)  #COMPILE CHECKER
@@ -779,13 +796,14 @@ def checkProgram(submission, classRootDir):
               result = subprocess.run(runCmd, stdin=None, stdout=fout, stderr=None)   # run Checker
            checkFilesMatches = filesMatch(submission["outCheckFileName"],submission["goldCheckFile"])
            if checkFilesMatches:
-               print("  >>> CHECK CORRECT <<<")
+               print(bcolors.BOLD + bcolors.GREEN + f'  >>> CHECK CORRECT <<<' + bcolors.ENDC)
            else:
-               print("  ### miscompare (opening diff) ###")
-               diffCmd = [diffPgm,submission["outCheckFileName"],submission["goldCheckFile"]]
-               process = subprocess.Popen(diffCmd, shell=True)     # run diff program
-               submission["processes"].append(process)
-               checked = False
+               if Path(submission["goldCheckFile"]).is_file():   #rpmnew
+                   print("  ### miscompare (opening diff) ###")
+                   diffCmd = [diffPgm,submission["outCheckFileName"],submission["goldCheckFile"]]
+                   process = subprocess.Popen(diffCmd, shell=True)     # run diff program
+                   submission["processes"].append(process)
+                   checked = False
     os.chdir(classRootDir)
     return checked
 
@@ -797,8 +815,7 @@ def runProgram(submission, classRootDir):
         compileCmd = ["python","-m","py_compile",submission["FileName"]]
         runCmds = [["python", submission["FileName"]]]
     elif submission["language"] == "java":
-        compileCmd = ["javac", "-parameters", "*.java"]
-        #print("    DBG1b",compileCmd,">"+ submission["studentPgmRunDir"])        
+        compileCmd = ["javac", "-parameters", "-g", "-Xlint:unchecked", "*.java"]
         runCmds = []
         tester = False
         runner = False
@@ -905,16 +922,19 @@ def runProgram(submission, classRootDir):
     if not error:
         goldFileMatches = filesMatch(submission["outputFile"],submission["goldFile"])
         if goldFileMatches:
-            print("  *** RUN CORRECT ***")
+            print(bcolors.BOLD + bcolors.GREEN + f'  *** RUN CORRECT ***' + bcolors.ENDC)
             autoJudgingCorrect = True    
         else:
             if autoJudging:
                 print("  INCORRECT (autojudged)")
             else:
-                print("  ### miscompare (opening diff) ###")
-                diffCmd = [diffPgm,submission["outputFile"],submission["goldFile"]]
-                process = subprocess.Popen(diffCmd, shell=True)     # run diff program
-                submission["processes"].append(process)
+                if Path(submission["goldFile"]).is_file():   #rpmnew
+                    print("  ### miscompare (opening diff) ###")
+                    diffCmd = [diffPgm,submission["outputFile"],submission["goldFile"]]
+                    process = subprocess.Popen(diffCmd, shell=True)     # run diff program
+                    submission["processes"].append(process)
+                else:
+                    print("  ### no golden file, skipping diff")
             with open(os.path.join(submission["studentPgmRunDir"], "diff.bat"), "w") as fdiff:
                 fdiff.write('"' + diffPgm + '"' + " " + submission["outFileName"] + " " + os.path.join(submission["goldenAssignmentDir"], "gold.txt"))
             # also write diff batch file to class directory (for quick access to each student's last run results)
@@ -999,7 +1019,7 @@ def submissionCorrect(submission,reason=""):
        assignmentGroup = assignmentGroup[:27]+">" if len(assignmentGroup) > 27 else assignmentGroup
        assignment = submission["Assignment"]
        assignment = assignment[:11]+">" if len(assignment) > 11 else assignment
-       fcorr.write(f'P{submission["classPeriod"]}  {assignmentGroup:<28} {submission["result"]} {assignment:<12} {submission["FileName"]} * {submission["submissionDateTime"]}\n')        
+       fcorr.write(f'P{submission["classPeriod"]} {reason} {assignmentGroup:<28} {submission["result"]} {assignment:<12} {submission["FileName"]} * {submission["submissionDateTime"]}\n')        
         #fcorr.write("(P" + submission["classPeriod"] + " " + os.path.basename(os.path.normpath(submission["assignmentGroup"]["assignmentGroupDir"])) +") " + submission["Assignment"] + " " + submission["FileName"] + " * " + submission["submissionDateTime"] + " *\n") 
     if not os.path.exists(os.path.join(submission["plagiarismAssignmentDir"],submission["submittedFileNameWithDate"])):
        os.rename(submission["FileName"], os.path.join(submission["plagiarismAssignmentDir"],submission["submittedFileNameWithDate"]))  # move pgm to PLAGIARISM directory
@@ -1007,10 +1027,12 @@ def submissionCorrect(submission,reason=""):
        #   combineFilesInZipFile(submission["plagiarismAssignmentDir"],submission["submittedFileNameWithDate"])
     else:
         os.remove(submission["FileName"])       # remove submission file (this only happens if the same file with the same time stamp is copied into class directory)
-    correctFileName = submission["outCorrectFileName"]
+    correctFileName = submission["outCorrectFileName"]    # default correct case
     if Path(submission["studentPgmRunDir"],submission["outFileName"]).is_file():
        if reason == 'late':
            correctFileName = submission["outCorrectButLateFileName"]
+       elif reason == '2late':    # submission is too late for any grade
+           correctFileName = submission["outCorrectBut2LateFileName"]
        copyfile(os.path.join(submission["studentPgmRunDir"],submission["outFileName"]), os.path.join(submission["studentDir"],correctFileName))  # copy output file to data directory
        if submission["groupSubmission"]:
           for partnerDir in submission["partnersDirs"]:
@@ -1018,12 +1040,14 @@ def submissionCorrect(submission,reason=""):
     else:     # (outFileName file may not exist - maybe program was manually deemed to be correct)
        if reason == 'late':
            correctFileName = submission["outCorrectButLateFileName"]
+       elif reason == '2late':    # submission is too late for any grade
+           correctFileName = submission["outCorrectBut2LateFileName"]
        copyfile(os.path.join(submission["goldFile"]), os.path.join(submission["studentDir"],correctFileName))  # copy output file to data directory
        if submission["groupSubmission"]:
           for partnerDir in submission["partnersDirs"]:
              copyfile(os.path.join(submission["goldFile"]), os.path.join(partnerDir,correctFileName))  # copy output file to all partners data directories
     scoreboard.updateScoreboard(scoreboardDir,submission["assignmentGroupDir"],submission["assignmentGroupId"],submission["classPeriod"],submission["listOfAssignments"])
-    updateLogFile(submission, "  *** CORRECT *** ")
+    updateLogFile(submission, bcolors.BOLD + bcolors.GREEN + f'  *** CORRECT *** ' + bcolors.ENDC)
 
 def submissionIncorrect(submission,reason=""):
     global autoJudging, moveTo00ManualCheck, classRootDir
@@ -1174,7 +1198,6 @@ def main():
                 currentSubmission = min(currentSubmissions, key=os.path.getmtime)
                 currentSubmissions.remove(currentSubmission)
                 submission = processCurrentSubmission(currentSubmission, assignmentGroups, assignments,classRootDir)
-                #print("    DBG1c",currentSubmission,doItAgain)
                 if submission["valid"]:
                    updateLogFile(submission,"(P" + submission["classPeriod"] + " " + submission["Assignment"] + ")" + ' ' + submission["FileName"] + ' * ' + submission["submissionDateTime"] + ' *',False,False)
                    ####################################### 
@@ -1183,10 +1206,9 @@ def main():
                    listOfStudentDataFiles = glob.glob(submission["studentDir"] + '/' + submission["Assignment"] + r'_*.txt')
                    result,points,correctFound = assignmentResults(listOfStudentDataFiles)
                    submission["result"] = result
-                   print("\n"+ "*** " + submission["Assignment"] + " P" + submission["classPeriod"] + " (" + result + ") " + submission["assignmentGroupId"] + " *** " + submission["FileName"] + ") " + submission["submissionDateTime"] + " [" + str(submission["timeout"]) + "sec]")
-                   #print("    DBG1d",doItAgain)
+                   print("\n"+ bcolors.BOLD + f'*** {submission["Assignment"]} P{submission["classPeriod"]} ({result}) {submission["assignmentGroupId"]} *** {submission["FileName"]}' + bcolors.ENDC + f' {submission["submissionDateTime"]}')
                    if doItAgain:
-                      doitAgain = False
+                      doItAgain = False
                    else:
                       copyFilesToProgramRunDirectory(submission, classRootDir)  ### copy files to student program run directory ###
                    checked = checkProgram(submission, classRootDir)   ### check the program ###
@@ -1197,7 +1219,6 @@ def main():
                         goodToRun = False
                    if goodToRun:
                      autoJudgingCorrect = runProgram(submission, classRootDir)   ### run the program ###
-
                    lCount = 0
                    if autoJudging:
                        if autoJudgingCorrect:
@@ -1207,7 +1228,7 @@ def main():
                    while not autoJudging:    # loop until a valid response
                        currentSubmissions = getSubmissions(validFileExtensions)
                        if submission["studentName"] != "TestTest":
-                          answer = input(submission["lateMsg"] + "  y/l/n/p [s d a b h i o g e c m f k t ?](r){x}" + str(len(currentSubmissions)-1) + "? ")
+                          answer = input(submission["lateMsg"] + "  y/l/2l/n/p [s d a b h i o g e c m f k t ?](r){x}" + str(len(currentSubmissions)-1) + "? ")
                        elif submission["studentName"] == "TestTest":
                          print("   *** THIS WAS JUST A TEST RUN ***")
                          response = input("  Confirm removing of file submission & student directory (y)? ")
@@ -1227,6 +1248,10 @@ def main():
                            submissionCorrect(submission,"late")
                            killProcesses(submission)
                            break
+                       elif answer == "2l":  # submission correct but TOO LATE. UPDATE scoreboard, CONTINUE to next submission.
+                           submissionCorrect(submission,"2late")
+                           killProcesses(submission)
+                           break 
                        elif answer.isnumeric():    # submission gets partial credit. UPDATE scoreboard, CONTINUE to next submission.
                            submissionCorrect(submission,"partial"+answer)
                            killProcesses(submission)
@@ -1246,10 +1271,14 @@ def main():
                               time.sleep(0.5)
                               submission["processes"].append(process)
                        elif answer == "d":
-                           diffCmd = [diffPgm,os.path.join(submission["studentPgmRunDir"],submission["outputFile"]),os.path.join(submission["goldenAssignmentDir"], "gold.txt")]
-                           process = subprocess.Popen(diffCmd, shell=True)     # run diff program
-                           submission["processes"].append(process)
-                       elif answer == "a":  # run program again                     
+                           if Path(os.path.join(submission["studentPgmRunDir"],submission["outputFile"]),os.path.join(submission["goldenAssignmentDir"], "gold.txt")).is_file():   #rpmnew
+                               diffCmd = [diffPgm,os.path.join(submission["studentPgmRunDir"],submission["outputFile"]),os.path.join(submission["goldenAssignmentDir"], "gold.txt")]
+                               process = subprocess.Popen(diffCmd, shell=True)     # run diff program
+                               submission["processes"].append(process)
+                           else:
+                               print("  ### no golden file, skipping diff")      
+                       elif answer == "a":  # run program again
+                           print("  Running program again.")
                            doItAgain = True
                            break
                        elif answer == "b":  # bring up file explorer of scoreboard directory
@@ -1339,14 +1368,14 @@ def main():
                        elif answer == "h":
                            webbrowser.open("https://github.com/rainerpm/CSAssignmentChecker#assignment-menu")
                        elif answer == "t":
+                           print("timestamp.  Set the submissions time stamp to right now (so other pending programs will be run/judged before this one).")
                            setFileTimestampToNow(submission["FileName"])
                            break
                        else:
                            print("  not a valid answer!!!")
-
             elif not autoJudging:  # no current submissions (wait for new ones)
                 currentSubmissions = getSubmissions(validFileExtensions)
-                print("\nPERIOD *",classPeriod,"* waiting for new submissions (<Ctrl-C> back to main menu) ", end="",flush=True)
+                print("\nPERIOD *",classPeriod,"* waiting for new submissions (<Ctrl-C> in Idle only to go back to main menu) ", end="",flush=True)
                 interrupted = False
                 while len(currentSubmissions) == 0:  # wait for more submissions
                     print(".", end="",flush=True)
@@ -1368,7 +1397,6 @@ def main():
                 #print("sleep",autoJudgingSleepTime)
                 time.sleep(autoJudgingSleepTime)
                 break
-
             if interrupted:  # if there is an interrupt go back to asking for class
                 interrupted = False
                 print()
