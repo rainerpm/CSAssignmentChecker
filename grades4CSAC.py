@@ -3,78 +3,8 @@
 # It will likely have to be customized but should be a good starting point.
 
 from   pathlib  import Path
-from   datetime import datetime
-
-scoreboardDir = r'C:\Users\E151509\My Drive\My LASA\scoreboard\annonymous'
-rootDir = r'C:\Users\E151509\Dropbox\Apps\StudentFiles'
-gradesDir = r'C:\Users\E151509\My Drive\My LASA\misc\tools\Grades2Teams'
-classPeriods = { '5' : 'Fundamentals',
-                 '4' : 'AP',
-                 '7' : 'AP'
-               }
-
-latePenaltyPercentageDefault = 0.70   # programs flagged as late are worth this percentage of the points
-
-# ASSIGNMENTS dictionary
-# key = Grade Book name
-# value = (class, assignment group, gradingTuple)
-#    gradingTuple = (pointsPossible,assignmentTuple1,assignmentTuple2,...)
-#       * points possible is a integer number for the total points of assignment group OR
-#         a tuple representing the points for assignments where grading is based on how many assignments in the assignment group are completed: 1st tuple element is points for 0 completed, 2nd is for 1 completed, 3rd is for 2 completed, ...
-#       * each assignmentTuple = assignmentName, percentOfAssignment (integer or float - see note about optional assignmetns below),[optional: percentDeductionForIncorrectSubmission]
-#       * example 1  (10,('calculator',100))  a 10pt assignment called calculator
-#       * example 2  (20,('pgm1a',80),('pgm1b',15),('pgm1c',5))    pgm1a correct is 80% (i.e. 16pts), pgm1a & pgm1b correct is 95%=80%+15%, pgm1a,pgm1b,pgm1c correct is 100%=80%+15%+5%
-#       * example 3  (20,('pgm1a',80,10),('pgm1b',15),('pgm1c',5)) same as above except that 2pts (10% of 20pts) are deducted for every incorrect submission of pgm1a    
-#       * example 4  ((0,7.5,9,10.5,12,13.5,15),('pgm1a',1),('pgm1b',),('pgm1c',),('pgm1d',),('pgm1e',),('pgm1f',))   6 total programs 0 correct = 0 pts,  1 correct = 7.5pts, 2=9pts, 3=10.5pts, ...
-#                                                       NOTE: A tuple with a single element requires a , after the element
-# A note about optional assigments
-#   Assignments can be optional and their points are counted if a later part of the assignment is correct.
-#   Optional assignments are indicated by adding a .0 to their percentOfAssignment (making the number a float)
-ASSIGNMENTS = {
-#                'Introduction to Thonny'   : ('Fundamentals','PYTHON_01_FirstAssignments',(5,('introduction',100))),
-#                'Heat Index'               : ('Fundamentals','PYTHON_01_FirstAssignments',(10,('heat',100))),
-#                'Calculator'               : ('Fundamentals','PYTHON_01_FirstAssignments',(10,('calculator',100))),
-#                'Fuel Economy'             : ('Fundamentals','PYTHON_01_FirstAssignments',(5,('fuel',100))),
-#                'Using Functions'          : ('Fundamentals','PYTHON_01_FirstAssignments',(10,('heat2',100))),
-#                'While loops'              : ('Fundamentals','PYTHON_01_FirstAssignments',(3,('while',100))),
-#                'For loops'                : ('Fundamentals','PYTHON_01_FirstAssignments',(4,('for',100,12.5))),  # deduct 1/2 point (12.5%) for every incorrect submission
-#                'Booleans decisions loops' : ('Fundamentals','PYTHON_01_FirstAssignments',(10,('bdl',100))),
-#                'Lets get loopy'           : ('Fundamentals','PYTHON_02_Lets_Get_Loopy',((0,9,15,21,24,25.5,27,27.9,28.8,29.4,30,31.5,33,34.5),('01arm',),('02fib',),('03days',),('04agtb',),('05year',),('06collatz',),('07power',),('08triplet',),('09polter',),('10champ',),('11area',),('12flip',),('13coin',))),
-#                'Strings'                  : ('Fundamentals','PYTHON_01_FirstAssignments',(5,('strings1',100,10),('strings2',40))),  # deduct 1/2 point (10%) for strings1, string2 is a bonus of 2 pts (or 40% of 5 points)
-#                'Ciphers'                  : ('Fundamentals','PYTHON_03_SecondAssignments',(15,('caesar',90),('vigenere',10))), 
-#                'Files'                    : ('Fundamentals','PYTHON_03_SecondAssignments',(4,('files1',70),('files2',10),('files3',10),('files4',10),('files5',25))), 
-#                'Register & Login'         : ('Fundamentals','PYTHON_03_SecondAssignments',(15,('pw0',70),('pw1',15),('pw2',15),('pwbonus0',6.7),('pwbonus1',6.7))), 
-#                 'List1'                    : ('Fundamentals','PYTHON_03_SecondAssignments',(3,('list1',100,16.6))),
-#                 'Student Grades'           : ('Fundamentals','PYTHON_04_ThirdAssignments',(10,('grades1',90),('grades2',10))),
-#                 'First Challenges'         : ('Fundamentals','PYTHON_04_ThirdAssignments',((0,5,10,15,18,20,22,-0.6),('aftest',),('artest',),('elevator',),('climb',),('microwave',),('tgencrypt',))),
-#                 'contacts'                 : ('Fundamentals','PYTHON_05_FourthAssignments',(2,('contacts',100))),
-#                 'dictionary1'              : ('Fundamentals','PYTHON_05_FourthAssignments',(3,('dictionary1',100))),
-#                 'More Student Grades'      : ('Fundamentals','PYTHON_05_FourthAssignments',(10,('grades3',100))),
-                 'states & baseball'       : ('Fundamentals','PYTHON_05_FourthAssignments',(10,('states1',70.0),('states2',10.0),('baseball',20))),   #
-                 'prime & distance'        : ('Fundamentals','PYTHON_05_FourthAssignments',(10,('prime',80),('distances1',10),('distances2',10))),
-                 'Second Challenges'       : ('Fundamentals','PYTHON_06_SecondChallenges',((0,10,14,16,17,18,19,20),('snap',),('fence',),('points',),('palinum',),('yoda',),('ocr',),('independence',))),
-                 'Three Bonus Problems'    : ('Fundamentals','PYTHON_07_ThreeProblems',((0,1,2,3),('supersum',),('summation',),('radical',))),
-#                'Book & StudentId'       : ('AP','JAVA_02_Objects1',(15,('Book',80),('StudentId',20))),
-#                'InOrder'                : ('AP','JAVA_02_Objects1',(10,('InOrder',100))),
-#                'Calculator & Quadratic' : ('AP','JAVA_02_Objects1',(10,('Calculator',80),('Quadratic',20))),
-#                'GCD'                    : ('AP','JAVA_02_Objects1',(3,('GCD',100))),
-#                'Robot'                    : ('AP','JAVA_02_Objects1',(10,('Robot',100))),
-#                'Deal'                     : ('AP','JAVA_03_Objects2',(15,('Deal',100))),
-#                'Collatz'                  : ('AP','JAVA_03_Objects2',(15,('Collatz',100))),
-#                'UserAccess'               : ('AP','JAVA_03_Objects2',(15,('UserAccess0',70.0),('UserAccess1',15.0),('UserAccess2',15.0),('UserEnglish',10),('UserPassword',10))),
-#                'WordSearch'               : ('AP','JAVA_03_Objects2',(15,('WordSearch80',80.0),('WordSearch90',10.0),('WordSearch100',10.0))),
-#                'Vigenere'                 : ('AP','JAVA_03_Objects2',(10,('Vigenere0',90.0),('Vigenere1',10.0))),
-#                'PlayList'                 : ('AP','JAVA_03_Objects2',(15,('PlayList',100))),
-#                'UIL 2018 Hands On'        : ('AP','2018_UIL_District',((0,8,9,10,11,12,13,14,15,16,17,18,19),('Alice',),('Bayani',),('Candela',),('Carla',),('Diya',),('Gleb',),('Jeremy',),('Kinga',),('Layla',),('Max',),('Nandita',),('Raymond',))),
-                'Library'                  : ('AP','JAVA04_Semester2A',(15,('Library',100))),
-                'Card'                     : ('AP','JAVA04_Semester2A',(10,('Card',100))),
-                'Deck'                     : ('AP','JAVA04_Semester2A',(10,('Deck',100,5.0))),   # -1/2 point (5%) for every incorrect submission
-                'Players'                  : ('AP','JAVA04_Semester2A',(15,('Player',50),('CardPlayer',50))),
-                'CardPlayerLevel1'         : ('AP','JAVA04_Semester2A',(10,('CardPlayerLevel1',100))),
-                'CardGame'                 : ('AP','JAVA04_Semester2A',(15,('CardGame',100))),
-                'AntClimb'                 : ('AP','JAVA04_Semester2A',(1,('AntClimb',100)))
-              }
-
+from datetime import datetime
+from grades4CSACdata import ASSIGNMENTS,scoreboardDir,codingBatDir,rootDir,gradesDir,classPeriods,latePenaltyPercentageDefault
 
 class bcolors:
     HEADER = '\033[95m'
@@ -203,12 +133,13 @@ while True:
 
     writeToGradesDir = False
     if not pickSingleStudent:    
-        userInput = input('Write grade files to ' + gradesDir + '(y)? ').strip();
+        userInput = input('Write grade files to ' + gradesDir + '(Enter=n)? ').strip();
         if userInput == 'y':
             writeToGradesDir = True
 
     printedStudents = False
-
+                        
+    foundWarnings = False
     for assignmentName in assignmentsPickedList:
         value = ASSIGNMENTS[assignmentName]
         assignmentGroup = value[1]
@@ -229,65 +160,85 @@ while True:
                             singleStudentNames.append(fields[1] + ' ' + fields[2]) 
                         if len(fields) == 6:
                             code2ID[fields[0]] = fields[5]
-                        registrationOrder.append((fields[0], fields[1], fields[2]))
-                # print(code2ID)
+                        registrationOrder.append((fields[0], fields[1], fields[2],fields[5]))
                 if pickSingleStudent and not printedStudents:
                     userInput = input('  Enter number of student: ').strip()
                     singleStudentName = singleStudentNames[int(userInput)-1]
-            
-            with open(Path(scoreboardDir,'Period'+period,assignmentGroup + '.txt'), "r") as sb:
-                firstLine = sb.readline()
-                secondLine = sb.readline()
-                assignmentsFromScoreboard = secondLine.split()
-                assignmentsOnly = []
-                for assignment in assignmentsFromScoreboard:
-                    assignmentsOnly.append(assignment[assignment.find(')')+1:])
-                assignmentNums = []
-                for assignmentTuple in assignmentTuples:
-                    num = 1
-                    for assignment in assignmentsOnly:
-                        if assignment == assignmentTuple[0]:
-                            assignmentNums.append(num)
-                        num = num + 1
-                thirdline = sb.readline()
-                fourthline = sb.readline()
-                gradesDic = {}
-                for line in sb:
-                    if line.startswith('TOTALS'):
-                        break
-                    student = line.split()
-                    studentCode = student[0]
-                    studentResult = []
-                    for assignmentNum in assignmentNums:
-                        studentResult.append(student[assignmentNum])
-                    gradeStr,gradeStrColor = calcPointsForStudent(gradingTuple,studentResult)
-                    if studentCode in code2ID:
-                        gradesDic[studentCode] = (code2ID[studentCode],gradeStr,gradeStrColor)
-                    else:
-                        print(f'WARNING!!! Student code {studentCode} in scoreboard file not found in REGISTER.txt.')
-                        
+            if (assignmentGroup == "CodingBat"):
+                with open(Path(gradesDir,period + ' - ' + assignmentName + '_' + dateTime + '.txt'), "w") as gf:
+                    gf.write("ID,"+assignmentName+'\n')
+                with open(Path(codingBatDir,'P' + period + ' - ' + assignmentName + '.txt'), "r") as cb:
+                    lineNum = 0
+                    for line in cb:
+                        correct = int(line.split()[2])
+                        name = line.split()[-2:]
+                        grade = gradingTuple[correct]
+                        studentId = registrationOrder[lineNum][3]
+                        with open(Path(gradesDir,period + ' - ' + assignmentName + '_' + dateTime + '.txt'), "a") as gf:
+                            print(f' {grade} {name[0]} {name[1]}')
+                            #gf.write(str(registrationOrder[lineNum][3]) + ',' + str(gradingTuple[correct])+'\n')
+                            gf.write(f'{studentId},{grade}\n')
+                        lineNum += 1
+            else:
+                with open(Path(scoreboardDir,'Period'+period,assignmentGroup + '.txt'), "r") as sb:
+                    firstLine = sb.readline()
+                    secondLine = sb.readline()
+                    assignmentsFromScoreboard = secondLine.split()
+                    assignmentsOnly = []
+                    for assignment in assignmentsFromScoreboard:
+                        assignmentsOnly.append(assignment[assignment.find(')')+1:])
+                    assignmentNums = []
+                    for assignmentTuple in assignmentTuples:
+                        num = 1
+                        for assignment in assignmentsOnly:
+                            if assignment == assignmentTuple[0]:
+                                assignmentNums.append(num)
+                            num = num + 1
+                    thirdline = sb.readline()
+                    fourthline = sb.readline()
+                    gradesDic = {}
+                    for line in sb:
+                        if line.startswith('TOTALS'):
+                            break
+                        student = line.split()
+                        studentCode = student[0]
+                        studentResult = []
+                        for assignmentNum in assignmentNums:
+                            studentResult.append(student[assignmentNum])
+                        gradeStr,gradeStrColor = calcPointsForStudent(gradingTuple,studentResult)
+                        if studentCode in code2ID:
+                            gradesDic[studentCode] = (code2ID[studentCode],gradeStr,gradeStrColor)
+                        else:
+                            foundWarnings = True
+                            print(bcolors.BOLD + bcolors.RED + f'WARNING!!! Student code {studentCode} in scoreboard file not found in REGISTER.txt.' + bcolors.ENDC)
+                            
 
-                if writeToGradesDir:
-                    with open(Path(gradesDir,period + ' - ' + assignmentName + '_' + dateTime + '.txt'), "w") as gf:
-                        gf.write("ID,"+assignmentName+'\n')
-                        for registration in registrationOrder:
-                            code = registration[0]
-                            gf.write(gradesDic[code][0] + ',' + gradesDic[code][1]+'\n')
+                    if writeToGradesDir:
+                        with open(Path(gradesDir,period + ' - ' + assignmentName + '_' + dateTime + '.txt'), "w") as gf:
+                            gf.write("ID,"+assignmentName+'\n')
+                            for registration in registrationOrder:
+                                code = registration[0]
+                                if code in gradesDic:
+                                   gf.write(gradesDic[code][0] + ',' + gradesDic[code][1]+'\n')
 
-                print("******* " + period + ' ' + assignmentName + " *******")
-                for registration in registrationOrder:
-                    code = registration[0]
-                    name = registration[1] + ' ' + registration[2]
-                    if code in gradesDic:
-                        if pickSingleStudent:
-                            if singleStudentName == name:
+                    print("******* " + period + ' ' + assignmentName + " *******")
+                    print(f'DBG {registrationOrder = }')
+                    for registration in registrationOrder:
+                        code = registration[0]
+                        name = registration[1] + ' ' + registration[2]
+                        #print(f'DBG {gradesDic = }')
+                        if code in gradesDic:
+                            if pickSingleStudent:
+                                if singleStudentName == name:
+                                    print(f'{gradesDic[code][2]} {name}')
+                            else:
                                 print(f'{gradesDic[code][2]} {name}')
                         else:
-                            print(f'{gradesDic[code][2]} {name}')
-                    else:
-                        print(f'WARNING!!! No result found in scoreboard for {code} in REGISTER.txt ({name = })')
-    
-        printedStudents = True            
-                
+                            print(f'WARNING!!! No result found in scoreboard for {code} in REGISTER.txt ({name = })')
+        
+        printedStudents = True
+    if foundWarnings:
+         print(bcolors.BOLD + bcolors.RED + f'WARNINGS found above (have a look)' + bcolors.ENDC)                
+    foundWarnings = False
                 
 
