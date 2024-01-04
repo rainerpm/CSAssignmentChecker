@@ -21,6 +21,9 @@ class bcolors:
     BLACK = '\033[30m'
     
 def calcPointsForStudent(gradingTuple,results):
+    #print(f'{gradingTuple = }')
+    #print(f'{results = }')
+    # ['0x', 'C', 'C1']
     pointsPossible = gradingTuple[0]
     poinstForHowManyCorrect = type(pointsPossible) is tuple
     if poinstForHowManyCorrect:
@@ -35,6 +38,7 @@ def calcPointsForStudent(gradingTuple,results):
         for result in results:
             assignmentTuple = assignmentTuples[idx]
             idx = idx + 1
+            assignmentName = assignmentTuple[0]
             assignmentPercentage = assignmentTuple[1]
             #print(f'  {result=} {assignmentTuple=} {assignmentPercentage=}')
             # possible deduction for incorrect attempts (only happens if percentDeductionForIncorrectSubmission is specified in assignmentTuple)
@@ -54,11 +58,14 @@ def calcPointsForStudent(gradingTuple,results):
             if result.startswith('C') or result.startswith('L'):
                 if result.startswith('L') and skippedOptionalParts:
                     points4gradeOptionalAssignments = points4gradeOptionalAssignments * 0.70
+                #print(f'DBG2 {points4grade = } {points4assignment = } {points4gradeOptionalAssignments = }')
                 points4grade = points4grade + points4assignment + points4gradeOptionalAssignments
+                points4gradeOptionalAssignments = 0  # reset to 0 so if student completes multiple optional parts a previous optional part's points is not added multiple times
             else:    
-                if isinstance(assignmentPercentage,float):
+                if assignmentName.startswith('(opt)'):
                     skippedOptionalParts = True
-                    points4gradeOptionalAssignments = points4gradeOptionalAssignments + points4assignment            
+                    #print(f'DBG2 {points4gradeOptionalAssignments = } {points4assignment = }')
+                    points4gradeOptionalAssignments = points4gradeOptionalAssignments + points4assignment
     else:    # grade is based on how MANY assignments in an assignment group are done (not which specific ones)
         numCorrect = 0
         numLate = 0
@@ -99,20 +106,17 @@ while True:
         print(f'  {period:2s} {classPeriods[period]}')
     print('  x  to exit')
     userInput = input('  Enter one or more period numbers (separate with space): ').strip()
-    #print(">" + userInput + "<");
     if userInput == 'x':
         exit() 
     elif not userInput == "":   # 2nd time through if user just hits enter use the same class period(s)
         periodsPicked = userInput.split()
-
-    #print(periodsPicked)
 
     # pick assignment(s)
     print('Choose 0 or 1 or more assignments')
     num = 0
     print('  0 all the below assignments for a single student')
     assignmentsList = []
-    for assignment in ASSIGNMENTS:
+    for assignment in ASSIGNMENTS:    # ASSIGNMENTS is dictionary defined in grades4ACdata.py
         for period in periodsPicked:
            if ASSIGNMENTS[assignment][0] == classPeriods[period]:
                if assignment not in assignmentsList:
@@ -129,7 +133,6 @@ while True:
         assignmentsPickedList = []
         for pick in assignmentsPicked:
             assignmentsPickedList.append(assignmentsList[int(pick)-1])
-        #print(assignmentsPickedList)
 
     writeToGradesDir = False
     if not pickSingleStudent:    
@@ -167,15 +170,16 @@ while True:
             if (assignmentGroup == "CodingBat"):
                 with open(Path(gradesDir,period + ' - ' + assignmentName + '_' + dateTime + '.txt'), "w") as gf:
                     gf.write("ID,"+assignmentName+'\n')
+                # CODINGBAT
                 with open(Path(codingBatDir,'P' + period + ' - ' + assignmentName + '.txt'), "r") as cb:
                     lineNum = 0
                     for line in cb:
                         correct = int(line.split()[2])
-                        name = line.split()[-2:]
+                        name = line.split()[-3:-1]
                         grade = gradingTuple[correct]
-                        studentId = registrationOrder[lineNum][3]
+                        studentId = line.split()[-1]
                         with open(Path(gradesDir,period + ' - ' + assignmentName + '_' + dateTime + '.txt'), "a") as gf:
-                            print(f' {grade} {name[0]} {name[1]}')
+                            print(f' {grade} {name[0]} {name[1]} [{studentId}]')
                             #gf.write(str(registrationOrder[lineNum][3]) + ',' + str(gradingTuple[correct])+'\n')
                             gf.write(f'{studentId},{grade}\n')
                         lineNum += 1
@@ -191,7 +195,10 @@ while True:
                     for assignmentTuple in assignmentTuples:
                         num = 1
                         for assignment in assignmentsOnly:
-                            if assignment == assignmentTuple[0]:
+                            assignmentNameFromTuple = assignmentTuple[0]
+                            if assignmentNameFromTuple.startswith('(opt)'):
+                                assignmentNameFromTuple = assignmentNameFromTuple[5:]   # remove '(opt)' from beginning of the name, '(opt)' is only used in calcPointsForStudent()
+                            if assignment == assignmentNameFromTuple:
                                 assignmentNums.append(num)
                             num = num + 1
                     thirdline = sb.readline()
@@ -206,8 +213,9 @@ while True:
                         for assignmentNum in assignmentNums:
                             studentResult.append(student[assignmentNum])
                         gradeStr,gradeStrColor = calcPointsForStudent(gradingTuple,studentResult)
+                        #print(f'{studentResult=}')
                         if studentCode in code2ID:
-                            gradesDic[studentCode] = (code2ID[studentCode],gradeStr,gradeStrColor)
+                            gradesDic[studentCode] = (code2ID[studentCode],gradeStr,gradeStrColor,studentResult)
                         else:
                             foundWarnings = True
                             print(bcolors.BOLD + bcolors.RED + f'WARNING!!! Student code {studentCode} in scoreboard file not found in REGISTER.txt.' + bcolors.ENDC)
@@ -220,9 +228,9 @@ while True:
                                 code = registration[0]
                                 if code in gradesDic:
                                    gf.write(gradesDic[code][0] + ',' + gradesDic[code][1]+'\n')
-
+                    #print(gradesDic)
                     print("******* " + period + ' ' + assignmentName + " *******")
-                    print(f'DBG {registrationOrder = }')
+                    #print(f'DBG {registrationOrder = }')
                     for registration in registrationOrder:
                         code = registration[0]
                         name = registration[1] + ' ' + registration[2]
@@ -232,7 +240,7 @@ while True:
                                 if singleStudentName == name:
                                     print(f'{gradesDic[code][2]} {name}')
                             else:
-                                print(f'{gradesDic[code][2]} {name}')
+                                print(f'{gradesDic[code][2]} ({gradesDic[code][3][0]:2}) {name}')
                         else:
                             print(f'WARNING!!! No result found in scoreboard for {code} in REGISTER.txt ({name = })')
         

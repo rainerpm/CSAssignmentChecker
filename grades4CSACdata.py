@@ -24,30 +24,31 @@ latePenaltyPercentageDefault = 0.70   # programs flagged as late are worth this 
 #                                                       NOTE: A tuple with a single element requires a , after the element
 # A note about optional assigments
 #   Assignments can be optional and their points are counted if a later part of the assignment is correct.
-#   Optional assignments are indicated by adding a .0 to their percentOfAssignment (making the number a float)
+#   Optional assignments are indicated by adding the string '(opt)' to the front of the assignment name.
 ASSIGNMENTS = {
-'CodingBat Warmup'         : ('Fundamentals','CodingBat',(0,2,3,4,5)),
-'Introduction to Thonny'   : ('Fundamentals','PYTHON_01_FirstAssignments',(5,('introduction',100))),
-'Heat Index'               : ('Fundamentals','PYTHON_01_FirstAssignments',(10,('heat',100))),
-'CodingBat Logic'          : ('Fundamentals','CodingBat',(0,1,2,3)),
-'Calculator'               : ('Fundamentals','PYTHON_01_FirstAssignments',(10,('calculator',100))),
-#'Fuel Economy'             : ('Fundamentals','PYTHON_01_FirstAssignments',(5,('fuel',100))),
-#'Using Functions'          : ('Fundamentals','PYTHON_01_FirstAssignments',(10,('heat2',100))),
-#'While loops'              : ('Fundamentals','PYTHON_01_FirstAssignments',(3,('while',100))),
-#'For loops'                : ('Fundamentals','PYTHON_01_FirstAssignments',(4,('for',100,12.5))),  # deduct 1/2 point (12.5%) for every incorrect submission
-#'Booleans decisions loops' : ('Fundamentals','PYTHON_01_FirstAssignments',(10,('bdl',100))),
-#'Lets get loopy'           : ('Fundamentals','PYTHON_02_Lets_Get_Loopy',((0,9,15,21,24,25.5,27,27.9,28.8,29.4,30,31.5,33,34.5),('01arm',),('02fib',),('03days',),('04agtb',),('05year',),('06collatz',),('07power',),('08triplet',),('09polter',),('10champ',),('11area',),('12flip',),('13coin',))),
-#'Strings'                  : ('Fundamentals','PYTHON_01_FirstAssignments',(5,('strings1',100,10),('strings2',40))),  # deduct 1/2 point (10%) for strings1, string2 is a bonus of 2 pts (or 40% of 5 points)
-#'Ciphers'                  : ('Fundamentals','PYTHON_03_SecondAssignments',(15,('caesar',90),('vigenere',10))), 
-#'Files'                    : ('Fundamentals','PYTHON_03_SecondAssignments',(4,('files1',70),('files2',10),('files3',10),('files4',10),('files5',25))), 
-#'Register & Login'         : ('Fundamentals','PYTHON_03_SecondAssignments',(15,('pw0',70),('pw1',15),('pw2',15),('pwbonus0',6.7),('pwbonus1',6.7))), 
+# 'CodingBat Warmup'         : ('Fundamentals','CodingBat',(0,2,3,4,5)),
+# 'Introduction to Thonny'   : ('Fundamentals','PYTHON_01_FirstAssignments',(5,('introduction',100))),
+# 'Heat Index'               : ('Fundamentals','PYTHON_01_FirstAssignments',(10,('heat',100))),
+# 'CodingBat Logic'          : ('Fundamentals','CodingBat',(0,1,2,3)),
+# 'Calculator'               : ('Fundamentals','PYTHON_01_FirstAssignments',(10,('calculator',100))),
+# 'Fuel Economy'             : ('Fundamentals','PYTHON_01_FirstAssignments',(5,('fuel',100))),
+# 'CodingBat Berlin Wall'    : ('Fundamentals','CodingBat',(0,1,2,3)),
+# 'Using Functions'          : ('Fundamentals','PYTHON_01_FirstAssignments',(10,('heat2',100))),
+# 'While loops'              : ('Fundamentals','PYTHON_01_FirstAssignments',(3,('while',100))),
+# 'For loops'                : ('Fundamentals','PYTHON_01_FirstAssignments',(4,('for',100,12.5))),  # deduct 1/2 point (12.5%) for every incorrect submission
+# 'Booleans decisions loops' : ('Fundamentals','PYTHON_01_FirstAssignments',(10,('bdl',100))),
+# 'Lets get loopy'           : ('Fundamentals','PYTHON_02_Lets_Get_Loopy',((0,9,15,21,24,25.5,27,27.9,28.8,29.4,30,31.5,33,34.5),('01sal',),('02fib',),('03days',),('04agtb',),('05pi',),('06collatz',),('07power',),('08triplet',),('09polter',),('10champ',),('11area',),('12flip',),('13coin',))),
+'Strings'                  : ('Fundamentals','PYTHON_01_FirstAssignments',(5,('strings1',100,10),('strings2',40))),  # deduct 1/2 point (10%) for strings1, string2 is a bonus of 2 pts (or 40% of 5 points)
+'Ciphers'                  : ('Fundamentals','PYTHON_03_SecondAssignments',(15,('caesar',90),('vigenere',10))), 
+'Files'                    : ('Fundamentals','PYTHON_03_SecondAssignments',(4,('files1',70),('files2',10),('files3',10),('files4',10),('files5',25))), 
+'Register & Login'         : ('Fundamentals','PYTHON_03_SecondAssignments',(15,('pw0',70),('pw1',15),('pw2',15),('pwbonus0',6.7),('pwbonus1',6.7))), 
 #'List1'                    : ('Fundamentals','PYTHON_03_SecondAssignments',(3,('list1',100,16.6))),
 #'Student Grades'           : ('Fundamentals','PYTHON_04_ThirdAssignments',(10,('grades1',90),('grades2',10))),
 #'First Challenges'         : ('Fundamentals','PYTHON_04_ThirdAssignments',((0,5,10,15,18,20,22,-0.6),('aftest',),('artest',),('elevator',),('climb',),('microwave',),('tgencrypt',))),
 #'contacts'                 : ('Fundamentals','PYTHON_05_FourthAssignments',(2,('contacts',100))),
 #'dictionary1'              : ('Fundamentals','PYTHON_05_FourthAssignments',(3,('dictionary1',100))),
 #'More Student Grades'      : ('Fundamentals','PYTHON_05_FourthAssignments',(10,('grades3',100))),
-#'states & baseball'        : ('Fundamentals','PYTHON_05_FourthAssignments',(10,('states1',70.0),('states2',10.0),('baseball',20))),   #
+#'states & baseball'        : ('Fundamentals','PYTHON_05_FourthAssignments',(10,('(opt)states1',70),('states2',10),('baseball',20))),   #
 #'prime & distance'         : ('Fundamentals','PYTHON_05_FourthAssignments',(10,('prime',80),('distances1',10),('distances2',10))),
 #'Second Challenges'        : ('Fundamentals','PYTHON_06_SecondChallenges',((0,10,14,16,17,18,19,20),('snap',),('fence',),('points',),('palinum',),('yoda',),('ocr',),('independence',))),
 #'Three Bonus Problems'     : ('Fundamentals','PYTHON_07_ThreeProblems',((0,1,2,3),('supersum',),('summation',),('radical',))),
@@ -71,13 +72,15 @@ ASSIGNMENTS = {
 #'Deal'                     : ('AP','JAVA_03_Objects2',(15,('Deal',100))),
 #'Phrase'                     : ('AP','JAVA_02_Objects1',(12,('Phrase',100,4.2))),    # 4.2% of 12 = 0.5 pts
 #NEXT YEAR 2024 'Phrase & Pictures'          : ('AP','JAVA_02_Objects1',(15,('Phrase',80,4.2),('Baboon',10),('Peppers',10),('Illusion1',6.67),('Illusion2',6.67),('Illusion3',6.67))),   # 4.2% of 80% of 15 = 0.5 pts, 6.67% of 15 = 1 pt
-'Collatz'                    : ('AP','JAVA_03_Objects2',(15,('Collatz',100,6.67))),   # 6.67% of 15 = 1 pt
-'UserAccess'                 : ('AP','JAVA_03_Objects2',(15,('UserAccess0',70.0),('UserAccess1',15.0),('UserAccess2',15.0),('UserEnglish',6.67),('UserPassword',6.67))),
-#'WordSearch'               : ('AP','JAVA_03_Objects2',(15,('WordSearch80',80.0),('WordSearch90',10.0),('WordSearch100',10.0))),
-#'Vigenere'                 : ('AP','JAVA_03_Objects2',(10,('Vigenere0',90.0),('Vigenere1',10.0))),
-#'PlayList'                 : ('AP','JAVA_03_Objects2',(15,('PlayList',100))),
+# 'Collatz'                    : ('AP','JAVA_03_Objects2',(15,('Collatz',100,6.67))),   # 6.67% of 15 = 1 pt
+# 'UserAccess'                 : ('AP','JAVA_03_Objects2',(15,('(opt)UserAccess0',70),('(opt)UserAccess1',15),('UserAccess2',15),('UserEnglish',6.67),('UserPassword',6.67))),
+# 'WordSearch'               : ('AP','JAVA_03_Objects2',(15,('(opt)WordSearch80',80),('(opt)WordSearch90',10),('WordSearch100',10))),
+# 'CodingBat Array Exercises'  : ('AP','CodingBat',(0,4,6,7,8,9,10,11,12,13,14,15)),
+# 'Vigenere'                  : ('AP','JAVA_03_Objects2',(10,('(opt)Vigenere0',90),('Vigenere1',10))),
+# 'PlayList'                  : ('AP','JAVA_03_Objects2',(15,('PlayList',100))),
 #'UIL 2018 Hands On'        : ('AP','2018_UIL_District',((0,8,9,10,11,12,13,14,15,16,17,18,19),('Alice',),('Bayani',),('Candela',),('Carla',),('Diya',),('Gleb',),('Jeremy',),('Kinga',),('Layla',),('Max',),('Nandita',),('Raymond',))),
-#'Library'                  : ('AP','JAVA04_Semester2A',(15,('Library',100))),
+'UIL 2022 Hands On'         : ('AP','2022_UIL_District',((0,7,8,9,10,10.5,11,11.5,12,12.5,13,13.5,14),('Adrian',),('Arusha',),('Catherine',),('Diane',),('Facundo',),('Haru',),('Kristina',),('Lavanya',),('Manos',),('Michaela',),('Pankaj',),('Shirley',))),
+'ArrayLists'                : ('AP','JAVA04_Semester2A',(15,('NumberJumble',70),('Library',30))),
 #'Card'                     : ('AP','JAVA04_Semester2A',(10,('Card',100))),
 #'Deck'                     : ('AP','JAVA04_Semester2A',(10,('Deck',100,5.0))),   # -1/2 point (5% of 10 points) for every incorrect submission
 #'Players'                  : ('AP','JAVA04_Semester2A',(15,('Player',50),('CardPlayer',50))),
