@@ -45,7 +45,7 @@ can be submitted directly to that folder in real time by the students (one way t
 * inside of demo/ you will also find the below (which do not need to be initialized or modified for the demo). 
   * **ASSIGNMENT_GROUPS** folder
     * **first6weeksAssignments, pythonAssignments** (these folders contain a group of related assignments, each of which will have it's own scoreboard file)
-      * **GCD, encryption** (these are the assignment folders  - the name of the assignment folder **is** the **assignment name**, assignment names must be unique, - @ = **assignment name**)
+      * **GCD, encryption** (these are the assignment folders  - the name of the assignment folder **is** the **assignment name**, assignment names must be unique, @ = **assignment name**)
          * **@.dat** is the teacher provided input data file for the assignment. Typically this file contains more/harder test data then what's been given to the students.
          * **@Tester.java** is an optional test program (@ is the **assignment name**)
          * **@Checker.java** is an optional checker program (@ is the **assignment name**)
