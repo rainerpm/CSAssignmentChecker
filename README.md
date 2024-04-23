@@ -6,13 +6,14 @@ The **CSAssignmentChecker.py** (aka **CSAC**) program verifies python or java as
 
 ### Requirements
 The following programs are required to be installed on your computer (the programs in parenthesis are what I use, but can be replaced with something equivalent by updating the customize.py file).
-  * Python (https://www.python.org/downloads/)
-    * The following is only required if you want to use the option to email students directly from the program by having the program use the Windows Outlook app
-      * pip install pywin32
-    * The following are only required for providing a student feeback comment via email or the clipboard and can be installed later
-      * pip install pyperclip (enables the program to access the clipboard)
-      * pip install pillow (enables the program to "grab" an image from the most recent clipboard entry) 
-  * JAVA (https://www.jgrasp.org/)
+  * Python IDE (https://www.python.org/downloads/)
+    * pip install pywin32
+      * only required if you want to use the option to email students directly from the program by having the program use the Windows Outlook app
+    * pip install pyperclip (enables the program to access the clipboard)
+      * only required for providing a student feeback comment via email or the clipboard
+    * pip install pillow (enables the program to "grab" an image from the most recent clipboard entry)
+      * only required for providing a student feeback comment via email or the clipboard
+  * JAVA IDE (https://www.jgrasp.org/)
   * Text Editor (https://notepad-plus-plus.org/downloads/)
   * diff program (https://winmerge.org/?lang=en).
 
