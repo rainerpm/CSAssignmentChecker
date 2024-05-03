@@ -41,7 +41,7 @@ Student results for each assignment group are stored in two scoreboard files (on
  
 ### Program (and Demo) Setup
 * unzip demo.zip to a folder on your hard drive (e.g. C:/YourPathToDemoDir/demo)
-* in **customize.py**
+* in **customize.py**  (it may enough to simply change USERNAME to your user name)
   * set the **rootDir** variable to the location of the unzipped demo folder (e.g. C:/YourPathToDemoDir/demo) 
   * set the **scoreboardDir** variable (e.g. C:/YourPathToDemoDir/demo/scoreboard_for_demo)
   * set the **pythonIdeLoc** variable to the location of the Python IDE (e.g. IDLE) executable.
