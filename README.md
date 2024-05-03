@@ -20,32 +20,33 @@ The following programs are required to be installed on your computer (the progra
 ### Student Registration
 Students are registered with **CSAC** via a REGISTER.txt file in each class period's directory. Each line in the REGISTER.txt file contains 6 pieces of information for each student (each separated by one or more spaces) (1) secret code - used to annonymously identify a student's results (2) first name (3) last name (4) clas period (5) email address (6) school student id.  You can create the REGISTER.txt file manually, or use a Google Form as specified [here](https://docs.google.com/document/d/1BaU-_KyqOs55-iTgqofZ8XuDYRqWC9_9-3l_4Etynp0/edit?usp=sharing).  
 
-### Assignment Submission and Verification
+### Assignment Submission
 To submit an assignment a student submits a single file using the naming convention **Last First ?_@.$** (where **Last** = student's last name, **First** = student's first name,  **?** = student secret code, **@** = assignment name, **$** = file extension: either py, java for individual files or zip for multiple files). For JAVA, the class in the **Last First ?_@.$** file must be named **@**.  An example of a valid filename is **Shotwell Gwynne 4381_encryption.py**.
 
 The student's assignment files can be explicitly copied to the class period's folder on the teacher's PC or 
 can be submitted directly to that folder in real time by the students (one way to do this is to have the students submit to an online folder that is automatically synched to the teacher's PC - e.g. [using a Google Form](https://docs.google.com/document/d/18Cs26CTd__zmu95VkVwxPxJL-zZW0eaX45ovpPbcuHM/edit?usp=sharing) or [using a Dropbox File Request](https://fileinbox.com/articles/dropbox-file-requests-ultimate-guide#:~:text=Unfortunately%2C%20Dropbox%20File%20Requests%20don,to%20create%20a%20Dropbox%20account.](https://docs.google.com/document/d/1R93KHIYiwyKRqjzm3_vxHb4VJ6b_4BD-f0hwP55qVKw/edit?usp=drive_link))).
 
-* **Basic Verification**  For a submitted Python or JAVA program that simply prints its output, **CSAC** runs the student's program and compares the program's generated output to a teacher provided "golden" output file named **gold.txt**.  The student's program may also read test data from a file named **@.dat** (as part of an assignment, student's are usually provided a **@.dat** file with a few basic test cases; typically a teacher will provide **CSAC** a **@.dat** file with more comprehensive test cases).  The student's program may prompt the user for input - e.g. Python: input() JAVA: scan.nextInt().  To provide this user input, the teacher provides **CSAC** with one or more **pgmUserInput&.txt** files (& is a unique identifier, usually 1,2,3, ...) and **CSAC** runs the submitted program once for each  user input file.
+### Assignment  Verification
+* **Basic Verification.**  For a Python or JAVA program that simply prints its output, **CSAC** runs the student's program and compares the program's generated output to a teacher provided "golden" output file named **gold.txt**.  The student's program may optionally read test input data from a file named **@.dat** (as part of an assignment, student's are usually provided a **@.dat** file with a few basic test cases; typically a teacher will provide **CSAC** a **@.dat** file with more comprehensive test cases).  The student's program may optionally prompt the user for input - e.g. Python: input() JAVA: scan.nextInt().  To provide this user input, the teacher provides **CSAC** with one or more **pgmUserInput&.txt** files (& is a unique identifier, usually 1,2,3, ...) - **CSAC** runs the submitted program once for each user input file.
 
-* **Advanced Verification (JAVA only)** **CSAC** does **Basic Verification** above and then runs any of these OPTIONAL programs 
+* **Advanced Verification (JAVA only).** **CSAC** does the **Basic Verification** above and then runs these OPTIONAL programs 
   * **@Checker.java**  [provided by teacher] Code provided by the teacher to check the contents of the student's program (number and type of instance variables as well as details on the constructors and methods in the student's program). The output is compared to the **checker.txt** file provided by the teacher. 
   * **@Runner.java**  [submitted by students] Code that the student wrote that uses the class(es) they wrote. The output is compared to the  **gold.txt** output file provided by the teacher. The @Runner.java program can optionally prompt the user for input. To provide this user input to **CSAC**, the teacher provides one or more runnerUserInput&.txt files (& is a unique identifier, usually 1,2,3, ...). The @Runner.java program will be run once for each user input file.
   * **@Tester.java**  [provided by teacher] Code provided by the teacher that tests the program submitted by the student. The output is compared to the  **gold.txt** output file provided by the teacher.    
 
 ### Scoreboard
-Student results for each assignment group are stored in two scoreboard files (one using the student's name, the other using the student's secret code for anonymity). Sharing the link to the scoreboard file allows students to see their results. Sometimes I use Notepad++ to project the live scoreboard (see https://www.raymond.cc/blog/monitor-log-or-text-file-changes-in-real-time-with-notepad/ on how to make Notepad++ display live results).
+Student results for each assignment group are stored in two scoreboard files (one using the student's name, the other using the student's secret code for anonymity). The teacher can share the link to the scoreboard file to allow students to see the results. Sometimes I use Notepad++ to project the live scoreboard (see https://www.raymond.cc/blog/monitor-log-or-text-file-changes-in-real-time-with-notepad/ on how to make Notepad++ display live results).
  
 ### Program (and Demo) Setup
 * unzip demo.zip to a folder on your hard drive (e.g. C:/YourPathToDemoDir/demo)
 * in **customize.py**
-  * set the **rootDir** variable to the location of the unzipped demo folder - C:/YourPathToDemoDir/demo 
-  * set the **scoreboardDir** variable to C:/YourPathToDemoDir/demo/scoreboard_for_demo
+  * set the **rootDir** variable to the location of the unzipped demo folder (e.g. C:/YourPathToDemoDir/demo) 
+  * set the **scoreboardDir** variable (e.g. C:/YourPathToDemoDir/demo/scoreboard_for_demo)
   * set the **pythonIdeLoc** variable to the location of the Python IDE (e.g. IDLE) executable.
   * set the **javaIdeLoc** variable to the location of the JAVA IDE (e.g. jGrasp) executable.
     * NOTE: The program uses *-parameters* compile option to ensure that JAVA reflection reflects parameter types instead of just using arg0
   * set the **textEditorLoc** variable to the location of a text editor (e.g. Notepad++) executable.
-  * set the **diffLoc** variable to the location of the diff program (e.g. winMerge, meld, kdiff, or tkdiff) executable.
+  * set the **diffLoc** variable to the location of the diff program (e.g. winMergeFFvboth) executable.
 * inside of demo/ you will also find the below (which do not need to be initialized or modified for the demo). 
   * **ASSIGNMENT_GROUPS** folder
     * **first6weeksAssignments, pythonAssignments** (these folders contain a group of related assignments, each of which will have it's own scoreboard file)
@@ -63,8 +64,8 @@ Student results for each assignment group are stored in two scoreboard files (on
     * **commentsJAVA.txt** and **commentsPYTHON.txt** contain the global comments used in student emails or clipboard
   * **1,4,5** (these are the class period folders to which student assignment files are either explicitly copied or directly submitted  via something like a Dropbox File Request. Inside each folder you will find the REGISTER.txt file containing the students registered to this class (for each student: a unique ID, last name, first name, class period, email address). Also in this folder is a folder for each assignment group that contains folders for each of the students which contain folders for the student's program submissions. 
   * **scoreboard_for_demo** This folder will contain the results for the student's assignments.
-  * **sampleSubmissions** Example submissions for the demo.  Both registration with APSC and assignment.
-  * **dueDates.txt** Optional file that contains the assigment name and its due date in a simple two column format.
+  * **sampleSubmissions** Two example student submissions.
+  * **dueDates.txt** Optional file that contains the due date followed by 1 or more assignment names.
   
 ### Demo
 The demo verifies two student assignments (1) [encryption](https://docs.google.com/document/d/1mr5FHL-cf3T1kRR0F10KCWwGGdjZC4Cj/edit?usp=sharing&ouid=117088614197672338242&rtpof=true&sd=true) (2) [GCD](https://docs.google.com/document/d/14nIXTUOr70_zRUZojzMZhbs9AmTWs5WxatsVtjNT_c4/edit?usp=sharing). Follow the below steps and/or watch the demo video: [download](https://drive.google.com/file/d/1o7TA-ym4WC4xezXcMf3mqvpzbMRN7Awm/view?usp=sharing) or [YouTube](https://youtu.be/Nr0t-hp050Y) 
@@ -72,7 +73,7 @@ The demo verifies two student assignments (1) [encryption](https://docs.google.c
   * since this is the first time the program has been run, the program creates some required directories.
   * You should now see the Main Menu\
     **(1 4 5)judge (a)utojudge score(b)oard (l)og e(x)it (\<ENTER\>=check)?**\
-  **Answer 4** to have the program enter the manual judging mode for class period 4. In this mode, the program continually checks for new submissions to the class period folder /demo/4/.
+  **Answer 4** to have the program enter the judging mode for class period 4. In this mode, the program continually checks for new submissions to the class period folder /demo/4/.
   Since there is currently no submission to process, the program prints a period every 2 seconds to let you know it is waiting for submissions.
 * For this demo, instead of students submitting files directly to the class period folder via something like a Dropbox File Request, *we will simply copy example files from /demo/sampleSubmissions/*.  To demo the basic verification of a student program, copy **/demo/sampleSubmissions/studentProblems/Shotwell Gwynne 4381_encryption.py** to the class period 4 folder **/demo/4/**. This file is Period 4's student Gwynne Shotwell's (student code 4381) submission of the encryption assignment. The program (which up to now had been printing periods) will detect this file and run the program. 
    * Since this student's program output does not match the expected "gold" output, CSAC will use the diff program to display the differences between the students program output and the expected "gold" output.
@@ -95,7 +96,7 @@ The demo verifies two student assignments (1) [encryption](https://docs.google.c
 The program's Main Menu\
 **(? ? ?)judge (a)utojudge score(b)oard (l)og e(x)it (\<ENTER\>=check)?**\
 has the following options
-* **(? ? ?)** A choice of class period numbers which cause the program to enter manual mode and monitor that class period's folder for student program submissions.  The program processes any current (and future) program submissions to that class period's folder - oldest submission is processed first. Incorrect output differences will be shown in **diff window** after which the **Assignment Menu** is displayed.
+* **(? ? ?)** A choice of class period numbers which cause the program to enter judging mode. **CSAC** now processes program submissions to that class period's folder - the oldest submission is processed first. A **diff window** will show any difference between the program's output and the expected output. Then **Assignment Menu** is displayed.
 * **(a)utojuge** Brings up the Autojudge Menu **(? ? ?)autojudge (m)ultiple (\<ENTER\>=all periods)?**. Specified class period folders are checked and any current (and future) program submissions are processed and automatically judged - if program output is not correct, the submission is counted as incorrect. 
 * **(l)og** Program opens the global log file (logGlobal.txt in **rootDir**) in the text editor. 
 * **e(x)it** Exits the program
