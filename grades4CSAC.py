@@ -5,6 +5,7 @@
 from   pathlib  import Path
 from datetime import datetime
 from grades4CSACdata import ASSIGNMENTS,scoreboardDir,codingBatDir,rootDir,gradesDir,classPeriods,latePenaltyPercentageDefault
+from math import ceil
 
 class bcolors:
     HEADER = '\033[95m'
@@ -116,12 +117,23 @@ while True:
     num = 0
     print('  0 all the below assignments for a single student')
     assignmentsList = []
-    for assignment in ASSIGNMENTS:    # ASSIGNMENTS is dictionary defined in grades4ACdata.py
+    for assignment in ASSIGNMENTS:    # ASSIGNMENTS is dictionary defined in grades4ACdata.py 
+        value = ASSIGNMENTS[assignment]
+        assignmentGroup = value[1]
+        gradingTuple = value[2]
+        assignmentTuples = gradingTuple[1:]
+        assignmentNames = ''
+        if assignmentGroup == 'CodingBat':
+            assignmentNames = 'various'
+        else:
+            for assignmentTuple in assignmentTuples:
+                assignmentNames += assignmentTuple[0] + ' '
+            assignmentNames = assignmentNames.rstrip()       
         for period in periodsPicked:
            if ASSIGNMENTS[assignment][0] == classPeriods[period]:
                if assignment not in assignmentsList:
                    num = num + 1
-                   print(f' {num:2d} {assignment}')
+                   print(f' {num:2d} {assignment:<20} ({assignmentNames})')
                    assignmentsList.append(assignment)
     userInput = input(f'Choose 0 or one or more 1-{num} (separate with space): ').strip()
     pickSingleStudent = False
@@ -148,6 +160,11 @@ while True:
         assignmentGroup = value[1]
         gradingTuple = value[2]
         assignmentTuples = gradingTuple[1:]
+        assignmentNames = ''
+        if assignmentGroup != 'CodingBat':
+            for assignmentTuple in assignmentTuples:
+                assignmentNames += assignmentTuple[0] + ' '
+            assignmentNames = assignmentNames.rstrip()
         singleStudentNames = []
         for period in periodsPicked:
             code2ID = {}
@@ -163,9 +180,9 @@ while True:
                             singleStudentNames.append(fields[1] + ' ' + fields[2]) 
                         if len(fields) == 6:
                             code2ID[fields[0]] = fields[5]
-                        registrationOrder.append((fields[0], fields[1], fields[2],fields[5]))
+                        registrationOrder.append((fields[0], fields[1], fields[2],fields[5])) 
                 if pickSingleStudent and not printedStudents:
-                    userInput = input('  Enter number of student: ').strip()
+                    userInput = input('Enter number of student: ').strip()
                     singleStudentName = singleStudentNames[int(userInput)-1]
             if (assignmentGroup == "CodingBat"):
                 with open(Path(gradesDir,period + ' - ' + assignmentName + '_' + dateTime + '.txt'), "w") as gf:
@@ -229,21 +246,26 @@ while True:
                                 if code in gradesDic:
                                    gf.write(gradesDic[code][0] + ',' + gradesDic[code][1]+'\n')
                     #print(gradesDic)
-                    print("******* " + period + ' ' + assignmentName + " *******")
+                    print("\n******* Period " + period + ' ' + assignmentName + " (" + assignmentNames + ") *******")
                     #print(f'DBG {registrationOrder = }')
                     for registration in registrationOrder:
                         code = registration[0]
                         name = registration[1] + ' ' + registration[2]
                         #print(f'DBG {gradesDic = }')
                         if code in gradesDic:
+                            attempts = ''
+                            for attempt in gradesDic[code][3]:
+                                attempts += f'{attempt:<3s}'                            
                             if pickSingleStudent:
                                 if singleStudentName == name:
-                                    print(f'{gradesDic[code][2]} {name}')
+                                    print(f'{gradesDic[code][2]} ({attempts[:-1]}) {name}')
                             else:
-                                print(f'{gradesDic[code][2]} ({gradesDic[code][3][0]:2}) {name}')
+                                print(f'{gradesDic[code][2]} ({attempts[:-1]}) {name}')
                         else:
                             print(f'WARNING!!! No result found in scoreboard for {code} in REGISTER.txt ({name = })')
-        
+                    print("^^^^^^^ Period " + period + ' ' + assignmentName + " (" + assignmentNames + ") ^^^^^^^")
+
+
         printedStudents = True
     if foundWarnings:
          print(bcolors.BOLD + bcolors.RED + f'WARNINGS found above (have a look)' + bcolors.ENDC)                
