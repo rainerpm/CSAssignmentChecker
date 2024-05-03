@@ -14,7 +14,7 @@
 
 import scoreboard  # import the associated scoreboard.py which creates the scoreboard files
 from scoreboard import assignmentResults    
-from customize import validClassPeriods,rootDir,scoreboardDir,mossDir,pythonIde,javaIde,schoolHolidays,diffPgm,textEditor,emailSignature,emailAttachmentDir, emailUseClassPeriodSentFolders, TIMEOUT_DEFAULT
+from customize import validClassPeriods,rootDir,scoreboardDir,pythonIde,javaIde,schoolHolidays,diffPgm,textEditor,emailSignature,emailAttachmentDir, emailUseClassPeriodSentFolders, TIMEOUT_DEFAULT
 
 # import python libraries (using Python 3.10 only ones that need to be installed
 # using 'pip install' appear to be pyperclip and pillow).
@@ -87,11 +87,7 @@ else:
 if not Path(scoreboardDir).is_dir():
     initError = True
     print(f"{bcolors.RED}Error!!!{bcolors.ENDC} scoreboard directory does not exist @" + scoreboardDir)
-    
-if not Path(mossDir).is_dir():
-    initWarning = True
-    print(f"{bcolors.RED}Error!!!{bcolors.ENDC} moss plagiarism directory does not exist @" + mossDir)
-    
+        
 if not Path(emailAttachmentDir).is_dir():
     initError = True
     print(f"{bcolors.RED}Error!!!{bcolors.ENDC} email attachment directory does not exist @" + emailAttachmentDir)  
@@ -251,14 +247,7 @@ def setup():
                 print("Created directory",autoJudgeManualCheckDir)
             plagiarismDir = os.path.join(classAssignmentGroupDir,"00PLAGIARISM")
             if not os.path.isdir(plagiarismDir):
-                os.mkdir(plagiarismDir)
-                if os.path.isdir(mossDir):
-                    if os.path.isfile(os.path.join(mossDir,"moss.pl")):
-                        copy(os.path.join(mossDir,"moss.pl"),plagiarismDir)  
-                    if os.path.isfile(os.path.join(mossDir,"moss_java.bat")):
-                       copy(os.path.join(mossDir,"moss_java.bat"),plagiarismDir)                
-                    if os.path.isfile(os.path.join(mossDir,"moss_python.bat")):
-                       copy(os.path.join(mossDir,"moss_python.bat"),plagiarismDir)                
+                os.mkdir(plagiarismDir)                
                 print("Created directory",plagiarismDir)
             assignmentGroup = {}  # create content dict, then add to it
             assignmentGroup["assignmentGroupDir"] = classAssignmentGroupDir
