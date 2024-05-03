@@ -80,7 +80,7 @@ The demo verifies two student assignments (1) [encryption](https://docs.google.c
 * For this demo, instead of students submitting files directly to the teacher's class period folder via something like a Google Form or Dropbox File Request, *we will simply copy example files from /demo/sampleSubmissions/*.
 * To demo the basic verification of a student program, copy **/demo/sampleSubmissions/studentProblems/Shotwell Gwynne 112233_encryption.py** to the class period 4 folder **/demo/4/**. This file is Period 4's student Gwynne Shotwell's (student secret code 112233) submission of the encryption assignment. The program (which up to now had been printing periods) will detect this file and run the program. 
    * Since this student's program output does not match the expected "gold" output, **CSAC** will use the diff program to display the differences between the students program output and the expected "gold" output.
-   * After you've had a chance to look at the difference, close the diff window. The program now displays the Assignment Menu **y/l/n/p \[s d a b h i o g e c m f k t ?\](r){x}#**
+   * After you've had a chance to look at the difference, close the diff window. The program now displays the Assignment Menu **y/late/2late/n/p [s d a b h i o g e c m f k t ?](r){x}(#)**
      * **Answer s** to show/see the program in the Python IDE. After you've run and/or inspected the program, close the IDE.
      * **Answer n** to judge the program as incorrect. The student's program status is reflected in /demo/scoreboard/ (one file with the student's name and one that is annoymized using the student's code that can be made accessible to the class). The result is reflected in the scoreboard file for that assignment group which is somwhat buried in the C:/YourPathToDemoDir/demo/scoreboard_for_demo/ folder.
    * Since the output was incorrect, the program also created a file (ShotwellGwynne.bat) in the latestResults folder inside the class period folder that enables the teacher to easily run diff program for the student's last incorrect submission and optionally bring up the program in the IDE or look at the data input file in the text editor.
@@ -106,7 +106,7 @@ has the following options
 
 ### Assignment Menu
 In manual mode after a student's program submission has been run and either the program was correct or the program was incorrect and the **diff window** has been closed, the Assignment Menu\
-**y/l/n/p \[s d a b h i o g e c m f k t ?\](r){x}#**\
+**y/late/2late/n/p [s d a b h i o g e c m f k t ?](r){x}(#) days1:days2**\
 is displayed with the following options (NOTE: Be sure that you are done with the current assignment submission before answering y n m r as this will make program proceed to the next submission)
 * **y** judge the student's program as correct, update the program's status in /demo/scoreboard/, and then **move on** to the next student submission. The teacher can choose to ignore inconsequential differences in the output shown in the **diff window** and still count the program correct.
 * **l** same as y above, but submission is marked as being LATE
@@ -130,6 +130,8 @@ is displayed with the following options (NOTE: Be sure that you are done with th
 * **r** remove the submission from the class period directory and then move on to the next student's submission.
 * **x** exit the program.
 * **#** number of submissions currently waiting to be run
+* **days1** number of school days until due date (negative is before the due date, positive is after)
+* **days2** number of calendar days until due date (negative is before the due date, positive is after) 
 
 ### Sending Emails or using the Clipboard 
 **CSAC** currently uses the Windows Outlook app (see **emailWithOutlook** function) to email students. I've also used to use the Outlook web app (see **emailWithOutlookSMTP** function), but our school district blocked that functionality.  The **emailWithGmail** function is also provided. The information content of the **CSAC** email can also be accessed via the Windows clipboard (Windows 10 and Windows 11 have a [“Clipboard History” tool](https://www.popsci.com/diy/windows-clipboard-manager/) that allows the Clipboard to store multiple items). When sending an email or using the clipboard, you can choose to include a local (i.e. assignment specific) comment from the comments.txt file in the assignments folder or general comment from ASSIGNMENT_GROUPS/commentsLANGUAGE.txt. From the comment menu **Comment (g[#], l[#], (o)ne-time comment, (n)o comment)?** choose **g** or **l** to open the global or local comment file in the text editor.  Append the comment name to select one of the comments (e.g. **gabc** selects **comment abc** from the global comments file in the ASSIGNMENT_GROUPS directory or **lxyz** selects **comment xyz** from the local comments file in the assignment's folder).  
