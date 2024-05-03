@@ -18,12 +18,12 @@ The following programs are required to be installed on your computer (the progra
   * diff program (https://winmerge.org/?lang=en).
 
 ### Student Registration
-Students are registered with **CSAC** via a REGISTER.txt file in each class period's directory. Each line in the REGISTER.txt file contains 6 pieces of information for each student (each separated by one or more spaces) (1) secret code - used to annonymously identify a student's results (2) first name (3) last name (4) clas period (5) email address (6) school student id.  You can create the REGISTER.txt file manually, or use a Google Form as specified [here](https://docs.google.com/document/d/1BaU-_KyqOs55-iTgqofZ8XuDYRqWC9_9-3l_4Etynp0/edit?usp=sharing).  
+Students are registered with **CSAC** via a REGISTER.txt file in each class period folder. Each line in the REGISTER.txt file contains 6 pieces of information for each student (each separated by one or more spaces) (1) secret code - used to annonymously identify a student's results (2) first name (3) last name (4) clas period (5) email address (6) school student id.  You can create the REGISTER.txt file manually, or use a Google Form as specified [here](https://docs.google.com/document/d/1BaU-_KyqOs55-iTgqofZ8XuDYRqWC9_9-3l_4Etynp0/edit?usp=sharing).  
 
 ### Assignment Submission
 To submit an assignment a student submits a single file using the naming convention **Last First ?_@.$** (where **Last** = student's last name, **First** = student's first name,  **?** = student secret code, **@** = assignment name, **$** = file extension: either py, java for individual files or zip for multiple files). For JAVA, the class in the **Last First ?_@.$** file must be named **@**.  An example of a valid filename is **Shotwell Gwynne 4381_encryption.py**.
 
-The student's assignment files can be explicitly copied to the class period's folder on the teacher's PC or 
+The student's assignment files can be explicitly copied to the class period folder on the teacher's PC or 
 can be submitted directly to that folder in real time by the students (one way to do this is to have the students submit to an online folder that is automatically synched to the teacher's PC - e.g. [using a Google Form](https://docs.google.com/document/d/18Cs26CTd__zmu95VkVwxPxJL-zZW0eaX45ovpPbcuHM/edit?usp=sharing) or [using a Dropbox File Request](https://fileinbox.com/articles/dropbox-file-requests-ultimate-guide#:~:text=Unfortunately%2C%20Dropbox%20File%20Requests%20don,to%20create%20a%20Dropbox%20account.](https://docs.google.com/document/d/1R93KHIYiwyKRqjzm3_vxHb4VJ6b_4BD-f0hwP55qVKw/edit?usp=drive_link))).
 
 ### Assignment  Verification
@@ -74,8 +74,8 @@ The demo verifies two student assignments (1) [encryption](https://docs.google.c
   * You should now see the Main Menu\
     **(1 4 5)judge (a)utojudge score(b)oard (l)og e(x)it (\<ENTER\>=check)?**\
   **Answer 4** to have the program enter the judging mode for class period 4. In this mode, the program continually checks for new submissions to the class period folder /demo/4/.
-  Since there is currently no submission to process, the program prints a period every 2 seconds to let you know it is waiting for submissions.
-* For this demo, instead of students submitting files directly to the class period folder via something like a Dropbox File Request, *we will simply copy example files from /demo/sampleSubmissions/*.  To demo the basic verification of a student program, copy **/demo/sampleSubmissions/studentProblems/Shotwell Gwynne 4381_encryption.py** to the class period 4 folder **/demo/4/**. This file is Period 4's student Gwynne Shotwell's (student code 4381) submission of the encryption assignment. The program (which up to now had been printing periods) will detect this file and run the program. 
+  Since there is currently no submission to process, the program prints a period every 2 seconds to indicate that it is waiting for submissions.
+* For this demo, instead of students submitting files directly to the teacher's class period folder via something like a Google Form or Dropbox File Request, *we will simply copy example files from /demo/sampleSubmissions/*.  To demo the basic verification of a student program, copy **/demo/sampleSubmissions/studentProblems/Shotwell Gwynne 4381_encryption.py** to the class period 4 folder **/demo/4/**. This file is Period 4's student Gwynne Shotwell's (student code 4381) submission of the encryption assignment. The program (which up to now had been printing periods) will detect this file and run the program. 
    * Since this student's program output does not match the expected "gold" output, CSAC will use the diff program to display the differences between the students program output and the expected "gold" output.
    * After you've had a chance to look at the difference, close the diff window. The program now displays the Assignment Menu **y/l/n/p \[s d a b h i o g e c m f k t ?\](r){x}#**
      * **Answer s** to show/see the program in the Python IDE. After you've run and/or inspected the program, close the IDE.
@@ -86,8 +86,7 @@ The demo verifies two student assignments (1) [encryption](https://docs.google.c
      * **Answer y** to judge the program as correct and update the program's status in /demo/scoreboard/.
    * NOTE: This particular student program when run with the teacher supplied input file /demo/ASSIGNMENT_GROUPS/pythonAssignments/encryption/encryption.dat is expected to print out exactly what's found in /demo/ASSIGNMENT_GROUPS/pythonAssignments/encryption/gold.txt. 
 * The program is once again in the mode of continually checking for new submissions to the class period folder **/demo/4/**. 
-  * Use Ctrl-C to go back to the Main Menu.
-* The class Period directories for Period 4 & 5 (**/demo/4/** and **/demo/5/**) already contained student registrations in the REGISTER.txt file. For class Period 1, we will now register two students in the **/demo/1/REGISTER.txt** file. You can manually edit this file to add students or to have **CSAC** register the students copy the two files in demo/sampleSubmissions/studentRegistrations/ to  **/demo/1/**.
+  * Use Ctrl-C to go back to the Main Menu (this works in Python Idle, but not in Thonny). If Ctrl-C does not work in your IDE, simply restart **CSAC** to switch class periods.
 * **Answer 1** in the Main Menu.  The program detects the registration files in **/demo/1/** and registers the 2 students by creating/updating the file REGISTER.txt in the student's class period folder.
 * To demo the more advanced verification of a JAVA program, copy the student program /demo/sampleSubmissions/studentProblems/Lovelace Ada 1234 - GCD.zip to the class period 1 folder /demo/1/.
   This represents the student's code for an assignment named "GCD". The student submitted a zip file containing **GCD.java** (definining the GCD object) and the test code for that object that the student wrote in **GCDRunner.java**. In addition to the expected output file gold.txt, the teacher has also supplied a specific test program called **GCDTester.java** in the folder **/demo/ASSIGNMENT_GROUPS/first6weeksAssignments/GCD/** as well as **runnerUserInput&.txt** files to provide user input to GCDRunner.java. The program runs the GCDTester program and should report *** CORRECT *** since the program's output matches the expected output in gold.txt.  Selecting **d** in the assignment menu shows the program and expected output in the diff program. This is the output from the runs of GCDTester.java and GCDRunner.java (with the runnerUserInput*.txt files providing the user input).
@@ -96,7 +95,7 @@ The demo verifies two student assignments (1) [encryption](https://docs.google.c
 The program's Main Menu\
 **(? ? ?)judge (a)utojudge score(b)oard (l)og e(x)it (\<ENTER\>=check)?**\
 has the following options
-* **(? ? ?)** A choice of class period numbers which cause the program to enter judging mode. **CSAC** now processes program submissions to that class period's folder - the oldest submission is processed first. A **diff window** will show any difference between the program's output and the expected output. Then **Assignment Menu** is displayed.
+* **(? ? ?)** A choice of class period numbers which cause the program to enter judging mode. **CSAC** now processes program submissions to that class period folder - the oldest submission is processed first. A **diff window** will show any difference between the program's output and the expected output. Then **Assignment Menu** is displayed.
 * **(a)utojuge** Brings up the Autojudge Menu **(? ? ?)autojudge (m)ultiple (\<ENTER\>=all periods)?**. Specified class period folders are checked and any current (and future) program submissions are processed and automatically judged - if program output is not correct, the submission is counted as incorrect. 
 * **(l)og** Program opens the global log file (logGlobal.txt in **rootDir**) in the text editor. 
 * **e(x)it** Exits the program
