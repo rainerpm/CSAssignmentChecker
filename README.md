@@ -18,12 +18,12 @@ The following programs are required to be installed on your computer (the progra
   * diff program (https://winmerge.org/?lang=en).
 
 ### Student Registration
-CSAC requires each student to register and stores each class's or section's student information in a file called REGISTER.txt.  Each line in the REGISTER.txt file contains 6 pieces of information for a student (each separated by one or more spaces) (1) secret code for CSAC to annonymously identify a student's results (2) first name (3) last name (4) clas period (5) email address (6) school student id.  You can create the REGISTER.txt file manually, or use a Google Form as specified [here](https://docs.google.com/document/d/1BaU-_KyqOs55-iTgqofZ8XuDYRqWC9_9-3l_4Etynp0/edit?usp=sharing).  
+Students are registered with **CSAC** via a REGISTER.txt file in each class period's directory like the one in demo/4/REGISTER.txt. Each line in the REGISTER.txt file contains 6 pieces of information for a student (each separated by one or more spaces) (1) secret code - used to annonymously identify a student's results (2) first name (3) last name (4) clas period (5) email address (6) school student id.  You can create the REGISTER.txt file manually, or use a Google Form as specified [here](https://docs.google.com/document/d/1BaU-_KyqOs55-iTgqofZ8XuDYRqWC9_9-3l_4Etynp0/edit?usp=sharing).  
 
 ### Assignment Submission and Verification
 To submit an assignment a student submits a single file using the naming convention **Last First ?_@.$** (where **Last** = student's last name, **First** = student's first name,  **?** = unique student number, **@** = assignment name, **$** = file extension: either py, java for individual files or zip for multiple files). For JAVA, the class in the **Last First ?_@.$** file must be named **@**.  An example of a valid filename is **Shotwell Gwynne 4381_encryption.py**.
 
-The student's assignment files can be explicitly copied to the class period folder on the teacher's PC or 
+The student's assignment files can be explicitly copied to the class period's folder on the teacher's PC or 
 can be submitted directly to that folder in real time by the students (one way to do this is to have the students submit to an online folder that is automatically synched to the teacher's PC - e.g. [using a Google Form](https://docs.google.com/document/d/18Cs26CTd__zmu95VkVwxPxJL-zZW0eaX45ovpPbcuHM/edit?usp=sharing) or [using a Dropbox File Request](https://fileinbox.com/articles/dropbox-file-requests-ultimate-guide#:~:text=Unfortunately%2C%20Dropbox%20File%20Requests%20don,to%20create%20a%20Dropbox%20account.](https://docs.google.com/document/d/1R93KHIYiwyKRqjzm3_vxHb4VJ6b_4BD-f0hwP55qVKw/edit?usp=drive_link))).
 
 * **Basic Verification**  For a submitted Python or JAVA program that simply prints its output, **CSAC** runs the student's program and compares the program's generated output to a teacher provided "golden" output file named **gold.txt**.  The student's program may also read test data from a file named **@.dat** (as part of an assignment, student's are usually provided a **@.dat** file with a few basic test cases; typically a teacher will provide **CSAC** a **@.dat** file with more comprehensive test cases).  The student's program may prompt the user for input - e.g. Python: input() JAVA: scan.nextInt().  To provide this user input, the teacher provides **CSAC** with one or more **pgmUserInput&.txt** files (& is a unique identifier, usually 1,2,3, ...) and **CSAC** runs the submitted program once for each  user input file.
@@ -33,6 +33,9 @@ can be submitted directly to that folder in real time by the students (one way t
   * **@Runner.java**  [submitted by students] Code that the student wrote that uses the class(es) they wrote. The output is compared to the  **gold.txt** output file provided by the teacher. The @Runner.java program can optionally prompt the user for input. To provide this user input to **CSAC**, the teacher provides one or more runnerUserInput&.txt files (& is a unique identifier, usually 1,2,3, ...). The @Runner.java program will be run once for each user input file.
   * **@Tester.java**  [provided by teacher] Code provided by the teacher that tests the program submitted by the student. The output is compared to the  **gold.txt** output file provided by the teacher.    
 
+### Scoreboard
+Student results for each assignment group are stored in two scoreboard files (one using the student's name, the other using the student's secret code for anonymity). Sharing the link to the scoreboard file allows students to see their results. Sometimes I use Notepad++ to project the live scoreboard (see https://www.raymond.cc/blog/monitor-log-or-text-file-changes-in-real-time-with-notepad/ on how to make Notepad++ display live results).
+ 
 ### Program (and Demo) Setup
 * unzip demo.zip to a folder on your hard drive (e.g. C:/YourPathToDemoDir/demo)
 * in **customize.py**
@@ -124,10 +127,7 @@ is displayed with the following options (NOTE: Be sure that you are done with th
 * **r** remove the submission from the class period directory and then move on to the next student's submission.
 * **x** exit the program.
 * **#** number of submissions currently waiting to be run
- 
-### Student Registration
-The easiest way to register students with **CSAC** is to simply create a REGISTER.txt file in each class directory like the one in demo/4/REGISTER.txt. Students can also register with **CSAC** by submitting a text file in the format **lastName FirstName ID_emailAddress.py**. The contents of the file are irrelevant.
- 
+
 ### Sending Emails or using the Clipboard 
 **CSAC** currently uses the Windows Outlook app (see **emailWithOutlook** function) to email students. I used to use the Outlook web app (see **emailWithOutlookSMTP** function), but our school district blocked that functionality.  The **emailWithGmail** function is also provided. The information content of the **CSAC** email can also be accessed via the Windows clipboard (Windows 10 and Windows 11 have a [“Clipboard History” tool](https://www.popsci.com/diy/windows-clipboard-manager/) that allows the Clipboard to store multiple items). When sending an email or using the clipboard, you can choose to include a local (i.e. assignment specific) comment from the comments.txt file in the assignments folder or general comment from ASSIGNMENT_GROUPS/commentsLANGUAGE.txt. From the comment menu **Comment (g[#], l[#], (o)ne-time comment, (n)o comment)?** choose **g** or **l** to open the global or local comment file in the text editor.  Append a number to select one of the comments (e.g. **l2** selects **comment 2** from the local comments.txt.  
  
@@ -137,5 +137,3 @@ A group of 2 or more students can submit an assignment. For example three studen
 ### Batch Files
 The latestResults directory inside the class directory will contain a batch file for each student's last submission. If the submission compiled & ran the batch file will run diff and then offer to open the IDE and input data files. If the submission did not compile or run, instead of running diff, the batch file will open the error file.
  
- ### Live Scoreboard
- I use Notepad++ to display the scoreboard (see https://www.raymond.cc/blog/monitor-log-or-text-file-changes-in-real-time-with-notepad/ on how to make Notepad++ display live results).
