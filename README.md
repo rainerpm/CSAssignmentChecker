@@ -2,7 +2,7 @@
 
 ### Overview
 
-The **CSAssignmentChecker.py** (aka **CSAC**) program verifies python or java assignments submitted by students. **CSAC** supports basic verification for Python programs and more advanced verification for JAVA programs. Student assignments are organized into assignment groups, each of which has a "scoreboard" file showing the results for each student. The program supports directly emailing a teacher comment to a student.  [demo video](https://youtu.be/Nr0t-hp050Y) 
+The **CSAssignmentChecker.py** (aka **CSAC**) program verifies python or java assignments submitted by students. **CSAC** supports basic verification for Python programs and more advanced verification for JAVA programs. Student assignments are organized into assignment groups, each of which has a *scoreboard* file showing the results for each student. 
 
 ### Requirements
 The following programs are required to be installed on your computer (the programs in parenthesis are what I use, but can be replaced with something equivalent by updating the customize.py file).
@@ -71,7 +71,7 @@ Student results for each assignment group are stored in two scoreboard files (on
   * **dueDates.txt** Optional file that contains the due date followed by 1 or more assignment names.
   
 ### Running the Demo
-The demo verifies two student assignments (1) [encryption](https://docs.google.com/document/d/1mr5FHL-cf3T1kRR0F10KCWwGGdjZC4Cj/edit?usp=sharing&ouid=117088614197672338242&rtpof=true&sd=true) (2) [GCD](https://docs.google.com/document/d/14nIXTUOr70_zRUZojzMZhbs9AmTWs5WxatsVtjNT_c4/edit?usp=sharing). Follow the below steps and/or watch the demo video (NOTE: The demo was changed slightly since the video was made): [download](https://drive.google.com/file/d/1o7TA-ym4WC4xezXcMf3mqvpzbMRN7Awm/view?usp=sharing) or [YouTube](https://youtu.be/Nr0t-hp050Y) 
+The demo verifies two student assignments (1) [encryption](https://docs.google.com/document/d/1mr5FHL-cf3T1kRR0F10KCWwGGdjZC4Cj/edit?usp=sharing&ouid=117088614197672338242&rtpof=true&sd=true) (2) [GCD](https://docs.google.com/document/d/14nIXTUOr70_zRUZojzMZhbs9AmTWs5WxatsVtjNT_c4/edit?usp=sharing). Follow the below steps and/or watch the demo video (NOTE: CSAC & the demo has changed slightly since the video was made): [download](https://drive.google.com/file/d/1o7TA-ym4WC4xezXcMf3mqvpzbMRN7Awm/view?usp=sharing) or [YouTube](https://youtu.be/Nr0t-hp050Y) 
 * run CSassignmentChecker.py  
   * since this is the first time the program has been run, the program creates some required directories.
   * You should now see the Main Menu\
@@ -83,11 +83,11 @@ The demo verifies two student assignments (1) [encryption](https://docs.google.c
    * Since this student's program output does not match the expected "gold" output, **CSAC** will use the diff program to display the differences between the students program output and the expected "gold" output.
    * After you've had a chance to look at the difference, close the diff window. The program now displays the Assignment Menu **y/late/2late/n/p [s d a b h i o g e c m f k t ?](r){x}(#)**
      * **Answer s** to show/see the program in the Python IDE. After you've run and/or inspected the program, close the IDE.
-     * **Answer n** to judge the program as incorrect. The student's program status is reflected in /demo/scoreboard/ (one file with the student's name and one that is annoymized using the student's code that can be made accessible to the class). The result is reflected in the scoreboard file for that assignment group which is somwhat buried in the C:/YourPathToDemoDir/demo/scoreboard_for_demo/ folder.
+     * **Answer n** to judge the program as incorrect. The student's program status is reflected in the scoreboard (one file with the student's name and one that is annoymized using the student's code that can be made accessible to the class). The result is reflected in the scoreboard file for that assignment group which is somwhat buried in the C:/YourPathToDemoDir/demo/scoreboard_for_demo/ folder.
    * Since the output was incorrect, the program also created a file (ShotwellGwynne.bat) in the latestResults folder inside the class period folder that enables the teacher to easily run diff program for the student's last incorrect submission and optionally bring up the program in the IDE or look at the data input file in the text editor.
    * Edit **/demo/sampleSubmissions/studentProblems/Shotwell Gwynne 112233_encryption.py** and fix the error on line 21 (changing thing[1] to thing[0]) and then once again copy the file to the class period 4 folder **/demo/4/**. 
     * Since the student's program output matches the assignments gold.txt file the program reports *** CORRECT ***. NOTE: The program ignores any whitespace at the end of a line or the end of the output when comparing the student's output to the expected output in the assignment's gold.txt file.
-     * **Answer y** to judge the program as correct and update the program's status in /demo/scoreboard/.
+     * **Answer y** to judge the program as correct and update the program's status in the scoreboard.
    * NOTE: This particular student program when run with the teacher supplied input file /demo/ASSIGNMENT_GROUPS/pythonAssignments/encryption/encryption.dat is expected to print out exactly what's found in /demo/ASSIGNMENT_GROUPS/pythonAssignments/encryption/gold.txt. 
   * The program is once again in the mode of continually checking for new submissions to the class period folder **/demo/4/**. Use Ctrl-C to go back to the Main Menu (this works in Python Idle, but not in Thonny). If Ctrl-C does not work in your IDE, simply restart **CSAC** to switch class periods.
 * To demo the more advanced verification of a JAVA program, **answer 1** in the Main Menu, so that **CSAC** is now awaiting program submissions in the **/demo/1/** folder. Then copy the student program /demo/sampleSubmissions/studentProblems/Lovelace Ada 123456 - GCD.zip to the **/demo/1/** folder.
@@ -109,10 +109,11 @@ has the following options
 In manual mode after a student's program submission has been run and either the program was correct or the program was incorrect and the **diff window** has been closed, the Assignment Menu\
 **y/late/2late/n/p [s d a b h i o g e c m f k t ?](r){x}(#) days1:days2**\
 is displayed with the following options (NOTE: Be sure that you are done with the current assignment submission before answering y n m r as this will make program proceed to the next submission)
-* **y** judge the student's program as correct, update the program's status in /demo/scoreboard/, and then **move on** to the next student submission. The teacher can choose to ignore inconsequential differences in the output shown in the **diff window** and still count the program correct.
-* **l** same as y above, but submission is marked as being LATE
-* **n** judge the student's program as incorrect, update the program's status in /demo/scoreboard/, and then **move on** to the next student submission.
-* **p** judge the student's program as incorrect due to a presentation error (e.g. incorrect spacing,punctuation,capitalization), update the program's status in /demo/scoreboard/, and then **move on** to the next student submission.
+* **y** judge the student's program as correct, update the program's status in the scoreboard, and then **move on** to the next student submission. The teacher can choose to ignore inconsequential differences in the output shown in the **diff window** and still count the program correct.
+* **late** same as y above, but submission is marked as being LATE in the scoreboard
+* **2late** same as y above, but submission is marked as being To LATE in the scoreboard
+* **n** judge the student's program as incorrect, update the program's status in the scoreboard, and then **move on** to the next student submission.
+* **p** judge the student's program as incorrect due to a presentation error (e.g. incorrect spacing,punctuation,capitalization), update the program's status in the scoreboard, and then **move on** to the next student submission.
 * **s** show the student's program submission in the IDE.
 * **d** run diff program again
 * **a** run the program again (runs all the checks again, retaining any edits that may have been made in the directory where the student program is run).
