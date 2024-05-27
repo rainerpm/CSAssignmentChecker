@@ -111,7 +111,7 @@ In manual mode after a student's program submission has been run and either the 
 is displayed with the following options (NOTE: Be sure that you are done with the current assignment submission before answering y n m r as this will make program proceed to the next submission)
 * **y** judge the student's program as correct, update the program's status in the scoreboard, and then **move on** to the next student submission. The teacher can choose to ignore inconsequential differences in the output shown in the **diff window** and still count the program correct.
 * **late** same as y above, but submission is marked as being LATE in the scoreboard
-* **2late** same as y above, but submission is marked as being To LATE in the scoreboard
+* **2late** same as y above, but submission is marked as being Too LATE in the scoreboard
 * **n** judge the student's program as incorrect, update the program's status in the scoreboard, and then **move on** to the next student submission.
 * **p** judge the student's program as incorrect due to a presentation error (e.g. incorrect spacing,punctuation,capitalization), update the program's status in the scoreboard, and then **move on** to the next student submission.
 * **s** show the student's program submission in the IDE.
