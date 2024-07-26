@@ -7,6 +7,7 @@ The **CSAssignmentChecker.py** (aka **CSAC**) program verifies python or java as
 ### Requirements
 The following programs are required to be installed on your computer (the programs in parenthesis are what I use, but can be replaced with something equivalent by updating the customize.py file).
   * Python IDE (https://www.python.org/downloads/)
+    * pip install numpy
     * pip install pywin32
       * only required if you want to use the option to email students directly from the program by having the program use the Windows Outlook app
     * pip install pyperclip (enables the program to access the clipboard)
