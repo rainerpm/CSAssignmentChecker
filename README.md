@@ -48,7 +48,7 @@ Student results for each assignment group are stored in two scoreboard files (on
   * set the **javaIdeLoc** variable to the location of the JAVA IDE (e.g. jGrasp) executable.
     * NOTE: The program uses *-parameters* compile option to ensure that JAVA reflection reflects parameter types instead of just using arg0
   * set the **textEditorLoc** variable to the location of a text editor (e.g. Notepad++) executable.
-  * set the **diffLoc** variable to the location of the diff program (e.g. winMergeFFvboth) executable.
+  * set the **diffLoc** variable to the location of the diff program (e.g. winMerge) executable.
 * you are now ready to run the demo - see the Running the Demo section below.
 * if you look inside the demo folder you will find 
   * **ASSIGNMENT_GROUPS** folder
