@@ -41,10 +41,9 @@ can be submitted directly to that folder in real time by the students (one way t
 Student results for each assignment group are stored in two scoreboard files (one using the student's name, the other using the student's secret code for anonymity). The teacher can share the link to the scoreboard file to allow students to see the results. Sometimes I use Notepad++ to project the live scoreboard (see https://www.raymond.cc/blog/monitor-log-or-text-file-changes-in-real-time-with-notepad/ on how to make Notepad++ display live results).
  
 ### Program (and Demo) Setup
-* unzip demo.zip to a folder on your hard drive (e.g. C:/Users/)
+* unzip demo.zip to a folder on your hard drive (e.g. C:/Users/*YourUserName*/Downloads)
 * in **customize.py**
-  * set the **rootDir** variable to the location of the unzipped demo folder (e.g. C:/Users/YourUserName/Downloads/demo) 
-  * set the **scoreboardDir** variable (e.g. C:/Users/YourUserName/Downloads/demo/scoreboard_for_demo)
+  * replace all occurences of *YourUserName* with your user name 
   * set the **pythonIdeLoc** variable to the location of the Python IDE (e.g. IDLE) executable.
   * set the **javaIdeLoc** variable to the location of the JAVA IDE (e.g. jGrasp) executable.
     * NOTE: The program uses *-parameters* compile option to ensure that JAVA reflection reflects parameter types instead of just using arg0
