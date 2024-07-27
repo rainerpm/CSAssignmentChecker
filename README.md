@@ -41,10 +41,10 @@ can be submitted directly to that folder in real time by the students (one way t
 Student results for each assignment group are stored in two scoreboard files (one using the student's name, the other using the student's secret code for anonymity). The teacher can share the link to the scoreboard file to allow students to see the results. Sometimes I use Notepad++ to project the live scoreboard (see https://www.raymond.cc/blog/monitor-log-or-text-file-changes-in-real-time-with-notepad/ on how to make Notepad++ display live results).
  
 ### Program (and Demo) Setup
-* unzip demo.zip to a folder on your hard drive (e.g. C:/Users/YourUserName/demo)
+* unzip demo.zip to a folder on your hard drive (e.g. C:/Users/)
 * in **customize.py**
-  * set the **rootDir** variable to the location of the unzipped demo folder (e.g. C:/Users/YourUserName/demo) 
-  * set the **scoreboardDir** variable (e.g. C:/Users/YourUserName/demo/scoreboard_for_demo)
+  * set the **rootDir** variable to the location of the unzipped demo folder (e.g. C:/Users/YourUserName/Downloads/demo) 
+  * set the **scoreboardDir** variable (e.g. C:/Users/YourUserName/Downloads/demo/scoreboard_for_demo)
   * set the **pythonIdeLoc** variable to the location of the Python IDE (e.g. IDLE) executable.
   * set the **javaIdeLoc** variable to the location of the JAVA IDE (e.g. jGrasp) executable.
     * NOTE: The program uses *-parameters* compile option to ensure that JAVA reflection reflects parameter types instead of just using arg0
@@ -83,7 +83,7 @@ The demo verifies two student assignments (1) [encryption](https://docs.google.c
    * Since this student's program output does not match the expected "gold" output, **CSAC** will use the diff program to display the differences between the students program output and the expected "gold" output.
    * After you've had a chance to look at the difference, close the diff window. The program now displays the Assignment Menu **y/late/2late/n/p [s d a b h i o g e c m f k t ?](r){x}(#)**
      * **Answer s** to show/see the program in the Python IDE. After you've run and/or inspected the program, close the IDE.
-     * **Answer n** to judge the program as incorrect. The student's program status is reflected in the scoreboard (one file with the student's name and one that is annoymized using the student's code that can be made accessible to the class). The result is reflected in the scoreboard file for that assignment group which is somwhat buried in the C:/Users/YourUserName/demo/scoreboard_for_demo/ folder.
+     * **Answer n** to judge the program as incorrect. The student's program status is reflected in the scoreboard (one file with the student's name and one that is annoymized using the student's code that can be made accessible to the class). The result is reflected in the scoreboard file for that assignment group which is somwhat buried in the C:/Users/YourUserName/Downloads/demo/scoreboard_for_demo/ folder.
    * Since the output was incorrect, the program also created a file (ShotwellGwynne.bat) in the latestResults folder inside the class period folder that enables the teacher to easily run diff program for the student's last incorrect submission and optionally bring up the program in the IDE or look at the data input file in the text editor.
    * Edit **/demo/sampleSubmissions/studentProblems/Shotwell Gwynne 112233_encryption.py** and fix the error on line 21 (changing thing[1] to thing[0]) and then once again copy the file to the class period 4 folder **/demo/4/**. 
     * Since the student's program output matches the assignments gold.txt file the program reports *** CORRECT ***. NOTE: The program ignores any whitespace at the end of a line or the end of the output when comparing the student's output to the expected output in the assignment's gold.txt file.
