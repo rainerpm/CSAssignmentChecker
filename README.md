@@ -135,7 +135,7 @@ is displayed with the following options (NOTE: Be sure that you are done with th
 * **r** remove the submission from the class period directory and then move on to the next student's submission.
 * **x** exit the program.
 * **#** number of submissions currently waiting to be run
-* **days1** number of school days until due date (negative is before the due date, positive is after)
+* **days1** number of school days until due date (negative is before the due date, positive is after). Program implements my current [Due Dates](https://docs.google.com/document/d/1FsaO3KNpjzn3G6qckAgyCPEAJk7UymidAZuEi5ZzSjs/edit#heading=h.ltopyeuk8xw6) policy.
 * **days2** number of calendar days until due date (negative is before the due date, positive is after) 
 
 ### Sending Emails or using the Clipboard 
