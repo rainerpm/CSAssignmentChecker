@@ -3,18 +3,9 @@
 #     - also remove the (now empty) directories in the dropbox app/website.
 #   * delete all directories/files in the scoreboard directory
 
-# summer improvements
-# 1) Deal with students submitting a file with a unsupported file extension(.py, .java, or .zip only no .txt or .java.java)
-# 2) MABYE: Move scoreboards into a class directory so all the scoreboards for a class are in one directory
-# 3) add a password to StudentDrop (maybe not necessary since a 6 digit secret code should be good enough)
-# 4) Make a "contest" StudentDrop
-# 5) Put a code in the scoreboard for manually moving a program to manual judging. This already
-#    exists when autojudging, but not when chosing 'm' to move it manually.
-# 6) Combine zip files into 1 file (alphabetically) for 00PLAGIARISM (see combineJAVAFilesFromZIPFile.py)
-
 import scoreboard  # import the associated scoreboard.py which creates the scoreboard files
 from scoreboard import assignmentResults    
-from customize import validClassPeriods,rootDir,scoreboardDir,pythonIde,javaIde,schoolHolidays,diffPgm,textEditor,emailSignature,emailAttachmentDir, emailUseClassPeriodSentFolders, TIMEOUT_DEFAULT
+from customize import classPeriodNames,classPeriodNamesForMenu,classAssignmentGroups,rootDir,scoreboardDir,pythonIde,javaIde,schoolHolidays,diffPgm,textEditor,emailSignature,emailAttachmentDir, emailUseClassPeriodSentFolders, TIMEOUT_DEFAULT
 
 # import python libraries (using Python 3.10 only ones that need to be installed
 # using 'pip install' appear to be pyperclip and pillow).
@@ -29,7 +20,7 @@ import json             # module is in python standard library
 import zipfile
 from   datetime import datetime  # module is in python standard library
 from   datetime import date      # module is in python standard library
-from   numpy    import busday_count  
+from   numpy    import busday_count   # pip install numpy (Thonny install numpy package)
 from   pathlib  import Path      # module is in python standard library
 from   shutil   import move  # module is in python standard library
 from   shutil   import copyfile  # module is in python standard library
@@ -41,13 +32,13 @@ from   email.mime.text      import MIMEText      # module is in python standard 
 from   email.mime.multipart import MIMEMultipart # module is in python standard library
 from   email.mime.base      import MIMEBase      # module is in python standard library
 from   email                import encoders      # module is in python standard library
-from   PIL      import ImageGrab                 # pip install pillow  (on Thonny install Pillow)
-import win32com.client  # pip install pywin32 (close and reopen Python after install) [for email using Outlook Windows 10 app (https://github.com/mhammond/pywin32)] (Thonny install pywin32)          
-import pyperclip        # allows python to add things to the clipboard (so it can be quickly pasted)  (Thonny install pyperclip)
+from   PIL      import ImageGrab                 # pip install pillow  (Thonny install pillow package)
+import win32com.client  # pip install pywin32 (close and reopen Python after install) [for email using Outlook Windows 10 app (https://github.com/mhammond/pywin32)] (Thonny install pywin32 package)          
+import pyperclip        # allows python to add things to the clipboard (so it can be quickly pasted)  (Thonny install pyperclip package)
 #from icecream import ic
 import webbrowser           # module is in python standard library
 import os                   # module is in python standard library
-from twilio.rest import Client  # pip install twilio (Thonny install twilio)
+# from twilio.rest import Client  # pip install twilio (Thonny install twilio)
 # to get the line number of a Python statement
 from inspect import currentframe, getframeinfo  # module is in python standard library
 from math import ceil
@@ -147,33 +138,35 @@ def signal_handler(signal, frame):
 signal.signal(signal.SIGINT, signal_handler)
 
 def check4Activity():
-    print("*** Checking for new file submissions ***")
+    print(f'{bcolors.BOLD}{bcolors.BLUE}*** Checking for new submissions ***{bcolors.ENDC}')
     listOfDirectoriesInRootDir = [p.name for p in Path(rootDir).iterdir() if p.is_dir()]  # getting-a-list-of-all-subdirectories-in-the-current-directory
 
-    for classPeriod in listOfDirectoriesInRootDir:
+    for classPeriodName in listOfDirectoriesInRootDir:
         files = []
-        if classPeriod in validClassPeriods:
-            print("Class Period",classPeriod)
-            files =[p for p in Path(rootDir,classPeriod).iterdir() if p.is_file()]
+        if classPeriodName in classPeriodNames:
+            print(f'{bcolors.BOLD}Submissions for {classPeriodName} ({classPeriodNamesForMenu[classPeriodNames.index(classPeriodName)]}){bcolors.ENDC}')
+            files =[p for p in Path(rootDir,classPeriodName).iterdir() if p.is_file()]
             for file in files:
                if file.name != "REGISTER.txt":
                   if file.suffix not in validFileExtensions:
                      print(" ","File with incorrect extension",">" + file.name + "<")
                   else:
                      print(" ", datetime.fromtimestamp(file.stat().st_mtime).strftime("%b%d %Hh%Mm"), ">"+file.name+"<")
-            files =[p for p in Path(rootDir,classPeriod,"00ManualCheck").iterdir() if p.is_file()]
-            for file in files:
-               print("  ..", "manual check -> ", datetime.fromtimestamp(file.stat().st_mtime).strftime("%b%d %Hh%Mm"), ">"+file.name+"<")
-               
-    if customDirectoryForUILComp:
-        print("UIL Competition Dir")
-        files =[p for p in Path(customDirectoryForUILComp).iterdir() if p.is_file()]
-        for file in files:
-           if file.name != "REGISTER.txt":
-              if file.suffix not in validFileExtensions:
-                 print(" ","File with incorrect extension",">" + file.name + "<")
-              else:
-                 print(" ", datetime.fromtimestamp(file.stat().st_mtime).strftime("%b%d %Hh%Mm"), ">"+file.name+"<")                
+            if os.path.isdir(Path(rootDir,classPeriodName,"00ManualCheck")):         
+                files =[p for p in Path(rootDir,classPeriodName,"00ManualCheck").iterdir() if p.is_file()]
+                for file in files:
+                   print("  ..", "manual check -> ", datetime.fromtimestamp(file.stat().st_mtime).strftime("%b%d %Hh%Mm"), ">"+file.name+"<")
+
+# July 2024 - no longer a custom directory, but treated just like any class directory listed in classPeriodNames list in customize.py
+#     if customDirectoryForUILComp:
+#         print("UIL Competition Dir")
+#         files =[p for p in Path(customDirectoryForUILComp).iterdir() if p.is_file()]
+#         for file in files:
+#            if file.name != "REGISTER.txt":
+#               if file.suffix not in validFileExtensions:
+#                  print(" ","File with incorrect extension",">" + file.name + "<")
+#               else:
+#                  print(" ", datetime.fromtimestamp(file.stat().st_mtime).strftime("%b%d %Hh%Mm"), ">"+file.name+"<")                
                 
 # return a dictionary of all registered students and create student directory
 # if it does not yet exist
@@ -215,33 +208,26 @@ def loadRegisteredStudents(classRootDir,assignmentGroups):
     return classRegistration
 
 def setup():
-    listOfGlobalAssignmentGroupDirectories = [f.name for f in os.scandir(os.path.join(rootDir,"ASSIGNMENT_GROUPS")) if f.is_dir()]  # https://stackoverflow.com/questions/973473/getting-a-list-of-all-subdirectories-in-the-current-directory
     allAssignmentGroups = {}
     allAssignments = {}
-    for globalAssignmentGroupDirOnly in listOfGlobalAssignmentGroupDirectories:  # iterate over assignment group directories in ASSIGNMENT_GROUPS directory
-        globalAssignmentGroupDir = os.path.join(rootDir,"ASSIGNMENT_GROUPS",globalAssignmentGroupDirOnly)
-        classesFile = os.path.join(globalAssignmentGroupDir,"periods.txt")
-        classPeriods = []
-        if os.path.exists(classesFile): 
-           with open(classesFile, "r") as cfile:
-               classPeriods = cfile.read().replace("\n"," ").split()
-        else:
-           #RPM sthorten to parent and basename
-           print(f"{bcolors.RED}Error!!!{bcolors.ENDC} Did not find file period.txt in",globalAssignmentGroupDir)
-        for classPeriod in classPeriods:
-            classPeriodsDir = os.path.join(rootDir,classPeriod)
-            if not os.path.isdir(classPeriodsDir):
-                os.mkdir(classPeriodsDir)
-                print("Created directory",classPeriodsDir)
-            classAssignmentGroupDir = os.path.abspath(os.path.join(rootDir,classPeriod,globalAssignmentGroupDirOnly))  # abspath necessary to open file explorer for main menu 'f' option
+    # new in July 2024
+    for classPeriodName in classPeriodNames:
+        classPeriodsDir = os.path.join(rootDir,classPeriodName)
+        if not os.path.isdir(classPeriodsDir):
+            os.mkdir(classPeriodsDir)
+            print("Created directory",classPeriodsDir)
+        for classAssignmentGroup in classAssignmentGroups[classPeriodName]:
+            globalAssignmentGroupDir = os.path.join(rootDir,"ASSIGNMENT_GROUPS",classAssignmentGroup)
+
+            classAssignmentGroupDir = os.path.abspath(os.path.join(rootDir,classPeriodName,classAssignmentGroup))  # abspath necessary to open file explorer for main menu 'f' option
             if not os.path.isdir(classAssignmentGroupDir):
                 os.mkdir(classAssignmentGroupDir)
                 print("Created directory",classAssignmentGroupDir)
-            latestResultsDir = os.path.join(rootDir,classPeriod,"latestResults")
+            latestResultsDir = os.path.join(rootDir,classPeriodName,"00LatestResults")
             if not os.path.isdir(latestResultsDir):
                 os.mkdir(latestResultsDir)
                 print("Created directory",latestResultsDir)
-            autoJudgeManualCheckDir = os.path.join(rootDir,classPeriod,"00ManualCheck")
+            autoJudgeManualCheckDir = os.path.join(rootDir,classPeriodName,"00ManualCheck")
             if not os.path.isdir(autoJudgeManualCheckDir):
                 os.mkdir(autoJudgeManualCheckDir)                
                 print("Created directory",autoJudgeManualCheckDir)
@@ -259,16 +245,76 @@ def setup():
             listOfAssignments.sort()
             assignmentGroup["listOfAssignments"] = listOfAssignments
             for assignment in listOfAssignments:
-                assignments[assignment] = globalAssignmentGroupDirOnly
-            assignmentGroups[globalAssignmentGroupDirOnly] = assignmentGroup
-            if classPeriod in allAssignmentGroups:
-                allAssignmentGroups[classPeriod].update(assignmentGroups)
+                assignments[assignment] = classAssignmentGroup
+            assignmentGroups[classAssignmentGroup] = assignmentGroup
+            if classPeriodName in allAssignmentGroups:
+                allAssignmentGroups[classPeriodName].update(assignmentGroups)
             else:
-                allAssignmentGroups[classPeriod] = assignmentGroups
-            if classPeriod in allAssignments:
-                allAssignments[classPeriod].update(assignments)
+                allAssignmentGroups[classPeriodName] = assignmentGroups
+            if classPeriodName in allAssignments:
+                allAssignments[classPeriodName].update(assignments)
             else:
-                allAssignments[classPeriod] = assignments
+                allAssignments[classPeriodName] = assignments
+
+
+
+#replaced block of code above in July 2024    
+#     listOfGlobalAssignmentGroupDirectories = [f.name for f in os.scandir(os.path.join(rootDir,"ASSIGNMENT_GROUPS")) if f.is_dir()]  # https://stackoverflow.com/questions/973473/getting-a-list-of-all-subdirectories-in-the-current-directory   
+#     for globalAssignmentGroupDirOnly in listOfGlobalAssignmentGroupDirectories:  # iterate over assignment group directories in ASSIGNMENT_GROUPS directory
+#         globalAssignmentGroupDir = os.path.join(rootDir,"ASSIGNMENT_GROUPS",globalAssignmentGroupDirOnly)
+#         classesFile = os.path.join(globalAssignmentGroupDir,"periods.txt")
+#         classPeriods = []
+#         if os.path.exists(classesFile): 
+#            with open(classesFile, "r") as cfile:
+#                classPeriods = cfile.read().replace("\n"," ").split()
+#         else:
+#            #RPM sthorten to parent and basename
+#            print(f"{bcolors.RED}Error!!!{bcolors.ENDC} Did not find file period.txt in",globalAssignmentGroupDir)
+#         for classPeriod in classPeriods:
+#             classPeriodsDir = os.path.join(rootDir,classPeriod)
+#             if not os.path.isdir(classPeriodsDir):
+#                 os.mkdir(classPeriodsDir)
+#                 print("Created directory",classPeriodsDir)
+#             classAssignmentGroupDir = os.path.abspath(os.path.join(rootDir,classPeriod,globalAssignmentGroupDirOnly))  # abspath necessary to open file explorer for main menu 'f' option
+#             if not os.path.isdir(classAssignmentGroupDir):
+#                 os.mkdir(classAssignmentGroupDir)
+#                 print("Created directory",classAssignmentGroupDir)
+#             latestResultsDir = os.path.join(rootDir,classPeriod,"00LatestResults")
+#             if not os.path.isdir(latestResultsDir):
+#                 os.mkdir(latestResultsDir)
+#                 print("Created directory",latestResultsDir)
+#             autoJudgeManualCheckDir = os.path.join(rootDir,classPeriod,"00ManualCheck")
+#             if not os.path.isdir(autoJudgeManualCheckDir):
+#                 os.mkdir(autoJudgeManualCheckDir)                
+#                 print("Created directory",autoJudgeManualCheckDir)
+#             plagiarismDir = os.path.join(classAssignmentGroupDir,"00PLAGIARISM")
+#             if not os.path.isdir(plagiarismDir):
+#                 os.mkdir(plagiarismDir)                
+#                 print("Created directory",plagiarismDir)
+#             assignmentGroup = {}  # create content dict, then add to it
+#             assignmentGroup["assignmentGroupDir"] = classAssignmentGroupDir
+#             assignmentGroup["goldenDir"] = globalAssignmentGroupDir   # this is in the GLOBAL assignment group directory
+#             assignmentGroup["plagiarismDir"] = plagiarismDir
+#             assignments = {}
+#             assignmentGroups = {}
+#             listOfAssignments = [f.name for f in os.scandir(globalAssignmentGroupDir) if f.is_dir()]  # https://stackoverflow.com/questions/973473/getting-a-list-of-all-subdirectories-in-the-current-directory
+#             listOfAssignments.sort()
+#             assignmentGroup["listOfAssignments"] = listOfAssignments
+#             for assignment in listOfAssignments:
+#                 assignments[assignment] = globalAssignmentGroupDirOnly
+#             assignmentGroups[globalAssignmentGroupDirOnly] = assignmentGroup
+#             if classPeriod in allAssignmentGroups:
+#                 allAssignmentGroups[classPeriod].update(assignmentGroups)
+#             else:
+#                 allAssignmentGroups[classPeriod] = assignmentGroups
+#             if classPeriod in allAssignments:
+#                 allAssignments[classPeriod].update(assignments)
+#             else:
+#                 allAssignments[classPeriod] = assignments
+    
+#    print(f'{allAssignmentGroups=}')
+#    print(f'{allAssignments=}')
+
     return allAssignmentGroups, allAssignments
 
 def emailStudent(submission):
@@ -306,7 +352,7 @@ def emailStudent(submission):
                emailCodes.append(classRegistrationInOrder[lstIdx])
            print(f'{emailCodes=}')    
     receiverEmailAddress = ""
-    subject = f'P{submission["classPeriod"]} StudentDrop ({submission["Assignment"]} - {submission["submissionDateTime"]})'
+    subject = f'{submission["classPeriod"]} CSAC Submission ({submission["Assignment"]} - {submission["submissionDateTime"]})'
     if submission["invalidAssignment"]:
         comment = f'"{submission["Assignment"]}" is an incorrect assignment name or the assignment is not checked off by submitting the code. The correct assignment name can be found after the waterdrop on the website.  The green checkmark on the website indicates assignments that are checked off by me in person.'
         incorrectAssignmentName = True
@@ -991,7 +1037,7 @@ def runProgram(submission, classRootDir):
     for ideCmd in ideCmds:
        bringUpIDEorDataFile = bringUpIDEorDataFile + '\nSTART /B "' + ideCmd[0] + '"' + ' ' + '"' + ideCmd[1] + '"'
     bringUpIDEorDataFile = bringUpIDEorDataFile + '\n:next'
-    latestResultsDir = os.path.join(classRootDir,"latestResults")
+    latestResultsDir = os.path.join(classRootDir,"00LatestResults")
     if submission["dataInputFileExists"]:
         bringUpIDEorDataFile += '\nset /P c=Bring up input data file [y]? \nif /I "%c%" EQU "Y" goto :idf\ngoto :end\n:idf\n' + '"' + textEditor + '"' + " -multiInst -nosession " + '"' + submission["dataInputFileName"] + '"' + '\n:end'
     if errorCompile:
@@ -1140,7 +1186,7 @@ def submissionCorrect(submission,reason=""):
        assignmentGroup = assignmentGroup[:27]+">" if len(assignmentGroup) > 27 else assignmentGroup
        assignment = submission["Assignment"]
        assignment = assignment[:11]+">" if len(assignment) > 11 else assignment
-       fcorr.write(f'P{submission["classPeriod"]} {reason} {assignmentGroup:<28} {submission["result"]} {assignment:<12} {submission["FileName"]} * {submission["submissionDateTime"]}\n')        
+       fcorr.write(f'{submission["classPeriod"]} {reason} {assignmentGroup:<28} {submission["result"]} {assignment:<12} {submission["FileName"]} * {submission["submissionDateTime"]}\n')        
         #fcorr.write("(P" + submission["classPeriod"] + " " + os.path.basename(os.path.normpath(submission["assignmentGroup"]["assignmentGroupDir"])) +") " + submission["Assignment"] + " " + submission["FileName"] + " * " + submission["submissionDateTime"] + " *\n") 
     if not os.path.exists(os.path.join(submission["plagiarismAssignmentDir"],submission["submittedFileNameWithDate"])):
        os.rename(submission["FileName"], os.path.join(submission["plagiarismAssignmentDir"],submission["submittedFileNameWithDate"]))  # move pgm to PLAGIARISM directory
@@ -1240,13 +1286,14 @@ def main():
         lCount = 0
         while not(inputContinue or not autoJudgingFirstTime):
             check4Activity()
-            validClassPeriodsString = ""
-            for classPeriod in validClassPeriods:
-                validClassPeriodsString = validClassPeriodsString + classPeriod + " "
-            validClassPeriodsString = validClassPeriodsString.rstrip()
-            response = input("\n" + "("+ validClassPeriodsString + ")judge (a)utojudge score(b)oard (l)og (f)iles e(x)it (" + bcolors.BLUE + "<ENTER>=check for new submissions" + bcolors.ENDC + ")? ")
-            inputContinue = (response == 'x') or (response in validClassPeriods)
-            if response in validClassPeriods:
+            classPeriodNamesString = ""
+            for classPeriod in classPeriodNamesForMenu:
+                classPeriodNamesString = classPeriodNamesString + classPeriod + " "
+            classPeriodNamesString = classPeriodNamesString.rstrip()
+            response = input("\n" + "("+ classPeriodNamesString + ")judge (a)utojudge score(b)oard (l)og (f)iles e(x)it (" + bcolors.BLUE + "<ENTER>=check for new submissions" + bcolors.ENDC + ")? ")
+            response = classPeriodNames[classPeriodNamesForMenu.index(response)]
+            inputContinue = (response == 'x') or (response in classPeriodNames)
+            if response in classPeriodNames:
                 classPeriod = response
                 manualCheckFiles = os.listdir(Path(rootDir,classPeriod,"00ManualCheck"))
                 if len(manualCheckFiles) > 0:
@@ -1255,10 +1302,10 @@ def main():
                       for file in manualCheckFiles:
                          os.rename(Path(rootDir,classPeriod,"00ManualCheck",file),Path(rootDir,classPeriod,file))
             elif response == "a":
-                response2 = input("(" + validClassPeriodsString + ")autojudge (m)ultiple (" + bcolors.BLUE + '<ENTER>=all periods' + bcolors.ENDC + ")? ")
+                response2 = input("(" + classPeriodNamesString + ")autojudge (m)ultiple (" + bcolors.BLUE + '<ENTER>=all periods' + bcolors.ENDC + ")? ")
                 autoJudging = True
                 autoJudgingFirstTime = False
-                if response2 in validClassPeriods:
+                if response2 in classPeriodNames:
                     classPeriod = response2
                     autoJudgingPeriods = [classPeriod]
                     autoJudgingSleepTime = 30
@@ -1267,7 +1314,7 @@ def main():
                     autoJudgingPeriods = response3.split(",")
                     autoJudgingSleepTime = 30
                 else:
-                    autoJudgingPeriods = validClassPeriods
+                    autoJudgingPeriods = classPeriodNames
                 moveTo00ManualCheck = False
                 response3 = input("incorrect to 00ManualCheck directory instead of judging incorrect (y " + bcolors.BLUE + '<ENTER>=n' + bcolors.ENDC + ")? ")
                 if response3 == 'y':
@@ -1337,7 +1384,7 @@ def main():
                 currentSubmissions.remove(currentSubmission)
                 submission = processCurrentSubmission(currentSubmission, assignmentGroups, assignments,classRootDir)
                 if submission["valid"]:
-                   updateLogFile(submission,"(P" + submission["classPeriod"] + " " + submission["Assignment"] + ")" + ' ' + submission["FileName"] + ' * ' + submission["submissionDateTime"] + ' *',False,False)
+                   updateLogFile(submission,"(submission["classPeriod"] + " " + submission["Assignment"] + ")" + ' ' + submission["FileName"] + ' * ' + submission["submissionDateTime"] + ' *',False,False)
                    ####################################### 
                    ### COPY, CHECK, and RUN THE PROGRAM
                    #######################################
@@ -1347,7 +1394,7 @@ def main():
                    timeoutStr = ""
                    if submission["timeout"] > TIMEOUT_DEFAULT:
                        timeoutStr = bcolors.RED + " timeout=" + str(submission["timeout"]) + bcolors.ENDC
-                   print("\n"+ bcolors.BOLD + f'*** {submission["Assignment"]} P{submission["classPeriod"]} ({result}) {submission["assignmentGroupId"]} *** {submission["FileName"]}' + timeoutStr + bcolors.ENDC + f' {submission["submissionDateTime"]}')
+                   print("\n"+ bcolors.BOLD + f'*** {submission["Assignment"]} {submission["classPeriod"]} ({result}) {submission["assignmentGroupId"]} *** {submission["FileName"]}' + timeoutStr + bcolors.ENDC + f' {submission["submissionDateTime"]}')
                    if doItAgain:
                       doItAgain = False
                    else:
@@ -1549,9 +1596,3 @@ def main():
                 break
 
 main()
-
-
-
-
-
-
