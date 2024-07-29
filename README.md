@@ -65,9 +65,10 @@ Student results for each assignment group are stored in two scoreboard files (on
          * **timeout.txt** contains the amount of seconds the test should be given before timing out (optional: overrides the TIMEOUT_DEFAULT set in customize.py)
     * **commentsJAVA.txt** and **commentsPYTHON.txt** contain the global comments used in student emails or clipboard
   * **P1,P4,P5** (these are the class period folders to which student assignment files are either explicitly copied or directly submitted  via something like [a Google Form](https://docs.google.com/document/d/18Cs26CTd__zmu95VkVwxPxJL-zZW0eaX45ovpPbcuHM/edit?usp=sharing) or [a Dropbox File Request](https://fileinbox.com/articles/dropbox-file-requests-ultimate-guide#:~:text=Unfortunately%2C%20Dropbox%20File%20Requests%20don,to%20create%20a%20Dropbox%20account.](https://docs.google.com/document/d/1R93KHIYiwyKRqjzm3_vxHb4VJ6b_4BD-f0hwP55qVKw/edit?usp=drive_link)). Inside each folder you will find the REGISTER.txt file containing the students registered to this class (for each student: a unique ID, last name, first name, class period, email address). Also in this folder is a folder for each assignment group that contains folders for each of the students which contain folders for the student's program submissions. 
-  * **scoreboard_for_demo** This folder will contain the results for the student's assignments.
   * **sampleSubmissions** Two example student submissions.
   * **dueDates.txt** Optional file that contains the due date followed by 1 or more assignment names.
+  * **scoreboard_for_demo** This folder will contain the results for the student's assignments.
+  * **emailAttachmentDir** This folder temporarily stores the email attachment that is screen captured when running CSAC.
   
 ### Running the Demo
 The demo verifies two student assignments (1) [encryption](https://docs.google.com/document/d/1mr5FHL-cf3T1kRR0F10KCWwGGdjZC4Cj/edit?usp=sharing&ouid=117088614197672338242&rtpof=true&sd=true) (2) [GCD](https://docs.google.com/document/d/14nIXTUOr70_zRUZojzMZhbs9AmTWs5WxatsVtjNT_c4/edit?usp=sharing). Follow the below steps and/or watch the demo video (NOTE: CSAC & the demo has changed slightly since the video was made): [download](https://drive.google.com/file/d/1o7TA-ym4WC4xezXcMf3mqvpzbMRN7Awm/view?usp=sharing) or [YouTube](https://youtu.be/Nr0t-hp050Y) 
