@@ -2,7 +2,7 @@
 
 ### Overview
 
-The **CSAssignmentChecker.py** (aka **CSAC**) program verifies python or java assignments submitted by students. **CSAC** supports basic verification for Python programs and more advanced verification for JAVA programs. Student assignments are organized into assignment groups, each of which has a *scoreboard* file showing the results for each student. Demo video (NOTE: CSAC & the demo has changed slightly since the video was made): [download](https://drive.google.com/file/d/1o7TA-ym4WC4xezXcMf3mqvpzbMRN7Awm/view?usp=sharing) or [YouTube](https://youtu.be/Nr0t-hp050Y) 
+The **CSAssignmentChecker.py** (aka **CSAC**) program verifies python or java assignments submitted by students. **CSAC** supports basic verification for Python programs and more advanced verification for JAVA programs. Student assignments are organized into assignment groups, each of which has a *scoreboard* file showing the results for each student. Demo video (NOTE: CSAC & the demo has changed slightly since the video was made): [download](https://drive.google.com/file/d/1o7TA-ym4WC4xezXcMf3mqvpzbMRN7Awm/view?usp=sharing) or [YouTube](https://youtu.be/Nr0t-hp050Y) The demo description down below is up to date.
 
 ### Requirements
 The following programs are required to be installed on your computer (the programs in parenthesis are what I use, but can be replaced with something equivalent by updating the customize.py file).
@@ -41,7 +41,7 @@ can be submitted directly to that folder in real time by the students (one way t
 Student results for each assignment group are stored in two scoreboard files (one using the student's name, the other using the student's secret code for anonymity). The teacher can share the link to the scoreboard file to allow students to see the results. Sometimes I use Notepad++ to project the live scoreboard (see https://www.raymond.cc/blog/monitor-log-or-text-file-changes-in-real-time-with-notepad/ on how to make Notepad++ display live results).
  
 ### Program (and Demo) Setup
-* unzip demo.zip to a folder on your hard drive (e.g. C:/Users/*YourUserName*/Downloads)
+* unzip **demo.zip** to a folder on your hard drive (e.g. C:/Users/*YourUserName*/Downloads)
 * in **customize.py**
   * replace all occurences of *YourUserName* with your user name 
   * set the **pythonIdeLoc** variable to the location of the Python IDE (e.g. IDLE) executable.
@@ -83,8 +83,8 @@ The demo verifies two student assignments (1) [encryption](https://docs.google.c
   **Answer 4** to have the program enter the judging mode for class period 4. In this mode, the program continually checks for new submissions to the class period folder **/demo/P4/**.
   Since there is currently no submission to process, the program prints a period every 2 seconds to indicate that it is waiting for submissions.
 * For this demo, instead of students submitting files directly to the teacher's class period folder via something like [a Google Form](https://docs.google.com/document/d/18Cs26CTd__zmu95VkVwxPxJL-zZW0eaX45ovpPbcuHM/edit?usp=sharing) or [a Dropbox File Request](https://fileinbox.com/articles/dropbox-file-requests-ultimate-guide#:~:text=Unfortunately%2C%20Dropbox%20File%20Requests%20don,to%20create%20a%20Dropbox%20account.](https://docs.google.com/document/d/1R93KHIYiwyKRqjzm3_vxHb4VJ6b_4BD-f0hwP55qVKw/edit?usp=drive_link)), *we will simply copy example files from /demo/sampleSubmissions/*.
-* To demo the basic verification of a student program, copy **/demo/sampleSubmissions/Shotwell Gwynne 112233_encryption.py** to the class period 4 folder **/demo/P4/**. This file is Period 4's student Gwynne Shotwell's (student secret code 112233) submission of the encryption assignment. CSAC (which up to now had been printing periods to indicate its waiting for submissions) will detect this file and run the program. 
-   * Since this student's program output does not match the expected "gold" output, **CSAC** will use the diff program to display the differences between the students program output and the expected "gold" output.
+* To demo the basic verification of a student program, copy **/demo/sampleSubmissions/Shotwell Gwynne 112233_encryption.py** to the class period 4 folder **/demo/P4/**. This file is Period 4's student Gwynne Shotwell's (student secret code 112233) submission of the encryption assignment. CSAC (which up to now had been printing periods to indicate its waiting for submissions) will detect this file and run the student's program. 
+   * This student's program output does not match the expected "gold" output, and thus **CSAC** will use the diff program to display the differences between the student's program output and the expected "gold" output in the **gold.txt** file.
    * After you've had a chance to look at the difference, close the diff window. The program now displays the Assignment Menu **y/late/2late/n/p [s d a b h i o g e c m f k t ?](r){x}(#)**
      * **Answer s** to show/see the program in the Python IDE. After you've run and/or inspected the program, close the IDE.
      * **Answer n** to judge the program as incorrect. The student's program status is reflected in the scoreboard (one file with the student's name and one that is annoymized using the student's code that can be made accessible to the class). The result is reflected in the scoreboard file for that assignment group which is somwhat buried in the **C:/Users/YourUserName/Downloads/demo/scoreboard_for_demo/** folder.
