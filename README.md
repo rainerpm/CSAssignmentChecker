@@ -19,7 +19,7 @@ The following programs are required to be installed on your computer (the progra
   * diff program (https://winmerge.org/?lang=en).
 
 ### Student Registration
-Students are registered with **CSAC** via a REGISTER.txt file in each class period folder. Each line in the REGISTER.txt file contains 6 pieces of information for each student (each separated by one or more spaces) (1) secret code - used to annonymously identify a student's results (2) first name (3) last name (4) class period (5) email address (6) school student id.  You can create the REGISTER.txt file manually, or use a Google Form as specified [here](https://docs.google.com/document/d/1BaU-_KyqOs55-iTgqofZ8XuDYRqWC9_9-3l_4Etynp0/edit?usp=sharing).  
+Students are registered with **CSAC** via a REGISTER.txt file in each class period folder. Each line in the REGISTER.txt file contains 6 pieces of information for each student (each separated by one or more spaces) (1) secret code - used to annonymously identify a student's results (2) first name (3) last name (4) class period (5) email address (6) school student id.  You can create the REGISTER.txt file manually, or use a [Google Form](https://docs.google.com/document/d/1BaU-_KyqOs55-iTgqofZ8XuDYRqWC9_9-3l_4Etynp0/edit?usp=sharing).  
 
 ### Assignment Submission
 To submit an assignment a student submits a single file using the naming convention **Last First ?_@.$** (where **Last** = student's last name, **First** = student's first name,  **?** = student secret code, **@** = assignment name, **$** = file extension: either py, java for individual files or zip for multiple files). For JAVA, the class in the **Last First ?_@.$** file must be named **@**.  An example of a valid filename is **Shotwell Gwynne 112233_encryption.py**.
