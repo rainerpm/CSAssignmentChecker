@@ -144,7 +144,7 @@ def check4Activity():
     for classPeriodName in listOfDirectoriesInRootDir:
         files = []
         if classPeriodName in classPeriodNames:
-            print(f'{bcolors.BOLD}Submissions for {classPeriodName} ({classPeriodNamesForMenu[classPeriodNames.index(classPeriodName)]}){bcolors.ENDC}')
+            print(f'{bcolors.BOLD}({classPeriodNamesForMenu[classPeriodNames.index(classPeriodName)]}) Submissions for {classPeriodName}{bcolors.ENDC}')
             files =[p for p in Path(rootDir,classPeriodName).iterdir() if p.is_file()]
             for file in files:
                if file.name != "REGISTER.txt":
@@ -409,7 +409,7 @@ def emailStudent(submission):
            elif schoolDaysLate > 6:
                dueDateMsg = f'You submitted on {submission["submissionDateTime"]}. It is now too late to submit this assignment for credit. The last partial credit day was {schoolDaysLate-6} school days ago. The assignment was due on {dateDue[assignment]} which was {schoolDaysLate} school days or {calendarDaysLate} calendar days ago.'
        
-       message = comment + '\n' + dueDateMsg + '\n'  + emailSignature
+       message = comment + '\n' + dueDateMsg + '\n\n'  + emailSignature
        for emailCode in emailCodes:
            emailSent = False
            if emailCode in submission["classRegistration"]:
@@ -1384,7 +1384,7 @@ def main():
                 currentSubmissions.remove(currentSubmission)
                 submission = processCurrentSubmission(currentSubmission, assignmentGroups, assignments,classRootDir)
                 if submission["valid"]:
-                   updateLogFile(submission,"(submission["classPeriod"] + " " + submission["Assignment"] + ")" + ' ' + submission["FileName"] + ' * ' + submission["submissionDateTime"] + ' *',False,False)
+                   updateLogFile(submission,"(" + submission["classPeriod"] + " " + submission["Assignment"] + ")" + ' ' + submission["FileName"] + ' * ' + submission["submissionDateTime"] + ' *',False,False)
                    ####################################### 
                    ### COPY, CHECK, and RUN THE PROGRAM
                    #######################################
