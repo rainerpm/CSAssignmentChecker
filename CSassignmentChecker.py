@@ -138,7 +138,7 @@ def signal_handler(signal, frame):
 signal.signal(signal.SIGINT, signal_handler)
 
 def check4Activity():
-    print(f'{bcolors.BOLD}{bcolors.BLUE}*** Checking for new submissions ***{bcolors.ENDC}')
+    print(f'\n{bcolors.BOLD}{bcolors.BLUE}*** Checking for new submissions ***{bcolors.ENDC}')
     listOfDirectoriesInRootDir = [p.name for p in Path(rootDir).iterdir() if p.is_dir()]  # getting-a-list-of-all-subdirectories-in-the-current-directory
 
     for classPeriodName in listOfDirectoriesInRootDir:
@@ -1291,7 +1291,8 @@ def main():
                 classPeriodNamesString = classPeriodNamesString + classPeriod + " "
             classPeriodNamesString = classPeriodNamesString.rstrip()
             response = input("\n" + "("+ classPeriodNamesString + ")judge (a)utojudge score(b)oard (l)og (f)iles e(x)it (" + bcolors.BLUE + "<ENTER>=check for new submissions" + bcolors.ENDC + ")? ")
-            response = classPeriodNames[classPeriodNamesForMenu.index(response)]
+            if response in classPeriodNamesForMenu:
+                response = classPeriodNames[classPeriodNamesForMenu.index(response)]
             inputContinue = (response == 'x') or (response in classPeriodNames)
             if response in classPeriodNames:
                 classPeriod = response
@@ -1320,9 +1321,11 @@ def main():
                 if response3 == 'y':
                    moveTo00ManualCheck = True
             elif response == "l":   # log
+                print("  opening logGlobal.txt file")
                 textEditorCmd = textEditorCmdOpt1 + ["logGlobal.txt"]      
                 result = subprocess.run(textEditorCmd, shell=True)
             elif response == "f":   # file explorer
+                print("  opening file explorer")
                 process = subprocess.Popen('explorer "' + os.path.normpath(rootDir) + '"',creationflags=subprocess.CREATE_NEW_PROCESS_GROUP)
             elif len(response) > 0 and response[0] == "b":
                process = subprocess.Popen('explorer "' + scoreboardDir + '\withNames"',creationflags=subprocess.CREATE_NEW_PROCESS_GROUP) # bring up file explorer of scoreboard directory
