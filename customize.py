@@ -1,3 +1,7 @@
+########################################################
+#### NO LONGER USED. USE CSACcustomize.py INSTEAD ######
+########################################################
+
 # programs
 pythonIde = r'C:/Users/E151509/AppData/Local/Programs/Python/Python312/Lib/idlelib/idle.pyw'
 javaIde = r'C:/Program Files (x86)/jGRASP/bin/jgrasp.exe'      
@@ -10,13 +14,16 @@ rootDir = r'C:/Users/E151509/My Drive (rainer.mueller@austinisd.org)/CSAC/Studen
 #rootDir = r'C:/Users/E151509/Downloads/demo/demo'
 #scoreboardDir = r'C:/Users/E151509/Google Drive/Course Materials/Introduction to Computer Science/10.Python/scoreboard'
 #scoreboardDirAlt = r'C:/Users/E151509/My Drive/Course Materials/Introduction to Computer Science/10.Python/scoreboard'
-scoreboardDir = r'C:/Users/E151509/My Drive/My LASA/scoreboard'
+scoreboardDir = r'C:\Users\E151509\My Drive (rainer.mueller@austinisd.org)\CSAC\StudentSubmissions\2024-25\scoreboard'
 #scoreboardDir = r'C:/Users/E151509/Downloads/demo/demo/scoreboard_for_demo'
 #mossDir = r'C:/Users/E151509/My Drive/My LASA/misc/tools/plagiarize checking'
 
 # java and python class periods
 classPeriodNames = ["P3","P5","P6","P8","Contests"]
-classPeriodNamesForMenu = ["3","5","6","8","C"]  # list of class names (shortened to make them easier to pick from the menu)
+classPeriodNamesForMenu = ["3","5","6","8","c"]  # list of class names (shortened to make them easier to pick from the menu)
+
+# automatically send an email to these class periods when problem judged correct (Y) or incorrect (N)
+classPeriodEmailYN = ["Contests"]
 
 javaAssignmentGroups = [#"JAVA_01_WritingAndCallingMethods",
                         #"JAVA_02_Objects1",
@@ -28,8 +35,8 @@ javaAssignmentGroups = [#"JAVA_01_WritingAndCallingMethods",
                         #"JAVA_08_FR_Practice3",
                         #"JAVA_09_Post_AP"
                        ]
-pythonAssignmentGroups = ["PYTHON_01_FirstAssignments",
-                          "PYTHON_02_Lets_Get_Loopy",
+pythonAssignmentGroups = ["PYTHON_01_FirstAssignments"
+                          #"PYTHON_02_Lets_Get_Loopy",
                           #"PYTHON_03_SecondAssignments",
                           #"PYTHON_04_ThirdAssignments",
                           #"PYTHON_05_FourthAssignments",
@@ -44,6 +51,8 @@ contestAssignmentGroups = [# "2018_UIL_District",
                            # "2022_UIL_District",
                            # "2023_UIL_District",
                            # "2024_Indeed"
+                           # "2024_Fall_Contest_2018InvA_2018InvB"
+                           "2024_Fall_Contest2_Indeed_2018"
                           ]
 classAssignmentGroups = {}
 classAssignmentGroups["P3"] = pythonAssignmentGroups
@@ -53,7 +62,7 @@ classAssignmentGroups["P8"] = pythonAssignmentGroups
 classAssignmentGroups["Contests"] = contestAssignmentGroups
 
 # email (email login is in login.py)
-emailSignature = "\nMr. Mueller\n"
+emailSignature = "Mr. Mueller\n"
 emailAttachmentDir = r"C:/Users/E151509/Documents/"
 # if set to False all sent email will end up in the Outlook 'Sent Items' folder
 # Set to True only if you have created the folder 'CSAC' inside your 'Sent Items' folder
