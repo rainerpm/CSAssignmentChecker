@@ -4,7 +4,7 @@
 
 from   pathlib  import Path
 from datetime import datetime
-from grades4CSACdata import ASSIGNMENTS,codingBatDir,gradesDir,classPeriods,latePenaltyPercentageDefault
+from CSACgradesData import ASSIGNMENTS,codingBatDir,gradesDir,classPeriods,latePenaltyPercentageDefault
 from CSACcustomize import rootDir,scoreboardDir,classPeriodNames,classPeriodNamesForMenu
 from math import ceil
 
