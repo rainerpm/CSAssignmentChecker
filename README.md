@@ -1,4 +1,4 @@
-# Computer Science Assignment Checker (CSAC)
+# CSAC - Computer Science Assignment Checker
 
 ### Overview
 
