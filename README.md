@@ -1,8 +1,8 @@
-# CSAssignmentChecker
+# Computer Science Assignment Checker (CSAC)
 
 ### Overview
 
-The **CSAssignmentChecker.py** (aka **CSAC**) program verifies python or java assignments submitted by students. **CSAC** supports basic verification for Python programs and more advanced verification for JAVA programs. Student assignments are organized into assignment groups, each of which has a *scoreboard* file showing the results for each student. [Demo video](https://youtu.be/nl750S_3hOY).
+The **CSAC.py** program verifies python or java assignments submitted by students. **CSAC** supports basic verification for Python programs and more advanced verification for JAVA programs. Student assignments are organized into assignment groups, each of which has a *scoreboard* file showing the results for each student. [Demo video](https://youtu.be/nl750S_3hOY).
 
 ### Requirements
 The following programs are required to be installed on your computer (the programs in parenthesis are what I use, but can be replaced with something equivalent by updating the customize.py file).
@@ -51,9 +51,9 @@ Student results for each assignment group are stored in two scoreboard files (on
   * set the **diffLoc** variable to the location of the diff program (e.g. winMerge) executable.
 * you are now ready to run the demo - see the Running the Demo section below.
 * if you look inside the demo folder you will find
-  * **CSassignmentChecker.py** the CSAC program
-  * **customize.py** file that customizes CSAC for your setup. 
-  * **scoreboard.py** generates the scoreboard (aka student results) output.
+  * **CSAC.py** the CSAC program
+  * **CSACcustomize.py** file that customizes CSAC for your setup. 
+  * **CSACscoreboard.py** generates the scoreboard (aka student results) output.
   * **ASSIGNMENT_GROUPS** folder
     * **first6weeksAssignments, pythonAssignments** (these folders contain a group of related assignments, each of which will have it's own scoreboard file)
       * **GCD, encryption** (these are the assignment folders  - the name of the assignment folder **is** the **assignment name**, assignment names must be unique, @ = **assignment name**)
@@ -75,7 +75,7 @@ Student results for each assignment group are stored in two scoreboard files (on
   
 ### Running the Demo
 The demo verifies two student assignments (1) [encryption](https://docs.google.com/document/d/1mr5FHL-cf3T1kRR0F10KCWwGGdjZC4Cj/edit?usp=sharing&ouid=117088614197672338242&rtpof=true&sd=true) (2) [GCD](https://docs.google.com/document/d/14nIXTUOr70_zRUZojzMZhbs9AmTWs5WxatsVtjNT_c4/edit?usp=sharing). Follow the below steps and/or watch the demo video (NOTE: CSAC & the demo has changed slightly since the video was made): [download](https://drive.google.com/file/d/1o7TA-ym4WC4xezXcMf3mqvpzbMRN7Awm/view?usp=sharing) or [YouTube](https://youtu.be/Nr0t-hp050Y) 
-* run CSassignmentChecker.py  
+* run CSAC.py  
   * since this is the first time the program has been run, the program creates some required directories.
   * You should now see the Main Menu\
     **(1 4 5)judge (a)utojudge score(b)oard (l)og e(x)it (\<ENTER\>=check)?**\
