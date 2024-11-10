@@ -5,7 +5,7 @@
 The **CSAC.py** program verifies python or java assignments submitted by students. **CSAC** supports basic verification for Python programs and more advanced verification for JAVA programs. Student assignments are organized into assignment groups, each of which has a *scoreboard* file showing the results for each student. [Demo video](https://youtu.be/nl750S_3hOY).
 
 ### Requirements
-The following programs are required to be installed on your computer (the programs in parenthesis are what I use, but can be replaced with something equivalent by updating the customize.py file).
+The following programs are required to be installed on your computer (the programs in parenthesis are what I use, but can be replaced with something equivalent by updating the CSACcustomize.py file).
   * Python IDE (I use Thonny like my students)
     * pip install numpy
     * pip install pywin32
@@ -42,7 +42,7 @@ Student results for each assignment group are stored in two scoreboard files (on
  
 ### Program (and Demo) Setup
 * unzip **demo.zip** to a folder on your hard drive (e.g. C:/Users/*YourUserName*/Downloads)
-* in **customize.py**
+* in **CSACcustomize.py**
   * replace all occurences of *YourUserName* with your user name 
   * set the **pythonIdeLoc** variable to the location of the Python IDE (e.g. IDLE) executable.
   * set the **javaIdeLoc** variable to the location of the JAVA IDE (e.g. jGrasp) executable.
@@ -65,7 +65,7 @@ Student results for each assignment group are stored in two scoreboard files (on
          * **gold.txt** is the teacher provided golden output for the assignment
          * **checker.txt** is the teacher provided checker output for the assignment
          * **comments.txt** contains the assignment specific comments used in student emails or clipboard
-         * **timeout.txt** contains the amount of seconds the test should be given before timing out (optional: overrides the TIMEOUT_DEFAULT set in customize.py)
+         * **timeout.txt** contains the amount of seconds the test should be given before timing out (optional: overrides the TIMEOUT_DEFAULT set in CSACcustomize.py)
     * **commentsJAVA.txt** and **commentsPYTHON.txt** contain the global comments used in student emails or clipboard
   * **P1,P4,P5** (these are the class period folders to which student assignment files are either explicitly copied by the teacher or directly submitted  via something like [a Google Form](https://docs.google.com/document/d/1R93KHIYiwyKRqjzm3_vxHb4VJ6b_4BD-f0hwP55qVKw/edit?usp=sharing) or [a Dropbox File Request](https://fileinbox.com/articles/dropbox-file-requests-ultimate-guide#:~:text=Unfortunately%2C%20Dropbox%20File%20Requests%20don,to%20create%20a%20Dropbox%20account.](https://docs.google.com/document/d/1R93KHIYiwyKRqjzm3_vxHb4VJ6b_4BD-f0hwP55qVKw/edit?usp=drive_link)) by the students. Inside each folder you will find the REGISTER.txt file containing the students registered to this class (for each student: a unique ID, last name, first name, class period, email address). Also in this folder is a folder for each assignment group that contains folders for each of the students which contain folders for the student's program submissions. 
   * **sampleSubmissions** Two example student submissions.
@@ -79,7 +79,7 @@ The demo verifies two student assignments (1) [encryption](https://docs.google.c
   * since this is the first time the program has been run, the program creates some required directories.
   * You should now see the Main Menu\
     **(1 4 5)judge (a)utojudge score(b)oard (l)og e(x)it (\<ENTER\>=check)?**\
-  The 3 numbers in the parenthesis are the "shortcut" names provided in the python list classPeriodNamesForMenu in the customize.py file.
+  The 3 numbers in the parenthesis are the "shortcut" names provided in the python list classPeriodNamesForMenu in the CSACcustomize.py file.
   **Answer 4** to have the program enter the judging mode for class period 4. In this mode, the program continually checks for new submissions to the class period folder **/demo/P4/**.
   Since there is currently no submission to process, the program prints a period every 2 seconds to indicate that it is waiting for submissions.
 * For this demo, instead of students submitting files directly to the teacher's class period folder via something like [a Google Form](https://docs.google.com/document/d/1R93KHIYiwyKRqjzm3_vxHb4VJ6b_4BD-f0hwP55qVKw/edit?usp=sharing) or [a Dropbox File Request](https://fileinbox.com/articles/dropbox-file-requests-ultimate-guide#:~:text=Unfortunately%2C%20Dropbox%20File%20Requests%20don,to%20create%20a%20Dropbox%20account.](https://docs.google.com/document/d/1R93KHIYiwyKRqjzm3_vxHb4VJ6b_4BD-f0hwP55qVKw/edit?usp=drive_link)), *we will simply copy example files from /demo/sampleSubmissions/*.
