@@ -1,3 +1,7 @@
+########################################################
+#### NO LONGER USED. USE CSACscoreboard.py INSTEAD #####
+########################################################
+
 import os
 import glob
 import subprocess
@@ -72,28 +76,17 @@ The POINTS column indicates your UIL programming competition score (60 pts/probl
 
      
    currentDate = datetime.now().strftime("%m-%d-%y")
-   directories1 = [scoreboardDir, scoreboardDir + '/annonymous/', scoreboardDir + '/annonymous/Period' + classId,  scoreboardDir + '/annonymous/Period' + classId + '/noFooterForLiveMonitoring']
+   directories1 = [scoreboardDir, scoreboardDir + '/annonymous/', scoreboardDir + '/annonymous/' + classId,  scoreboardDir + '/annonymous/' + classId + '/noFooterForLiveMonitoring']
    for directory in directories1:
      if not os.path.isdir(directory):
        os.mkdir(directory)
-   directories2 = [scoreboardDir, scoreboardDir + '/withNames/', scoreboardDir + '/withNames/Period' + classId,  scoreboardDir + '/withNames/Period' + classId + '/noFooterForLiveMonitoring']
+   directories2 = [scoreboardDir, scoreboardDir + '/withNames/', scoreboardDir + '/withNames/' + classId,  scoreboardDir + '/withNames/' + classId + '/noFooterForLiveMonitoring']
    for directory in directories2:
      if not os.path.isdir(directory):
        os.mkdir(directory)   
-##   if not os.path.isdir(scoreboardDir):
-##      os.mkdir(scoreboardDir)
-##   if not os.path.isdir(scoreboardDir + '/annonymous/'):
-##      os.mkdir(scoreboardDir + '/annonymous/')
-##   if not os.path.isdir(scoreboardDir + '/annonymous/'):
-##      os.mkdir(scoreboardDir + '/annonymous/Period' + classId)
-##      os.mkdir(scoreboardDir + '/annonymous/Period' + classId + '/noFooterForLiveMonitoring')
-   scoreboardFile = scoreboardDir + '/annonymous/Period' + classId + "/" + assignmentGroupId + '.txt'
-   scoreboardFileNoFooter = scoreboardDir + '/annonymous/Period' + classId + '/noFooterForLiveMonitoring' + "/" + assignmentGroupId + '.txt'
-##   if not os.path.isdir(scoreboardDir + '/withNames/'):
-##      os.mkdir(scoreboardDir + '/withNames/')
-##      os.mkdir(scoreboardDir + '/withNames/Period' + classId)
-##      os.mkdir(scoreboardDir + '/withNames/Period' + classId + '/noFooterForLiveMonitoring')
-   scoreboardFileWithNames = scoreboardDir + '/withNames/Period' + classId + "/" + assignmentGroupId + '.txt'
+   scoreboardFile = scoreboardDir + '/annonymous/' + classId + "/" + assignmentGroupId + '.txt'
+   scoreboardFileNoFooter = scoreboardDir + '/annonymous/' + classId + '/noFooterForLiveMonitoring' + "/" + assignmentGroupId + '.txt'
+   scoreboardFileWithNames = scoreboardDir + '/withNames/' + classId + "/" + assignmentGroupId + '.txt'
    for includeNames in [True,False]:
       if includeNames:
         fscoreboard  = open(scoreboardFileWithNames,'w')
@@ -101,7 +94,7 @@ The POINTS column indicates your UIL programming competition score (60 pts/probl
       else:
         fscoreboard = open(scoreboardFile,'w')
         spaces = ' '
-      fscoreboard.write(datetime.now().strftime("%c") + '  Period ' + classId + '  ' + assignmentGroupId + '\n')
+      fscoreboard.write(datetime.now().strftime("%c") + classId + '  ' + assignmentGroupId + '\n')
       i = 0
       for testName in listOfTestNames:
          i += 1
@@ -122,6 +115,7 @@ The POINTS column indicates your UIL programming competition score (60 pts/probl
       if not includeNames:
          listOfStudentDirectories.sort(key = lambda x: int(x.split('_')[1]))  # https://stackoverflow.com/questions/31306951/how-to-sort-a-list-by-last-character-of-string
       testsCorrect = {}
+      studentScoresListToSort = []
       for studentDirectory in listOfStudentDirectories:
         nameCode = studentDirectory.split('_')
         name = nameCode[0]
@@ -144,14 +138,15 @@ The POINTS column indicates your UIL programming competition score (60 pts/probl
            fscoreboard.write(f'{name[0:19]:20s} {code:<6s} {correctCount:>2d}     {studentResult} {totalPoints:>4d}' + '\n')
         else:
            fscoreboard.write(f'{code:<6s}  {studentResult}  {correctCount:>2d}    {totalPoints:>4d}' + '\n')
+#ADD1            studentScoresListToSort.append(f'{code:<6s}  {studentResult}  {correctCount:>2d}    {totalPoints:>4d}')
 
         # scoreboard file for each student/competitor
         if SCOREBOARD4EACHSTUDENT:
-             if not os.path.isdir(scoreboardDir + '/Period' + classId):
-                os.mkdir(scoreboardDir + '/Period' + classId)
-             scoreboardFileForIndividual = scoreboardDir + '/Period' + classId + "/" + name + '_' + code + '.txt'
+             if not os.path.isdir(scoreboardDir + classId):
+                os.mkdir(scoreboardDir + classId)
+             scoreboardFileForIndividual = scoreboardDir + classId + "/" + name + '_' + code + '.txt'
              fscoreboardIndividual  = open(scoreboardFileForIndividual,'w')           
-             fscoreboardIndividual.write(datetime.now().strftime("%c") + '  Period ' + classId + '  ' + assignmentGroupId + '\n\n')
+             fscoreboardIndividual.write(datetime.now().strftime("%c") + classId + '  ' + assignmentGroupId + '\n\n')
              i = 0
              j = 0
              for testName in listOfTestNames:
@@ -164,7 +159,10 @@ The POINTS column indicates your UIL programming competition score (60 pts/probl
              fscoreboardIndividual.write(' POINTS\n')
              fscoreboardIndividual.write(f' {studentResult} {totalPoints:>4d}' + '\n')
              fscoreboardIndividual.write(footer)
-             fscoreboardIndividual.close()  
+             fscoreboardIndividual.close()
+#ADD1       studentScoresListSorted = sorted(studentScoresListToSort, key=lambda x:x[-1], reverse=True)
+#ADD1       for studentScore in studentScoresListSorted:
+#ADD1           print(studentScore)
       totals = ''
       sumTotals = 0
       for test in listOfTestNames:
