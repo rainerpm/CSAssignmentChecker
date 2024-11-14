@@ -165,11 +165,11 @@ while True:
         for pick in assignmentsPicked:
             assignmentsPickedList.append(assignmentsList[int(pick)-1])
 
-    writeToGradesDir = False
+    writeToGradesDir = True
     if not pickSingleStudent:    
-        userInput = input('Write grade files to ' + gradesDir + '(Enter=n)? ').strip();
-        if userInput == 'y':
-            writeToGradesDir = True
+        userInput = input('Write grade files to ' + gradesDir + ' (Enter=y)? ').strip();
+        if not(userInput == '' or userInput.lower() == 'y'):
+            writeToGradesDir = False
 
     printedStudents = False
                         
