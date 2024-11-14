@@ -1,11 +1,11 @@
-# CSAssignmentChecker
+# CSAC - Computer Science Assignment Checker
 
 ### Overview
 
-The **CSAssignmentChecker.py** (aka **CSAC**) program verifies python or java assignments submitted by students. **CSAC** supports basic verification for Python programs and more advanced verification for JAVA programs. Student assignments are organized into assignment groups, each of which has a *scoreboard* file showing the results for each student. [Demo video](https://youtu.be/nl750S_3hOY).
+The **CSAC.py** program verifies python or java assignments submitted by students. **CSAC** supports basic verification for Python programs and more advanced verification for JAVA programs. Student assignments are organized into assignment groups, each of which has a *scoreboard* file showing the results for each student. [Demo video](https://youtu.be/nl750S_3hOY).
 
 ### Requirements
-The following programs are required to be installed on your computer (the programs in parenthesis are what I use, but can be replaced with something equivalent by updating the customize.py file).
+The following programs are required to be installed on your computer (the programs in parenthesis are what I use, but can be replaced with something equivalent by updating the CSACcustomize.py file).
   * Python IDE (I use Thonny like my students)
     * pip install numpy
     * pip install pywin32
@@ -19,7 +19,7 @@ The following programs are required to be installed on your computer (the progra
   * diff program (https://winmerge.org/?lang=en).
 
 ### Student Registration
-Students are registered with **CSAC** via a REGISTER.txt file in each class period folder. Each line in the REGISTER.txt file contains 6 pieces of information for each student (each separated by one or more spaces) (1) secret code - used to annonymously identify a student's results (2) first name (3) last name (4) class period (5) email address (6) school student id.  You can create the REGISTER.txt file manually, or use a [Google Form](https://docs.google.com/document/d/1BaU-_KyqOs55-iTgqofZ8XuDYRqWC9_9-3l_4Etynp0/edit?usp=sharing).  
+Students are registered with **CSAC** via a REGISTER.txt file in each class period folder. Each line in the REGISTER.txt file contains 6 pieces of information for each student (each separated by one or more spaces) (1) secret code - used to annonymously identify a student's results (2) first name (3) last name (4) class period (5) email address (6) school student id (**CSAC** currently does not support spaces or hyphens in student's first or last names). You can create the REGISTER.txt file manually, or use a [Google Form](https://docs.google.com/document/d/1BaU-_KyqOs55-iTgqofZ8XuDYRqWC9_9-3l_4Etynp0/edit?usp=sharing).  
 
 ### Assignment Submission
 To submit an assignment a student submits a single file using the naming convention **Last First ?_@.$** (where **Last** = student's last name, **First** = student's first name,  **?** = student secret code, **@** = assignment name, **$** = file extension: either py, java for individual files or zip for multiple files). For JAVA, the class in the **Last First ?_@.$** file must be named **@**.  An example of a valid filename is **Shotwell Gwynne 112233_encryption.py**.
@@ -42,7 +42,7 @@ Student results for each assignment group are stored in two scoreboard files (on
  
 ### Program (and Demo) Setup
 * unzip **demo.zip** to a folder on your hard drive (e.g. C:/Users/*YourUserName*/Downloads)
-* in **customize.py**
+* in **CSACcustomize.py**
   * replace all occurences of *YourUserName* with your user name 
   * set the **pythonIdeLoc** variable to the location of the Python IDE (e.g. IDLE) executable.
   * set the **javaIdeLoc** variable to the location of the JAVA IDE (e.g. jGrasp) executable.
@@ -51,9 +51,9 @@ Student results for each assignment group are stored in two scoreboard files (on
   * set the **diffLoc** variable to the location of the diff program (e.g. winMerge) executable.
 * you are now ready to run the demo - see the Running the Demo section below.
 * if you look inside the demo folder you will find
-  * **CSassignmentChecker.py** the CSAC program
-  * **customize.py** file that customizes CSAC for your setup. 
-  * **scoreboard.py** generates the scoreboard (aka student results) output.
+  * **CSAC.py** the CSAC program
+  * **CSACcustomize.py** file that customizes CSAC for your setup. 
+  * **CSACscoreboard.py** generates the scoreboard (aka student results) output.
   * **ASSIGNMENT_GROUPS** folder
     * **first6weeksAssignments, pythonAssignments** (these folders contain a group of related assignments, each of which will have it's own scoreboard file)
       * **GCD, encryption** (these are the assignment folders  - the name of the assignment folder **is** the **assignment name**, assignment names must be unique, @ = **assignment name**)
@@ -65,7 +65,7 @@ Student results for each assignment group are stored in two scoreboard files (on
          * **gold.txt** is the teacher provided golden output for the assignment
          * **checker.txt** is the teacher provided checker output for the assignment
          * **comments.txt** contains the assignment specific comments used in student emails or clipboard
-         * **timeout.txt** contains the amount of seconds the test should be given before timing out (optional: overrides the TIMEOUT_DEFAULT set in customize.py)
+         * **timeout.txt** contains the amount of seconds the test should be given before timing out (optional: overrides the TIMEOUT_DEFAULT set in CSACcustomize.py)
     * **commentsJAVA.txt** and **commentsPYTHON.txt** contain the global comments used in student emails or clipboard
   * **P1,P4,P5** (these are the class period folders to which student assignment files are either explicitly copied by the teacher or directly submitted  via something like [a Google Form](https://docs.google.com/document/d/1R93KHIYiwyKRqjzm3_vxHb4VJ6b_4BD-f0hwP55qVKw/edit?usp=sharing) or [a Dropbox File Request](https://fileinbox.com/articles/dropbox-file-requests-ultimate-guide#:~:text=Unfortunately%2C%20Dropbox%20File%20Requests%20don,to%20create%20a%20Dropbox%20account.](https://docs.google.com/document/d/1R93KHIYiwyKRqjzm3_vxHb4VJ6b_4BD-f0hwP55qVKw/edit?usp=drive_link)) by the students. Inside each folder you will find the REGISTER.txt file containing the students registered to this class (for each student: a unique ID, last name, first name, class period, email address). Also in this folder is a folder for each assignment group that contains folders for each of the students which contain folders for the student's program submissions. 
   * **sampleSubmissions** Two example student submissions.
@@ -75,11 +75,11 @@ Student results for each assignment group are stored in two scoreboard files (on
   
 ### Running the Demo
 The demo verifies two student assignments (1) [encryption](https://docs.google.com/document/d/1mr5FHL-cf3T1kRR0F10KCWwGGdjZC4Cj/edit?usp=sharing&ouid=117088614197672338242&rtpof=true&sd=true) (2) [GCD](https://docs.google.com/document/d/14nIXTUOr70_zRUZojzMZhbs9AmTWs5WxatsVtjNT_c4/edit?usp=sharing). Follow the below steps and/or watch the demo video (NOTE: CSAC & the demo has changed slightly since the video was made): [download](https://drive.google.com/file/d/1o7TA-ym4WC4xezXcMf3mqvpzbMRN7Awm/view?usp=sharing) or [YouTube](https://youtu.be/Nr0t-hp050Y) 
-* run CSassignmentChecker.py  
+* run CSAC.py  
   * since this is the first time the program has been run, the program creates some required directories.
   * You should now see the Main Menu\
     **(1 4 5)judge (a)utojudge score(b)oard (l)og e(x)it (\<ENTER\>=check)?**\
-  The 3 numbers in the parenthesis are the "shortcut" names provided in the python list classPeriodNamesForMenu in the customize.py file.
+  The 3 numbers in the parenthesis are the "shortcut" names provided in the python list classPeriodNamesForMenu in the CSACcustomize.py file.
   **Answer 4** to have the program enter the judging mode for class period 4. In this mode, the program continually checks for new submissions to the class period folder **/demo/P4/**.
   Since there is currently no submission to process, the program prints a period every 2 seconds to indicate that it is waiting for submissions.
 * For this demo, instead of students submitting files directly to the teacher's class period folder via something like [a Google Form](https://docs.google.com/document/d/1R93KHIYiwyKRqjzm3_vxHb4VJ6b_4BD-f0hwP55qVKw/edit?usp=sharing) or [a Dropbox File Request](https://fileinbox.com/articles/dropbox-file-requests-ultimate-guide#:~:text=Unfortunately%2C%20Dropbox%20File%20Requests%20don,to%20create%20a%20Dropbox%20account.](https://docs.google.com/document/d/1R93KHIYiwyKRqjzm3_vxHb4VJ6b_4BD-f0hwP55qVKw/edit?usp=drive_link)), *we will simply copy example files from /demo/sampleSubmissions/*.
