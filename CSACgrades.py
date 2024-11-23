@@ -7,6 +7,8 @@ from datetime import datetime
 from CSACgradesData import ASSIGNMENTS,codingBatDir,gradesDir,classPeriods,latePenaltyPercentageDefault
 from CSACcustomize import rootDir,scoreboardDir,classPeriodNames,classPeriodNamesForMenu
 from math import ceil
+import os                   # module is in python standard library
+
 
 class bcolors:
     HEADER = '\033[95m'
@@ -22,6 +24,7 @@ class bcolors:
     ORANGE = '\033[33m'
     BLACK = '\033[30m'
     
+   
 def calcPointsForStudent(gradingTuple,results):
     #print(f'{gradingTuple = }')
     #print(f'{results = }')
@@ -129,7 +132,7 @@ while True:
     # print("DBG",periodsPicked)
 
     # pick assignment(s)
-    print('Choose 0 or 1 or more assignments')
+    print('Choose 0, or choose 1 or more assignments')
     num = 0
     print('  0 all the below assignments for a single student')
     assignmentsList = []
@@ -152,7 +155,7 @@ while True:
            if ASSIGNMENTS[assignment][0] == classPeriods[period]:
                if assignment not in assignmentsList:
                    num = num + 1
-                   print(f' {num:2d} {assignment:<20} ({assignmentNames})')
+                   print(f' {num:2d} {assignment:<24} ({assignmentNames})')
                    assignmentsList.append(assignment)
     userInput = input(f'Choose 0 or one or more 1-{num} (separate with space): ').strip()
     pickSingleStudent = False
