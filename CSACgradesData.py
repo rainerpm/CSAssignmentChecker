@@ -27,17 +27,17 @@ latePenaltyPercentageDefault = 0.70   # programs flagged as late are worth this 
 #   Optional assignments are indicated by adding the string '(opt)' to the front of the assignment name.
 ASSIGNMENTS = {
 #graded with manual checkoff 'CodingBat Warmup'         : ('Fundamentals','CodingBat',(0,2,3,4,5)),
-'Introduction to Thonny'   : ('Fundamentals','PYTHON_01_FirstAssignments',(5,('introduction',100))),
-'Heat Index'               : ('Fundamentals','PYTHON_01_FirstAssignments',(10,('heat',100))),
-'CodingBat Logic'          : ('Fundamentals','CodingBat',(0,1,2,3)),
-'Calculator'               : ('Fundamentals','PYTHON_01_FirstAssignments',(10,('calculator',100))),
+#'Introduction to Thonny'   : ('Fundamentals','PYTHON_01_FirstAssignments',(5,('introduction',100))),
+#'Heat Index'               : ('Fundamentals','PYTHON_01_FirstAssignments',(10,('heat',100))),
+#'CodingBat Logic'          : ('Fundamentals','CodingBat',(0,1,2,3)),
+#'Calculator'               : ('Fundamentals','PYTHON_01_FirstAssignments',(10,('calculator',100))),
 'Fuel Economy'             : ('Fundamentals','PYTHON_01_FirstAssignments',(5,('fuel',100))),
-'CodingBat Berlin Wall'    : ('Fundamentals','CodingBat',(0,1,2,3)),
-# 'Using Functions'          : ('Fundamentals','PYTHON_01_FirstAssignments',(10,('heat2',100))),
-# 'While loops'              : ('Fundamentals','PYTHON_01_FirstAssignments',(3,('while',100))),
-# 'For loops'                : ('Fundamentals','PYTHON_01_FirstAssignments',(4,('for',100,12.5))),  # deduct 1/2 point (12.5%) for every incorrect submission
-# 'Booleans decisions loops' : ('Fundamentals','PYTHON_01_FirstAssignments',(10,('bdl',100))),
-# 'Lets get loopy'           : ('Fundamentals','PYTHON_02_Lets_Get_Loopy',((0,9,15,21,24,25.5,27,27.9,28.8,29.4,30,31.5,33,34.5),('01sal',),('02fib',),('03days',),('04agtb',),('05pi',),('06collatz',),('07power',),('08triplet',),('09polter',),('10champ',),('11area',),('12flip',),('13coin',))),
+#'CodingBat Berlin Wall'    : ('Fundamentals','CodingBat',(0,1,2,3)),
+'Using Functions'          : ('Fundamentals','PYTHON_01_FirstAssignments',(10,('heat2',100))),
+'While loops'              : ('Fundamentals','PYTHON_01_FirstAssignments',(3,('while',100))),
+'For loops'                : ('Fundamentals','PYTHON_01_FirstAssignments',(4,('for',100,12.5))),  # deduct 1/2 point (12.5%) for every incorrect submission
+'Booleans decisions loops' : ('Fundamentals','PYTHON_01_FirstAssignments',(10,('bdl',100))),
+'Lets get loopy'           : ('Fundamentals','PYTHON_02_Lets_Get_Loopy',((0,9,15,21,24,25.5,27,27.9,28.8,29.4,30,31.5,33,34.5),('01sal',),('02fib',),('03days',),('04agtb',),('05pi',),('06collatz',),('07power',),('08triplet',),('09polter',),('10champ',),('11area',),('12flip',),('13coin',))),
 #'Strings'                  : ('Fundamentals','PYTHON_01_FirstAssignments',(5,('strings1',100,10),('strings2',40))),  # deduct 1/2 point (10%) for strings1, string2 is a bonus of 2 pts (or 40% of 5 points)
 # 'Ciphers'                  : ('Fundamentals','PYTHON_03_SecondAssignments',(15,('caesar',90),('vigenere',10))), 
 # 'Files'                    : ('Fundamentals','PYTHON_03_SecondAssignments',(4,('files1',70),('files2',10),('files3',10),('files4',10),('files5',25))), 
@@ -89,11 +89,11 @@ ASSIGNMENTS = {
 #2024-25  'CardPlayerLevel1'         : ('AP','JAVA_04_Semester2A',(10,('CardPlayerLevel1',100,5.0))),   # -1/2 point (5% of 10 points) for every incorrect submission
 #'CardGame'                  : ('AP','JAVA_04_Semester2A',(15,('CardGame',100))),
 #'CardShark'                 : ('AP','JAVA_04_Semester2A',(5,('(opt)CardPlayerLevel2',70),('CardPlayerLevel3',30),('CardPlayerBonus',40))),
-'CodingBat LASA Drills 01'  : ('AP','CodingBat',(0,1,2,3,4,5)),
-'FR Practice 1'             : ('AP','JAVA_05_FR_Practice1',((0,6,8.4,9.6,10.8,11.4,12),('RandomStringChooser',),('RandomLetterChooser',),('LogMessage',),('SystemLog',),('Crossword',),('StringFormatter',))),
-'CodingBat Recursion'       : ('AP','CodingBat',(0,7,8,10)),    # manually double check 10 grade to make sure they also have a 1 in AntClimb
-'AntClimb'                  : ('AP','JAVA_06_Semester2B',(1,('AntClimb',100))),
-'MergeSort and QuickSort'   : ('AP','JAVA_06_Semester2B',((0,7,10),('MergeSort',),('QuickSort',))),
-'FR Practice 2'             : ('AP','JAVA_07_FR_Practice2',((0,5.6,6.8,8),('MusicDownloads',),('TokenPass',),('SkyView',))),
-'FR Practice 3'             : ('AP','JAVA_08_FR_Practice3',((0,7,8.5,10),('Scramble',),('SeatingChart',),('Trio',)))
+#'CodingBat LASA Drills 01'  : ('AP','CodingBat',(0,1,2,3,4,5)),
+# 'FR Practice 1'             : ('AP','JAVA_05_FR_Practice1',((0,6,8.4,9.6,10.8,11.4,12),('RandomStringChooser',),('RandomLetterChooser',),('LogMessage',),('SystemLog',),('Crossword',),('StringFormatter',))),
+# 'CodingBat Recursion'       : ('AP','CodingBat',(0,7,8,10)),    # manually double check 10 grade to make sure they also have a 1 in AntClimb
+# 'AntClimb'                  : ('AP','JAVA_06_Semester2B',(1,('AntClimb',100))),
+# 'MergeSort and QuickSort'   : ('AP','JAVA_06_Semester2B',((0,7,10),('MergeSort',),('QuickSort',))),
+# 'FR Practice 2'             : ('AP','JAVA_07_FR_Practice2',((0,5.6,6.8,8),('MusicDownloads',),('TokenPass',),('SkyView',))),
+# 'FR Practice 3'             : ('AP','JAVA_08_FR_Practice3',((0,7,8.5,10),('Scramble',),('SeatingChart',),('Trio',)))
 }
