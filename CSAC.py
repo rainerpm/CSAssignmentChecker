@@ -3,7 +3,7 @@
 #     - also remove the (now empty) directories in the dropbox app/website.
 #   * delete all directories/files in the scoreboard directory
 
-import CSACscoreboard  # import the associated scoreboard.py which creates the scoreboard files
+import CSACscoreboard  # import the associated CSACscoreboard.py which creates the scoreboard files
 from CSACscoreboard import assignmentResults    
 from CSACcustomize import classPeriodNames,classPeriodNamesForMenu,classPeriodEmailYN,classAssignmentGroups,rootDir,scoreboardDir,pythonIde,javaIde,schoolHolidays,diffPgm,textEditor,emailSignature,emailAttachmentDir, emailUseClassPeriodSentFolders, TIMEOUT_DEFAULT
 
@@ -1121,7 +1121,7 @@ def submissionCorrect(submission,reason=""):
        if submission["groupSubmission"]:
           for partnerDir in submission["partnersDirs"]:
              copyfile(os.path.join(submission["goldFile"]), os.path.join(partnerDir,correctFileName))  # copy output file to all partners data directories
-    scoreboard.updateScoreboard(scoreboardDir,submission["assignmentGroupDir"],submission["assignmentGroupId"],submission["classPeriod"],submission["listOfAssignments"])
+    CSACscoreboard.updateScoreboard(scoreboardDir,submission["assignmentGroupDir"],submission["assignmentGroupId"],submission["classPeriod"],submission["listOfAssignments"])
     updateLogFile(submission, bcolors.BOLD + bcolors.GREEN + f'  *** CORRECT *** ' + bcolors.ENDC)
 
 def submissionIncorrect(submission,reason=""):
@@ -1142,7 +1142,7 @@ def submissionIncorrect(submission,reason=""):
             if submission["groupSubmission"]:
               for partnerDir in submission["partnersDirs"]:
                  copyfile(os.path.join(submission["studentPgmRunDir"],submission["outFileName"]),os.path.join(partnerDir,outFileName))  # copy output file to all partners data directories
-        scoreboard.updateScoreboard(scoreboardDir,submission["assignmentGroupDir"],submission["assignmentGroupId"],submission["classPeriod"],submission["listOfAssignments"])
+        CSACscoreboard.updateScoreboard(scoreboardDir,submission["assignmentGroupDir"],submission["assignmentGroupId"],submission["classPeriod"],submission["listOfAssignments"])
         updateLogFile(submission, "  >>> INCORRECT <<< ")
     else:
         updateLogFile(submission, "  >>> INVALID SUBMISSION <<< ")
@@ -1490,7 +1490,7 @@ def main():
                             aDict = assignmentGroups[aGroupId]
                             aGroupDir = aDict["assignmentGroupDir"]
                             listOfAssignments = aDict["listOfAssignments"]
-                            scoreboard.updateScoreboard(scoreboardDir,aGroupDir,aGroupId,classPeriod,listOfAssignments)
+                            CSACscoreboard.updateScoreboard(scoreboardDir,aGroupDir,aGroupId,classPeriod,listOfAssignments)
                         break
                 print()
             else:   # autojudging and all test in directory have been processed
