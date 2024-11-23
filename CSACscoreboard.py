@@ -1,17 +1,38 @@
+########################################################
+#### NO LONGER USED. USE CSACscoreboard.py INSTEAD #####
+########################################################
+
 import os
 import glob
 import subprocess
 import re
-from datetime import datetime
+from datetime import datetime,timedelta
 from pathlib import Path
 from shutil import copyfile
 import ctypes
 import time
 import random
+from CSACcustomize import rootDir,schoolHolidays
+from numpy import busday_count   # pip install numpy (Thonny install numpy package)
 
 # This file is imported into checkStudentPgmSubmissions.py
 # It generates two scoreboard files (one with a student name and
 # one with a students secret code).
+
+# due dates
+def getDueDates():
+    assignmentDueDate = {}
+    if os.path.exists(Path(rootDir,"dueDates.txt")):
+        with open(Path(rootDir,"dueDates.txt"), "r") as dd:
+            for line in dd:
+                if line.lstrip().startswith("#"):
+                    continue
+                fields = line.split()
+                dateField = fields[0]
+                assignmentFields = fields[1:]
+                for assignmentField in assignmentFields:
+                    assignmentDueDate[assignmentField] = dateField
+    return assignmentDueDate
 
 def assignmentResults(listOfStudentDataFiles):
      newestStudentDataFile = ""
@@ -176,7 +197,38 @@ The POINTS column indicates your UIL programming competition score (60 pts/probl
          fscoreboard.write('TOTALS                    ' + f'{sumTotals:>4d}' + '     ' + totals)
       else:
          fscoreboard.write('TOTALS  ' + totals + f'{sumTotals:>4d}')
-
+         
+      fscoreboard.write('\n\n                    due date     last grace   last 70%\n')
+      
+      dueDates = getDueDates()
+      j = 0
+      hardDeadlineList = ['01sal', '02fib', '03days', '04agtb', '05year', '05pi', '06collatz', '07power', '08triplet', '09polter', '10champ', '11area', '12flip', '13coin']
+      for testName in listOfTestNames:
+         j += 1
+         if testName in dueDates:
+             dueDateObj = datetime.strptime(dueDates[testName],'%m/%d/%y').date()
+             daysDiff = (datetime.today().date() - dueDateObj).days
+             if daysDiff < 200:     
+                 fscoreboard.write(f'({j:2}) {testName:14} {dueDateObj.strftime("%a %b %d")}   ')
+                 schoolDaysLate = 0
+                 i = 0 
+                 while schoolDaysLate <= 3:
+                     i = i + 1
+                     checkDay = dueDateObj+timedelta(days=i)
+                     schoolDaysLate = busday_count(dueDateObj,checkDay,weekmask=[1,1,1,1,1,0,0],holidays=schoolHolidays)             
+                 fscoreboard.write((checkDay+timedelta(days=-1)).strftime("%a %b %d") + '   ')
+                 while schoolDaysLate <= 6:
+                     i = i + 1
+                     checkDay = dueDateObj+timedelta(days=i)
+                     schoolDaysLate = busday_count(dueDateObj,checkDay,weekmask=[1,1,1,1,1,0,0],holidays=schoolHolidays)             
+                 fscoreboard.write((checkDay+timedelta(days=-1)).strftime("%a %b %d"))       
+                 fscoreboard.write('\n')
+             else:  # date is likely still last years due date
+                 fscoreboard.write(f'({j:2}) {testName:14} CSAC still has last years due date.\n')
+         else:
+             fscoreboard.write(f'({j:2}) {testName:14} due date has not been entered in CSAC yet (check website).\n')
+        
+        
       if includeNames:
          fscoreboard.write('\n' + footer)
          fscoreboard.close()
@@ -184,8 +236,9 @@ The POINTS column indicates your UIL programming competition score (60 pts/probl
          fscoreboard.close()
          copyfile(scoreboardFile,scoreboardFileNoFooter)  # the NoFooter Scoreboard is the right size for live monitoring of the score with Notepad++'s Document Monitor plugin (since the plugin scrolls to the end you can't fit the whole file on the screen if it has the footer lines)
          fscoreboard = open(scoreboardFile,'a')
-         fscoreboard.write('\n' + footer)
-         fscoreboard.close()         
+         fscoreboard.write('\n' + footer)      
+         fscoreboard.close()
+
 
          
 def lastname(directoryName):
