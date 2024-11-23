@@ -3,7 +3,7 @@
 #     - also remove the (now empty) directories in the dropbox app/website.
 #   * delete all directories/files in the scoreboard directory
 
-import scoreboard  # import the associated scoreboard.py which creates the scoreboard files
+import CSACscoreboard  # import the associated scoreboard.py which creates the scoreboard files
 from CSACscoreboard import assignmentResults    
 from CSACcustomize import classPeriodNames,classPeriodNamesForMenu,classPeriodEmailYN,classAssignmentGroups,rootDir,scoreboardDir,pythonIde,javaIde,schoolHolidays,diffPgm,textEditor,emailSignature,emailAttachmentDir, emailUseClassPeriodSentFolders, TIMEOUT_DEFAULT
 
@@ -1274,7 +1274,7 @@ def main():
             aDict = assignmentGroups[aGroupId]
             aGroupDir = aDict["assignmentGroupDir"]
             listOfAssignments = aDict["listOfAssignments"]
-            scoreboard.updateScoreboard(scoreboardDir,aGroupDir,aGroupId,classPeriod,listOfAssignments)      
+            CSACscoreboard.updateScoreboard(scoreboardDir,aGroupDir,aGroupId,classPeriod,listOfAssignments)      
       
         doItAgain = False
         while True:  # loop over each program, run the oldest first
