@@ -15,7 +15,8 @@ import re               # module is in python standard library
 import time             # module is in python standard library
 import sys              # module is in python standard library
 import signal           # module is in python standard library
-import json             # module is in python standard library
+import json             # module is in python standard libraryy
+
 import zipfile
 from   datetime import datetime  # module is in python standard library
 from   datetime import date      # module is in python standard library
@@ -49,7 +50,7 @@ else:
     class bcolors:
         HEADER,BLUE,CYAN,GREEN,WARNING,RED,ENDC,BOLD,UNDERLINE,LIGHTGRAY,ORANGE,BLACK,BGGREEN,BGRED,BGYELLOW,BGCYAN = '\033[95m','\033[94m','\033[96m','\033[92m','\033[93m','\033[91m','\033[0m','\033[1m','\033[4m','\033[37m','\033[33m','\033[30m','\033[42m','\033[41m','\033[43m','\033[46m'
 
-validFileExtensions = [".py",".java",".zip",".txt"] # .py for python, .java/.zip for java, .txt for registration file
+validFileExtensions = [".py",".java",".zip",".txt"] # .py for python, .java/.zip for java, .txt for counting submissions (i.e. *_CORRECT.txt)
 
 # Check variables set in customize.py
 initError = False
@@ -104,7 +105,7 @@ if not Path(customDirectoryForUILComp).is_dir():
 registrationRequired = True
 
 # due dates
-dateDue = {}
+assignmentDueDateGlobal = {}
 if os.path.exists(Path(rootDir,"dueDates.txt")):
     with open(Path(rootDir,"dueDates.txt"), "r") as dd:
         for line in dd:
@@ -114,7 +115,7 @@ if os.path.exists(Path(rootDir,"dueDates.txt")):
             dateField = fields[0]
             assignmentFields = fields[1:]
             for assignmentField in assignmentFields:
-                dateDue[assignmentField] = dateField
+                assignmentDueDateGlobal[assignmentField] = dateField
 
 # Use Ctrl-C to stop waiting for new submissions
 def signal_handler(signal, frame):
@@ -304,28 +305,7 @@ def emailStudent(submission, comment='',attach=True):
                comment = comment.rstrip("cancelAttachment")
        updateLogFile(submission, "  email msg -> " + comment)
        emailHeader = f'The {submission["Assignment"]} was submitted on {submission["submissionDateTime"]}.'
-       dueDateMsg = ''
-       assignment = submission["Assignment"]
-       if assignment in dateDue:
-           dueDateObj = datetime.strptime(dateDue[assignment],'%m/%d/%y').date()
-           submittedDateObj = submission["submissionDateTimeObj"]
-           calendarDaysLate = (submittedDateObj - dueDateObj).days
-           schoolDaysLate = busday_count(dueDateObj,submittedDateObj,weekmask=[1,1,1,1,1,0,0],holidays=schoolHolidays)
-           if schoolDaysLate < 0:
-               dueDateMsg = f'The assignment is due on {dateDue[assignment]} which is in {-calendarDaysLate} calendar days ({-schoolDaysLate} school days).'
-           elif schoolDaysLate == 0:
-               dueDateMsg = f'You submitted on {submission["submissionDateTime"]} which is the assignments due date.'
-           elif schoolDaysLate <  3:
-               dueDateMsg = f'The assignment was due on {dateDue[assignment]}. You submitted on {submission["submissionDateTime"]} (you have {3-schoolDaysLate} school day{"s"[:(3-schoolDaysLate)^1]} left from this date to receive full credit).'
-           elif schoolDaysLate == 3:
-               dueDateMsg = f'The assignment was due on {dateDue[assignment]}. You submitted on {submission["submissionDateTime"]} (which is the last date to still receive full credit for the assignment).'
-           elif schoolDaysLate < 6:
-               dueDateMsg = f'The assignment was due on {dateDue[assignment]}. You submitted on {submission["submissionDateTime"]} (the assignment can still be submitted for partial credit for {6-schoolDaysLate} more school day{"s"[:(6-schoolDaysLate)^1]} from this date).'
-           elif schoolDaysLate == 6:
-               dueDateMsg = f'The assignment was due on {dateDue[assignment]}. You submitted on {submission["submissionDateTime"]} (this is the last date to still receive partial credit for the assignment).'
-           elif schoolDaysLate > 6:
-               dueDateMsg = f'You submitted on {submission["submissionDateTime"]}. It is now too late to submit this assignment for credit. The last partial credit day was {schoolDaysLate-6} school days ago. The assignment was due on {dateDue[assignment]} which was {schoolDaysLate} school days or {calendarDaysLate} calendar days ago.'
-       
+       dueDateMsg = getDueDateInfo(submission,submission["Assignment"],submission["submissionDateTimeObj"])[1]
        message = comment + '\n' + dueDateMsg + '\n\n'  + emailSignature
        for emailCode in emailCodes:
            emailSent = False
@@ -453,7 +433,7 @@ def commentFromFile(submission):
       askQuestion = False
       while not matchResponse:
          response = input("  Comment (g[*], l[*], (o)ne-time comment, (n)o comment, (c)lipboard text (ca)lipboard&attachment e(x)it? ")
-         if matchResponse := re.match(r'([gloncx])(\w*)',response):
+         if matchResponse := re.match(r'([gloncx])([.\w. \-]*)',response):
             commentTypeResponse = matchResponse.group(1)
             commentNameResponse  = matchResponse.group(2)
       if commentTypeResponse == 'g':
@@ -487,7 +467,7 @@ def commentFromFile(submission):
             commentCount = 1
             with open(commentsFile) as cFile:
                for line in cFile:
-                  if matchResponse := re.match(r'comment (\w+)',line):
+                  if matchResponse := re.match(r'comment ([.\w. \-]+)',line):
                      commentNamePrev = commentName
                      commentName = matchResponse.group(1)
                      if firstComment:
@@ -579,6 +559,43 @@ def processFileName(fname):
       print('\n' + bcolors.RED + f'  Incorrect file name format >{fname}<' + bcolors.ENDC)
    return validNameAndCode,validSubmittedFileName,nameLast,nameFirst,code,assignment,concurrent
    
+def getDueDateInfo(submission,assignment,submissionDateTimeObj):
+   lateInfoStr = ''
+   dueDateMsg = ''
+   if assignment in assignmentDueDateGlobal:
+       dueDateObj = datetime.strptime(assignmentDueDateGlobal[assignment],'%m/%d/%y').date()
+       submittedDateObj = submissionDateTimeObj
+       calendarDaysLate = (submittedDateObj - dueDateObj).days
+       schoolDaysLate = busday_count(dueDateObj,submittedDateObj,weekmask=[1,1,1,1,1,0,0],holidays=schoolHolidays)
+       if schoolDaysLate > 0:
+           if schoolDaysLate > 6:
+               lateInfoStr = bcolors.BOLD + bcolors.RED + f'2late {schoolDaysLate-6} school day{"s"[:(schoolDaysLate-6)^1]} since last grace day' + bcolors.ENDC + bcolors.RED + f' 0%' + bcolors.ENDC
+           elif schoolDaysLate > 3:
+               lateInfoStr = bcolors.BOLD + bcolors.RED + f'late {schoolDaysLate}' + bcolors.ENDC + f':{calendarDaysLate}' + bcolors.RED + f' 70%' + bcolors.ENDC
+           elif schoolDaysLate > 0:
+               lateInfoStr = bcolors.BLUE + f'{schoolDaysLate}' + bcolors.ENDC + f':{calendarDaysLate}' + bcolors.BLUE + f' grace day' + bcolors.ENDC
+       else:
+           lateInfoStr = bcolors.GREEN + f'{schoolDaysLate}' + bcolors.ENDC + f':{calendarDaysLate}'
+
+       if schoolDaysLate < 0:
+           dueDateMsg = f'The assignment is due on {assignmentDueDateGlobal[assignment]} which is in {-calendarDaysLate} calendar days ({-schoolDaysLate} school days). After that you still have 3 "grace" days to receive full credit.'
+       elif schoolDaysLate == 0:
+           dueDateMsg = f'You submitted on {submission["submissionDateTime"]} which is the assignments due date. You still have 3 "grace" school days to receive full credit.'
+       elif schoolDaysLate <  3:
+           dueDateMsg = f'The assignment was due on {assignmentDueDateGlobal[assignment]}. You submitted on {submission["submissionDateTime"]} (you still have {3-schoolDaysLate} school day{"s"[:(3-schoolDaysLate)^1]} left from this date to receive full credit).'
+       elif schoolDaysLate == 3:
+           dueDateMsg = f'The assignment was due on {assignmentDueDateGlobal[assignment]}. You submitted on {submission["submissionDateTime"]} (which is the last date to still receive full credit for the assignment).'
+       elif schoolDaysLate < 6:
+           dueDateMsg = f'The assignment was due on {assignmentDueDateGlobal[assignment]}. You submitted on {submission["submissionDateTime"]} (the assignment can still be submitted for partial credit for {6-schoolDaysLate} more school day{"s"[:(6-schoolDaysLate)^1]} from this date).'
+       elif schoolDaysLate == 6:
+           dueDateMsg = f'The assignment was due on {assignmentDueDateGlobal[assignment]}. You submitted on {submission["submissionDateTime"]} (this is the last date to still receive partial credit for the assignment).'
+       elif schoolDaysLate > 6:
+           dueDateMsg = f'You submitted on {submission["submissionDateTime"]}. It is now too late to submit this assignment for credit. The last partial credit day was {schoolDaysLate-6} school days ago. The assignment was due on {assignmentDueDateGlobal[assignment]} which was {schoolDaysLate} school days or {calendarDaysLate} calendar days ago.'
+   else:
+       lateInfoStr = "NoDueDate"
+       
+   return lateInfoStr,dueDateMsg
+   
 def processCurrentSubmission(currentSubmission, assignmentGroups, assignments,classRootDir):
    submission = {}
    submission["processes"] = []
@@ -613,25 +630,8 @@ def processCurrentSubmission(currentSubmission, assignmentGroups, assignments,cl
    else:
        submission["language"] = "java"
    submission["Assignment"]  = assignment
-   if validSubmittedFileName:  
-       lateStr = ""
-       if submission["Assignment"] in dateDue:
-           dueDateObj = datetime.strptime(dateDue[assignment],'%m/%d/%y').date()
-           submittedDateObj = submission["submissionDateTimeObj"]
-           calendarDaysLate = (submittedDateObj - dueDateObj).days
-           schoolDaysLate = busday_count(dueDateObj,submittedDateObj,weekmask=[1,1,1,1,1,0,0],holidays=schoolHolidays)
-           if schoolDaysLate > 0:
-               if schoolDaysLate > 6:
-                   lateStr = bcolors.BOLD + bcolors.RED + f'2late {schoolDaysLate-6} school day{"s"[:(schoolDaysLate-6)^1]} since last grace day' + bcolors.ENDC + bcolors.RED + f' 0%' + bcolors.ENDC
-               elif schoolDaysLate > 3:
-                   lateStr = bcolors.BOLD + bcolors.RED + f'late {schoolDaysLate}' + bcolors.ENDC + f':{calendarDaysLate}' + bcolors.RED + f' 70%' + bcolors.ENDC
-               elif schoolDaysLate > 0:
-                   lateStr = bcolors.BLUE + f'{schoolDaysLate}' + bcolors.ENDC + f':{calendarDaysLate}' + bcolors.BLUE + f' grace day' + bcolors.ENDC
-           else:
-               lateStr = bcolors.GREEN + f'{schoolDaysLate}' + bcolors.ENDC + f':{calendarDaysLate}'
-       else:
-           lateStr = "NoDueDate"
-       submission["lateMsg"] = lateStr
+   if validSubmittedFileName:
+       submission["lateInfo"] = getDueDateInfo(submission,assignment,submission["submissionDateTimeObj"])[0]
        if submission["FileExtension"] == ".zip":
          submission["assignmentFileName"] = submission["Assignment"] + ".java"
        else:
@@ -1056,8 +1056,9 @@ def getSubmissions(extensions):
     listOfSubmissions = []
     for extension in extensions:
         listOfSubmissions = listOfSubmissions + glob.glob(r"*" + extension)
-    if "REGISTER.txt" in listOfSubmissions:
-      listOfSubmissions.remove("REGISTER.txt")
+    #if "REGISTER.txt" in listOfSubmissions:
+    #  listOfSubmissions.remove("REGISTER.txt")
+    listOfSubmissions.remove('REGISTER.txt')
     return listOfSubmissions
 
 def updateLogFile(submission, logMessage, alsoPrint = False, indent=True):
@@ -1326,7 +1327,7 @@ def main():
                    while not autoJudging:    # loop until a valid response
                        currentSubmissions = getSubmissions(validFileExtensions)
                        if submission["studentName"] != "TestTest":
-                          answer = input("  " + bcolors.BOLD + bcolors.BGYELLOW + "y/late/2late/n/p" + bcolors.ENDC + " [s d a b h i o g e c m f k t ?](r){x}(" + str(len(currentSubmissions)-1) + ") " + submission["lateMsg"] + "? ")
+                          answer = input("  " + bcolors.BOLD + bcolors.BGYELLOW + "y/late/2late/n/p" + bcolors.ENDC + " [s d a b h i o g e c m f k t ?](r){x}(" + str(len(currentSubmissions)-1) + ") " + submission["lateInfo"] + "? ")
                        elif submission["studentName"] == "TestTest":
                          print("   *** THIS WAS JUST A TEST RUN ***")
                          response = input("  Confirm removing of file submission & student directory (y " + bcolors.BLUE + '<ENTER>=n' + bcolors.ENDC + ")? ")
