@@ -27,6 +27,7 @@ javaAssignmentGroups = [#"JAVA_01_WritingAndCallingMethods",
                         #"JAVA_09_Post_AP"
                        ]
 pythonAssignmentGroups = ["PYTHON_01_FirstAssignments"
+                          #"PYTHON_PGM_QUIZ"
                           #"PYTHON_02_Lets_Get_Loopy",
                           #"PYTHON_03_SecondAssignments",
                           #"PYTHON_04_ThirdAssignments",
