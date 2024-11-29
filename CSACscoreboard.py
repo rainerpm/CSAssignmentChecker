@@ -47,7 +47,10 @@ def assignmentResults(listOfStudentDataFiles):
      elif newestStudentDataFile.endswith("presentationErr.txt"):
         result = "Ep"
      elif newestStudentDataFile.endswith("manualCheck.txt"):
-        result = "Ea"        
+        result = "Ea"
+     elif re.search(r"GRADE_(\d*\.*\d*)\.txt",newestStudentDataFile):
+        x = re.search(r"GRADE_(\d*\.*\d*)\.txt", newestStudentDataFile)
+        result = x.group(1)
      else:
         count = 0
         correctFound = False
@@ -149,12 +152,13 @@ The POINTS column indicates your UIL programming competition score (60 pts/probl
               correctCount = correctCount + 1
               testsCorrect[test] = testsCorrect.get(test,0) + 1           
                            
-           studentResult = studentResult + f'{result:<2s}' + '  '
+           #studentResult = studentResult + f'{result:<2s}' + '  '
+           studentResult = studentResult + f'{result:>3s}' + ' '
            countTestsInRow += 1
         if includeNames:
            fscoreboard.write(f'{name[0:19]:20s} {code:<6s} {correctCount:>2d}     {studentResult} {totalPoints:>4d}' + '\n')
         else:
-           fscoreboard.write(f'{code:<6s}  {studentResult}  {correctCount:>2d}    {totalPoints:>4d}' + '\n')
+           fscoreboard.write(f'{code:<6s} {studentResult}  {correctCount:>2d}    {totalPoints:>4d}' + '\n')
 #ADD1            studentScoresListToSort.append(f'{code:<6s}  {studentResult}  {correctCount:>2d}    {totalPoints:>4d}')
 
         # scoreboard file for each student/competitor
