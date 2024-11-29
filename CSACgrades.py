@@ -8,6 +8,7 @@ from CSACgradesData import ASSIGNMENTS,codingBatDir,gradesDir,classPeriods,lateP
 from CSACcustomize import rootDir,scoreboardDir,classPeriodNames,classPeriodNamesForMenu
 from math import ceil
 import os                   # module is in python standard library
+import re
 
 
 class bcolors:
@@ -26,6 +27,7 @@ class bcolors:
     
    
 def calcPointsForStudent(gradingTuple,results):
+    print(f'{gradingTuple=} {results=}')
     #print(f'{gradingTuple = }')
     #print(f'{results = }')
     # ['0x', 'C', 'C1']
@@ -41,11 +43,13 @@ def calcPointsForStudent(gradingTuple,results):
     if not poinstForHowManyCorrect: # grade is based on the specific assignments in an assignment group that were completed.
         skippedOptionalParts = False
         for result in results:
+            if result == '0x':
+                continue
             assignmentTuple = assignmentTuples[idx]
             idx = idx + 1
             assignmentName = assignmentTuple[0]
             assignmentPercentage = assignmentTuple[1]
-            #print(f'  {result=} {assignmentTuple=} {assignmentPercentage=}')
+            print(f'  {result=} {assignmentTuple=} {assignmentPercentage=}')
             # possible deduction for incorrect attempts (only happens if percentDeductionForIncorrectSubmission is specified in assignmentTuple)
             pointDeductionForIncorrectAttemts = 0
             if len(assignmentTuple) == 3 and len(result) >= 2:
@@ -65,6 +69,11 @@ def calcPointsForStudent(gradingTuple,results):
                     points4gradeOptionalAssignments = points4gradeOptionalAssignments * 0.70
                 #print(f'DBG2 {points4grade = } {points4assignment = } {points4gradeOptionalAssignments = }')
                 points4grade = points4grade + points4assignment + points4gradeOptionalAssignments
+                points4gradeOptionalAssignments = 0  # reset to 0 so if student completes multiple optional parts a previous optional part's points is not added multiple times
+            elif re.search(r"(\d*\.*\d*)",result):
+                x = re.search(r"(\d*\.*\d*)",result)
+                points4grade = float(x.group(1))
+                print(f'  {points4grade=}')  
                 points4gradeOptionalAssignments = 0  # reset to 0 so if student completes multiple optional parts a previous optional part's points is not added multiple times
             else:    
                 if assignmentName.startswith('(opt)'):
