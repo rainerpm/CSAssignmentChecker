@@ -128,22 +128,24 @@ signal.signal(signal.SIGINT, signal_handler)
 def check4Activity():
     print(f'\n{bcolors.BOLD}{bcolors.BLUE}*** Checking for new submissions ***{bcolors.ENDC}')
     listOfDirectoriesInRootDir = [p.name for p in Path(rootDir).iterdir() if p.is_dir()]  # getting-a-list-of-all-subdirectories-in-the-current-directory
-
-    for classPeriodName in listOfDirectoriesInRootDir:
+    validClassPeriodDirs = []
+    for classPeriodName in classPeriodNames:
+        if classPeriodName in listOfDirectoriesInRootDir:
+            validClassPeriodDirs.append(classPeriodName)
+    for classPeriodName in validClassPeriodDirs:
         files = []
-        if classPeriodName in classPeriodNames:
-            print(f'{bcolors.BOLD}({classPeriodNamesForMenu[classPeriodNames.index(classPeriodName)]}) Submissions for {classPeriodName}{bcolors.ENDC}')
-            files =[p for p in Path(rootDir,classPeriodName).iterdir() if p.is_file()]
+        print(f'{bcolors.BOLD}({classPeriodNamesForMenu[classPeriodNames.index(classPeriodName)]}) Submissions for {classPeriodName}{bcolors.ENDC}')
+        files =[p for p in Path(rootDir,classPeriodName).iterdir() if p.is_file()]
+        for file in files:
+           if file.name != "REGISTER.txt":
+              if file.suffix not in validFileExtensions:
+                 print(" ","File with incorrect extension",">" + file.name + "<")
+              else:
+                 print(" ", datetime.fromtimestamp(file.stat().st_mtime).strftime("%b%d %Hh%Mm"), ">"+file.name+"<")
+        if os.path.isdir(Path(rootDir,classPeriodName,"00ManualCheck")):         
+            files =[p for p in Path(rootDir,classPeriodName,"00ManualCheck").iterdir() if p.is_file()]
             for file in files:
-               if file.name != "REGISTER.txt":
-                  if file.suffix not in validFileExtensions:
-                     print(" ","File with incorrect extension",">" + file.name + "<")
-                  else:
-                     print(" ", datetime.fromtimestamp(file.stat().st_mtime).strftime("%b%d %Hh%Mm"), ">"+file.name+"<")
-            if os.path.isdir(Path(rootDir,classPeriodName,"00ManualCheck")):         
-                files =[p for p in Path(rootDir,classPeriodName,"00ManualCheck").iterdir() if p.is_file()]
-                for file in files:
-                   print("  ..", "manual check -> ", datetime.fromtimestamp(file.stat().st_mtime).strftime("%b%d %Hh%Mm"), ">"+file.name+"<")               
+               print("  ..", "manual check -> ", datetime.fromtimestamp(file.stat().st_mtime).strftime("%b%d %Hh%Mm"), ">"+file.name+"<")               
                 
 # return a dictionary of all registered students and create student directory
 # if it does not yet exist
@@ -709,6 +711,7 @@ def processCurrentSubmission(currentSubmission, assignmentGroups, assignments,cl
          submission["outCorrectFileName"] = submission["Assignment"] + "_" + submission["submissionDateTime"] + "_out_CORRECT.txt"
          submission["outCorrectButLateFileName"] = submission["Assignment"] + "_" + submission["submissionDateTime"] + "_out_CORRECT_LATE.txt"
          submission["outCorrectBut2LateFileName"] = submission["Assignment"] + "_" + submission["submissionDateTime"] + "_out_CORRECT_2LATE.txt"
+         submission["outGradeFileName"] = submission["Assignment"] + "_" + submission["submissionDateTime"] + "_out_GRADE_##.txt"
          submission["outLongFileName"] = submission["Assignment"] + "_" + submission["submissionDateTime"] + "_out.txt"
          submission["outFileNamePresentationErr"] = submission["Assignment"] + "_" + submission["submissionDateTime"] + "_presentationErr.txt"
          submission["outFileNameManualCheckAuto"] = submission["Assignment"] + "_" + submission["submissionDateTime"] + "_manualCheckAuto.txt"
@@ -1089,6 +1092,7 @@ def gradeSubmission(submission):
     submission["processes"].append(process)
 
 def submissionCorrect(submission,reason=""):
+    # update CORRECT.txt file
     with open(os.path.join(rootDir,"CORRECT.txt"), "a") as fcorr:
        assignmentGroup = os.path.basename(os.path.normpath(submission["assignmentGroup"]["assignmentGroupDir"]))
        assignmentGroup = assignmentGroup[:27]+">" if len(assignmentGroup) > 27 else assignmentGroup
@@ -1096,8 +1100,9 @@ def submissionCorrect(submission,reason=""):
        assignment = assignment[:11]+">" if len(assignment) > 11 else assignment
        fcorr.write(f'{submission["classPeriod"]} {reason} {assignmentGroup:<28} {submission["result"]} {assignment:<12} {submission["FileName"]} * {submission["submissionDateTime"]}\n')        
         #fcorr.write("(P" + submission["classPeriod"] + " " + os.path.basename(os.path.normpath(submission["assignmentGroup"]["assignmentGroupDir"])) +") " + submission["Assignment"] + " " + submission["FileName"] + " * " + submission["submissionDateTime"] + " *\n") 
+    # move pgm to PLAGIARISM directory
     if not os.path.exists(os.path.join(submission["plagiarismAssignmentDir"],submission["submittedFileNameWithDate"])):
-       os.rename(submission["FileName"], os.path.join(submission["plagiarismAssignmentDir"],submission["submittedFileNameWithDate"]))  # move pgm to PLAGIARISM directory
+       os.rename(submission["FileName"], os.path.join(submission["plagiarismAssignmentDir"],submission["submittedFileNameWithDate"]))  
        #if submission["FileExtension"] == ".zip":
        #   combineFilesInZipFile(submission["plagiarismAssignmentDir"],submission["submittedFileNameWithDate"])
     else:
@@ -1108,6 +1113,9 @@ def submissionCorrect(submission,reason=""):
            correctFileName = submission["outCorrectButLateFileName"]
        elif reason == '2late':    # submission is too late for any grade
            correctFileName = submission["outCorrectBut2LateFileName"]
+       elif reason.startswith('grade'):
+           actualGrade = reason[5:]
+           correctFileName = submission["outGradeFileName"].replace('##',actualGrade)
        copyfile(os.path.join(submission["studentPgmRunDir"],submission["outFileName"]), os.path.join(submission["studentDir"],correctFileName))  # copy output file to data directory
        if submission["groupSubmission"]:
           for partnerDir in submission["partnersDirs"]:
@@ -1117,6 +1125,9 @@ def submissionCorrect(submission,reason=""):
            correctFileName = submission["outCorrectButLateFileName"]
        elif reason == '2late':    # submission is too late for any grade
            correctFileName = submission["outCorrectBut2LateFileName"]
+       elif reason.startswith('grade'):
+           actualGrade = reason[5:]
+           correctFileName = submission["outGradeFileName"].replace('##',actualGrade)
        copyfile(os.path.join(submission["goldFile"]), os.path.join(submission["studentDir"],correctFileName))  # copy output file to data directory
        if submission["groupSubmission"]:
           for partnerDir in submission["partnersDirs"]:
@@ -1327,7 +1338,7 @@ def main():
                    while not autoJudging:    # loop until a valid response
                        currentSubmissions = getSubmissions(validFileExtensions)
                        if submission["studentName"] != "TestTest":
-                          answer = input("  " + bcolors.BOLD + bcolors.BGYELLOW + "y/late/2late/n/p" + bcolors.ENDC + " [s d a b h i o g e c m f k t ?](r){x}(" + str(len(currentSubmissions)-1) + ") " + submission["lateInfo"] + "? ")
+                          answer = input("  " + bcolors.BOLD + bcolors.BGYELLOW + "y/late/2late/n/p/###" + bcolors.ENDC + " [s d a b h i o g e c m f k t ?](r){x}(" + str(len(currentSubmissions)-1) + ") " + submission["lateInfo"] + "? ")
                        elif submission["studentName"] == "TestTest":
                          print("   *** THIS WAS JUST A TEST RUN ***")
                          response = input("  Confirm removing of file submission & student directory (y " + bcolors.BLUE + '<ENTER>=n' + bcolors.ENDC + ")? ")
@@ -1352,9 +1363,9 @@ def main():
                        elif answer == "2late":  # submission correct but TOO LATE. UPDATE scoreboard, CONTINUE to next submission.
                            submissionCorrect(submission,"2late")
                            killProcesses(submission)
-                           break 
-                       elif answer.isnumeric():    # submission gets partial credit. UPDATE scoreboard, CONTINUE to next submission.
-                           submissionCorrect(submission,"partial"+answer)
+                           break
+                       elif re.search(r"(\d+\.*\d*)",answer):    # submission gets grade. UPDATE scoreboard, CONTINUE to next submission.
+                           submissionCorrect(submission,"grade"+answer)
                            killProcesses(submission)
                            break        
                        elif answer == "n":  # submission incorrect. UPDATE scoreboard, CONTINUE to next submission.
