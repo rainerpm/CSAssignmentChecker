@@ -1,6 +1,19 @@
-# This program looks through all the programs turned in for an assignment
-# for matches to a list of regular expressions in the python list named
-# patterns below.
+# This program checks all the files for an assignment to see if students cheated.
+# For each assignment user can select to run these cheating detection tools
+#   1) compare50 (https://cs50.readthedocs.io/projects/compare50/en/latest/)
+#         program currently assumes compare50 has been setup in the Windows Subsystem for Linux
+#   2) moss      (https://theory.stanford.edu/~aiken/moss/)
+#         requires the CSAClogin.txt file which has a line that has the word 'moss' followed
+#         by 1 or more spaces followed by your moss id.
+#   3) plagcheck (https://plagcheck.readthedocs.io/en/latest/?badge=latest)
+#         runs and analysis moss results (haven't checked how useful this analysis is)
+#   4) variable frequency
+#         function in this program that checks (python programs only for now) how often the same
+#         variable name is used by different student's programs.
+#   5) find regex(s)
+#         finds all the files that match 1 or more provided regular expressions
+# Assignments can be in the CSAC directory structure or in the customAssignments dictionary.
+
 
 import os
 import glob
