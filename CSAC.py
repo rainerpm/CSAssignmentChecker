@@ -7,6 +7,8 @@ import CSACscoreboard  # import the associated CSACscoreboard.py which creates t
 from CSACscoreboard import assignmentResults    
 from CSACcustomize import classPeriodNames,classPeriodNamesForMenu,classPeriodEmailYN,classAssignmentGroups,rootDir,scoreboardDir,pythonIde,javaIde,schoolHolidays,diffPgm,textEditor,emailSignature,emailAttachmentDir, emailUseClassPeriodSentFolders, TIMEOUT_DEFAULT
 
+minimizeFilesCreated = True
+
 # import python libraries
 import os               # module is in python standard library 
 import glob             # module is in python standard library
@@ -197,7 +199,6 @@ def setup():
             print("Created directory",classPeriodsDir)
         for classAssignmentGroup in classAssignmentGroups[classPeriodName]:
             globalAssignmentGroupDir = os.path.join(rootDir,"ASSIGNMENT_GROUPS",classAssignmentGroup)
-
             classAssignmentGroupDir = os.path.abspath(os.path.join(rootDir,classPeriodName,classAssignmentGroup))  # abspath necessary to open file explorer for main menu 'f' option
             if not os.path.isdir(classAssignmentGroupDir):
                 os.mkdir(classAssignmentGroupDir)
@@ -221,6 +222,7 @@ def setup():
             assignments = {}
             assignmentGroups = {}
             listOfAssignments = [f.name for f in os.scandir(globalAssignmentGroupDir) if f.is_dir()]  # https://stackoverflow.com/questions/973473/getting-a-list-of-all-subdirectories-in-the-current-directory
+            listOfAssignments = [s for s in listOfAssignments if not s.startswith("IGNORE")]
             listOfAssignments.sort()
             assignmentGroup["listOfAssignments"] = listOfAssignments
             for assignment in listOfAssignments:
@@ -273,7 +275,7 @@ def emailStudent(submission, comment='',attach=True):
     receiverEmailAddress = ""
     subject = f'{submission["classPeriod"]} CSAC Submission ({submission["Assignment"]} - {submission["submissionDateTime"]})'
     if submission["invalidAssignment"]:
-        comment = f'"{submission["Assignment"]}" is an incorrect assignment name or the assignment is not checked off by submitting the code. The correct assignment name can be found after the waterdrop on the website.  The green checkmark on the website indicates assignments that are checked off by me in person.'
+        comment = f'"{submission["Assignment"]}" is an incorrect assignment name. Please resubmit with the correct assignment name.'
         incorrectAssignmentName = True
     else:
         if not comment:
@@ -675,7 +677,7 @@ def processCurrentSubmission(currentSubmission, assignmentGroups, assignments,cl
           print("  Assignment >"+assignment+"< is not in group "+submission["listOfAssignments"])
    submission["invalidAssignment"] = validFileSubmission and not((assignment in assignments) or submission["registration"])
    if submission["invalidAssignment"]:
-      print('\n' + bcolors.RED + f'  Invalid Assignment Name: >{assignment}<' + bcolors.ENDC)
+      print('\n' + bcolors.RED + f'  Invalid Assignment Name: >{assignment}< for submission: {submission["FileName"]}' + bcolors.ENDC)
       
    if validFileSubmission and ((assignment in assignments) or submission["registration"]) and registrationOK and (submission["registration"] or (assignment in submission["listOfAssignments"])):
       submission["nameForLatestDir"] = submission["studentName"]
@@ -1065,22 +1067,23 @@ def getSubmissions(extensions):
     return listOfSubmissions
 
 def updateLogFile(submission, logMessage, alsoPrint = False, indent=True):
-    if alsoPrint:
-        print(logMessage)
-    indentSpaces = ""
-    if indent:
-       indentSpaces = '  '
-    # global log file in rootDir
-    with open(os.path.join(rootDir,"logGlobal.txt"), "a") as fglog:
-        fglog.write(indentSpaces + logMessage + "\n")
-    # assignment log file in classRootDir
-    if "assignmentGroupDir" in submission:
-        with open(os.path.join(submission["assignmentGroupDir"],"logAssignment.txt"), "a") as falog:
-            falog.write(indentSpaces+ logMessage + "\n")
-    # student log file in student directory
-    if "studentDir" in submission:  # "studentDir" will not be in dictionary for an invalid/unknown assignment name
-        with open(os.path.join(submission["studentDir"],"log.txt"), "a") as fslog:
-            fslog.write(indentSpaces + logMessage + "\n")
+    if not minimizeFilesCreated:
+        if alsoPrint:
+            print(logMessage)
+        indentSpaces = ""
+        if indent:
+           indentSpaces = '  '
+        # global log file in rootDir
+        with open(os.path.join(rootDir,"logGlobal.txt"), "a") as fglog:
+            fglog.write(indentSpaces + logMessage + "\n")
+        # assignment log file in classRootDir
+        if "assignmentGroupDir" in submission:
+            with open(os.path.join(submission["assignmentGroupDir"],"logAssignment.txt"), "a") as falog:
+                falog.write(indentSpaces+ logMessage + "\n")
+        # student log file in student directory
+        if "studentDir" in submission:  # "studentDir" will not be in dictionary for an invalid/unknown assignment name
+            with open(os.path.join(submission["studentDir"],"log.txt"), "a") as fslog:
+                fslog.write(indentSpaces + logMessage + "\n")
 
 def gradeSubmission(submission):
     summary = "\n*** " + submission["Assignment"] + " (" + submission["result"] + ") " + submission["submissionDateTime"]
@@ -1515,3 +1518,4 @@ def main():
                 break
 
 main()
+8
