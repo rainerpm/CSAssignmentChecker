@@ -27,10 +27,7 @@ class bcolors:
     
    
 def calcPointsForStudent(gradingTuple,results):
-    print(f'{gradingTuple=} {results=}')
-    #print(f'{gradingTuple = }')
-    #print(f'{results = }')
-    # ['0x', 'C', 'C1']
+    #print(f'{gradingTuple=} {results=}')
     pointsPossible = gradingTuple[0]
     poinstForHowManyCorrect = type(pointsPossible) is tuple
     if poinstForHowManyCorrect:
@@ -49,7 +46,7 @@ def calcPointsForStudent(gradingTuple,results):
             idx = idx + 1
             assignmentName = assignmentTuple[0]
             assignmentPercentage = assignmentTuple[1]
-            print(f'  {result=} {assignmentTuple=} {assignmentPercentage=}')
+            #print(f'  {result=} {assignmentTuple=} {assignmentPercentage=}')
             # possible deduction for incorrect attempts (only happens if percentDeductionForIncorrectSubmission is specified in assignmentTuple)
             pointDeductionForIncorrectAttemts = 0
             if len(assignmentTuple) == 3 and len(result) >= 2:
@@ -63,15 +60,14 @@ def calcPointsForStudent(gradingTuple,results):
             if result.startswith('L'):
                 latePenaltyPercentage = latePenaltyPercentageDefault   # late assignments are worth this percentage
             points4assignment = ((pointsPossible * assignmentPercentage/100) - pointDeductionForIncorrectAttemts) * latePenaltyPercentage          
-
             if result.startswith('C') or result.startswith('L'):
                 if result.startswith('L') and skippedOptionalParts:
                     points4gradeOptionalAssignments = points4gradeOptionalAssignments * 0.70
                 #print(f'DBG2 {points4grade = } {points4assignment = } {points4gradeOptionalAssignments = }')
                 points4grade = points4grade + points4assignment + points4gradeOptionalAssignments
                 points4gradeOptionalAssignments = 0  # reset to 0 so if student completes multiple optional parts a previous optional part's points is not added multiple times
-            elif re.search(r"(\d*\.*\d*)",result):
-                x = re.search(r"(\d*\.*\d*)",result)
+            elif re.search(r"(^\d+(\.\d+)?)$",result):
+                x = re.search(r"(^\d+(\.\d+)?)$",result)
                 points4grade = float(x.group(1))
                 print(f'  {points4grade=}')  
                 points4gradeOptionalAssignments = 0  # reset to 0 so if student completes multiple optional parts a previous optional part's points is not added multiple times
@@ -116,8 +112,11 @@ while True:
     print('\nChoose 1 or more class periods')
     
     listOfDirectoriesInRootDir = [p.name for p in Path(rootDir).iterdir() if p.is_dir()]  # getting-a-list-of-all-subdirectories-in-the-current-directory
-
-    for classPeriodName in listOfDirectoriesInRootDir:
+    validClassPeriodDirs = []
+    for classPeriodName in classPeriodNames:
+        if classPeriodName in listOfDirectoriesInRootDir:
+            validClassPeriodDirs.append(classPeriodName)
+    for classPeriodName in validClassPeriodDirs:
         files = []
         if classPeriodName in classPeriodNames:
             print(f'  {bcolors.BOLD}({classPeriodNamesForMenu[classPeriodNames.index(classPeriodName)]}) class {classPeriodName}{bcolors.ENDC}')
@@ -280,6 +279,7 @@ while True:
                     print("\n******* Period " + period + ' ' + assignmentName + " (" + assignmentNames + ") *******")
                     #print(f'DBG {registrationOrder = }')
                     for registration in registrationOrder:
+                        #print(f'{registration=}')
                         code = registration[0]
                         name = registration[1] + ' ' + registration[2]
                         #print(f'DBG {gradesDic = }')
