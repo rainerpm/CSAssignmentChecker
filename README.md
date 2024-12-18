@@ -141,6 +141,9 @@ is displayed with the following options (NOTE: Be sure that you are done with th
 * **days1** number of school days until due date (negative is before the due date, positive is after). Program implements my current [Due Dates](https://docs.google.com/document/d/1FsaO3KNpjzn3G6qckAgyCPEAJk7UymidAZuEi5ZzSjs/edit#heading=h.ltopyeuk8xw6) policy.
 * **days2** number of calendar days until due date (negative is before the due date, positive is after) 
 
+### Assignment Groups
+The currently active assignment groups are listed in the javaAssignmentGroups and pythonAssignmentGroups dictionaries in the CSACcustomize.py file. Folder names starting with the word IGNORE are inactive assignments in an assignment group.
+
 ### Sending Emails or using the Clipboard 
 **CSAC** currently uses the Windows Outlook app (see **emailWithOutlook** function) to email students. I've also used to use the Outlook web app (see **emailWithOutlookSMTP** function), but our school district blocked that functionality.  The **emailWithGmail** function is also provided. The information content of the **CSAC** email can also be accessed via the Windows clipboard (Windows 10 and Windows 11 have a [“Clipboard History” tool](https://www.popsci.com/diy/windows-clipboard-manager/) that allows the Clipboard to store multiple items). When sending an email or using the clipboard, you can choose to include a local (i.e. assignment specific) comment from the comments.txt file in the assignments folder or general comment from ASSIGNMENT_GROUPS/commentsLANGUAGE.txt. From the comment menu **Comment (g[#], l[#], (o)ne-time comment, (n)o comment)?** choose **g** or **l** to open the global or local comment file in the text editor.  Append the comment name to select one of the comments (e.g. **gabc** selects **comment abc** from the global comments file in the ASSIGNMENT_GROUPS directory or **lxyz** selects **comment xyz** from the local comments file in the assignment's folder).  
  
