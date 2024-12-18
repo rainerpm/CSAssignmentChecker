@@ -1,7 +1,7 @@
 # This program checks all the files for an assignment to see if students cheated.
 # For each assignment user can select to run these cheating detection tools
 #   1) compare50 (https://cs50.readthedocs.io/projects/compare50/en/latest/)
-#         program currently assumes compare50 has been setup in the Windows Subsystem for Linux
+#         assumption is that compare50 has been setup in the Windows Subsystem for Linux
 #   2) moss      (https://theory.stanford.edu/~aiken/moss/)
 #         requires the CSAClogin.txt file which has a line that has the word 'moss' followed
 #         by 1 or more spaces followed by your moss id.
@@ -27,6 +27,8 @@ import webbrowser
 import mosspy  # Tools -> Open System Shell and then pip install mossypy;  https://github.com/soachishti/moss.py which was linke on moss website (https://theory.stanford.edu/~aiken/moss/)
 from plagcheck.plagcheck import check, insights, share_scores
 import pprint
+from   pathlib  import Path      # module is in python standard library
+
 
 from bs4 import BeautifulSoup   # Thonny (import beautifulsoup4)
 
@@ -130,9 +132,12 @@ def diffFiles(filesList):
 def findPatterns(assignment):
     response = input('Enter string or a list of regex patterns to search for: ')
     if response.startswith('['):
-        patterns = eval(response)
+        initialList = eval(response)
+        patterns = []
+        for item in InitialList:
+            patterns.append(re.escape(item))
     else:
-        patterns = [response]
+        patterns = [re.escape(response)]
     print(f'Searching with {patterns =}')
     assignmentName = assignment[1]
     assignmentGroup = assignment[2]
@@ -195,34 +200,38 @@ def compare50(assignment,compare50OutputDir,custom=False):
     print('Top matches')
     print('      structure   text        exact')
     for num in range(1,31):
-        with open(f'{outputDir}\match_{num}.html', 'r', encoding='utf-8') as file:
-            # Read the content of the file
-            html_content = file.read()
+        fileName =  Path(f'{outputDir}\match_{num}.html')
+        if not fileName.is_file(): 
+                print(f"Error!!! {fileName} not found")
+        else:
+            with open(fileName, 'r', encoding='utf-8') as file:
+                # Read the content of the file
+                html_content = file.read()
 
-            # Parse the HTML content with BeautifulSoup
-            soup = BeautifulSoup(html_content, 'html.parser')
+                # Parse the HTML content with BeautifulSoup
+                soup = BeautifulSoup(html_content, 'html.parser')
 
-            # Find the div with id="structureleft"
-            percents = ''
-            for structure in ['structureleft','structureright','textleft','textright','exactleft','exactright']:
-                structureDiv = soup.find('div', id=f'{structure}')
-                
-                if structureDiv:
-                    # Find all <h4> elements with class="file_name" within the structureleft div
-                    file_names = structureDiv.find_all('h4', class_='file_name')
+                # Find the div with id="structureleft"
+                percents = ''
+                for structure in ['structureleft','structureright','textleft','textright','exactleft','exactright']:
+                    structureDiv = soup.find('div', id=f'{structure}')
                     
-                    # Print the contents of each <h4> element
-                    for file_name in file_names:
-                        name = file_name.get_text().split('_')[0]
-                        percent = file_name.get_text().split()[-1].replace('(','').replace(')','')
-                        percents = percents + f'{percent:>5s} '
-                        if structure == 'structureleft':
-                            nameLeft = name
-                        if structure == 'structureright':
-                            nameRight = name
-                else:
-                    print('No div with id="structureleft" found.')
-            print(f'  {num:2d} {percents} {nameLeft:20s} {nameRight:20s}')
+                    if structureDiv:
+                        # Find all <h4> elements with class="file_name" within the structureleft div
+                        file_names = structureDiv.find_all('h4', class_='file_name')
+                        
+                        # Print the contents of each <h4> element
+                        for file_name in file_names:
+                            name = file_name.get_text().split('_')[0]
+                            percent = file_name.get_text().split()[-1].replace('(','').replace(')','')
+                            percents = percents + f'{percent:>5s} '
+                            if structure == 'structureleft':
+                                nameLeft = name
+                            if structure == 'structureright':
+                                nameRight = name
+                    else:
+                        print('No div with id="structureleft" found.')
+                print(f'  {num:2d} {percents} {nameLeft:20s} {nameRight:20s}')
                
     response = input("Open results in browser (x=exit)? ")
     if response != 'x':
