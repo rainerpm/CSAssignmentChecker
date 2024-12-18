@@ -48,8 +48,8 @@ def assignmentResults(listOfStudentDataFiles):
         result = "Ep"
      elif newestStudentDataFile.endswith("manualCheck.txt"):
         result = "Ea"
-     elif re.search(r"GRADE_(\d*\.*\d*)\.txt",newestStudentDataFile):
-        x = re.search(r"GRADE_(\d*\.*\d*)\.txt", newestStudentDataFile)
+     elif re.search(r"GRADE_(\d+\.*\d*)\.txt",newestStudentDataFile):
+        x = re.search(r"GRADE_(\d+\.*\d*)\.txt", newestStudentDataFile)
         result = x.group(1)
      else:
         count = 0
@@ -224,9 +224,13 @@ The POINTS column indicates your UIL programming competition score (60 pts/probl
                  while schoolDaysLate <= 6:
                      i = i + 1
                      checkDay = dueDateObj+timedelta(days=i)
-                     schoolDaysLate = busday_count(dueDateObj,checkDay,weekmask=[1,1,1,1,1,0,0],holidays=schoolHolidays)             
-                 fscoreboard.write((checkDay+timedelta(days=-1)).strftime("%a %b %d"))       
-                 fscoreboard.write('\n')
+                     schoolDaysLate = busday_count(dueDateObj,checkDay,weekmask=[1,1,1,1,1,0,0],holidays=schoolHolidays)
+                 if testName not in hardDeadlineList:
+                     fscoreboard.write((checkDay+timedelta(days=-1)).strftime("%a %b %d"))       
+                     fscoreboard.write('\n')
+                 else:
+                     fscoreboard.write("NONE")       
+                     fscoreboard.write('\n')                     
              else:  # date is likely still last years due date
                  fscoreboard.write(f'({j:2}) {testName:14} CSAC still has last years due date.\n')
          else:
