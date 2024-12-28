@@ -31,6 +31,7 @@ can be submitted directly to that folder in real time by the students (one way t
 * **Basic Verification.**  For a Python or JAVA program that simply prints its output, **CSAC** runs the student's program and compares the program's generated output to a teacher provided "golden" output file named **gold.txt**.
   * The student's program may optionally read test input data from a file named **@.dat** (as part of an assignment, student's are usually provided a **@.dat** file with a few basic test cases; typically a teacher will provide **CSAC** a **@.dat** file with more comprehensive test cases).
   * The student's program may optionally prompt the user for input - e.g. Python: input() JAVA: scan.nextInt().  To provide this user input, the teacher provides **CSAC** with one or more **pgmUserInput&.txt** files (& is a unique identifier, usually 1,2,3, ...) - **CSAC** runs the submitted program once for each user input file.
+  * [OPTIONAL] The teacher may provide a **find.txt** file that specifies text to search for in the student's submission which CSAC compares to the expected results in **findGold.txt** (see details below). Each line in **find.txt** specifies the name of a function/method and the text to search for in that function/method.  To search anywhere in the program submission use "canBeAnywhere" in place of the function/method name.  Or to search code that is outside any functions in Python use "outsideAFunction".
 
 * **Advanced Verification (JAVA only).** **CSAC** does the **Basic Verification** above and then runs these OPTIONAL programs 
   * **@Checker.java**  [provided by teacher] Code provided by the teacher to check the contents of the student's program (number and type of instance variables as well as details on the constructors and methods in the student's program). The output is compared to the **checker.txt** file provided by the teacher.
@@ -56,14 +57,16 @@ Student results for each assignment group are stored in two scoreboard files (on
   * **CSACscoreboard.py** generates the scoreboard (aka student results) output.
   * **ASSIGNMENT_GROUPS** folder
     * **first6weeksAssignments, pythonAssignments** (these folders contain a group of related assignments, each of which will have it's own scoreboard file)
-      * **GCD, encryption** (these are the assignment folders  - the name of the assignment folder **is** the **assignment name**, assignment names must be unique, @ = **assignment name**)
+      * **GCD, encryption** (these are two of the assignment folders  - the name of the assignment folder **is** the **assignment name**, assignment names must be unique, @ = **assignment name**)
          * **@.dat** is the teacher provided input data file for the assignment. Typically this file contains more/harder test data then what's been given to the students.
-         * **@Tester.java** is an optional test program (@ is the **assignment name**)
-         * **@Checker.java** is an optional checker program (@ is the **assignment name**)
+         * **@Tester.java** an optional test program (@ is the **assignment name**)
+         * **@Checker.java** an optional checker program (@ is the **assignment name**)
          * **pgmUserInput&.txt** user input files if the student's program requires user input - e.g. Python: input() JAVA: scan.nextInt() 
          * **runnerUserInput&.txt** user input files if the student also submits **@Runner.java** file
-         * **gold.txt** is the teacher provided golden output for the assignment
-         * **checker.txt** is the teacher provided checker output for the assignment
+         * **gold.txt** the teacher provided expected (aka golden) output for the assignment
+         * **find.txt** [OPTIONAL] the teacher provided file that contains text that is searched for in the student's submission.
+         * **findGold.txt** [OPTIONAL] the teacher provided file that contains the expected (aka golden) output for the searches specified in **find.txt**
+         * **checker.txt** the teacher provided checker output for the assignment
          * **comments.txt** contains the assignment specific comments used in student emails or clipboard
          * **timeout.txt** contains the amount of seconds the test should be given before timing out (optional: overrides the TIMEOUT_DEFAULT set in CSACcustomize.py)
     * **commentsJAVA.txt** and **commentsPYTHON.txt** contain the global comments used in student emails or clipboard
