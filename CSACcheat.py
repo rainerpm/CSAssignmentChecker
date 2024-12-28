@@ -179,12 +179,15 @@ def compare50(assignment,compare50OutputDir,custom=False):
         for classPeriodName in classPeriodNames:
             assignmentDir = os.path.join(rootDir,classPeriodName,assignmentGroup,"00PLAGIARISM",assignmentName)
             if os.path.isdir(assignmentDir):
-                assignmentDir = f'"{assignmentDir}"'
-                compare50Files = compare50Files + f'{assignmentDir}/*.py '
+                #assignmentDir = f'"{assignmentDir}"'
+                compare50Files = compare50Files + f'"{assignmentDir}"/*.py '
     else:   # custom assignment
         compare50Files = ''
         for customFiles in customAssignments[assignmentName]:
             compare50Files = compare50Files + f'{customFiles} '
+    solutionsDir = os.path.join(rootDir,"ASSIGNMENT_GROUPS",assignmentGroup,assignmentName,"solutions")
+    if os.path.isdir(solutionsDir):
+        compare50Files = compare50Files + f'"{solutionsDir}"/*.py '        
     # run compare50    
     compare50FilesWsl = compare50Files.replace('\\','/').replace('C:','/mnt/c')
     outputDir = f'{compare50OutputDir}/{assignmentName}'
