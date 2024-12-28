@@ -206,7 +206,8 @@ The POINTS column indicates your UIL programming competition score (60 pts/probl
       
       dueDates = getDueDates()
       j = 0
-      hardDeadlineList = ['01sal', '02fib', '03days', '04agtb', '05year', '05pi', '06collatz', '07power', '08triplet', '09polter', '10champ', '11area', '12flip', '13coin']
+      no70PercentDueDateAssignments = ['01sal', '02fib', '03days', '04agtb', '05year', '05pi', '06collatz', '07power', '08triplet', '09polter', '10champ', '11area', '12flip', '13coin']
+      noGraceDueDateAssignments = []
       for testName in listOfTestNames:
          j += 1
          if testName in dueDates:
@@ -219,13 +220,16 @@ The POINTS column indicates your UIL programming competition score (60 pts/probl
                  while schoolDaysLate <= 3:
                      i = i + 1
                      checkDay = dueDateObj+timedelta(days=i)
-                     schoolDaysLate = busday_count(dueDateObj,checkDay,weekmask=[1,1,1,1,1,0,0],holidays=schoolHolidays)             
-                 fscoreboard.write((checkDay+timedelta(days=-1)).strftime("%a %b %d") + '   ')
+                     schoolDaysLate = busday_count(dueDateObj,checkDay,weekmask=[1,1,1,1,1,0,0],holidays=schoolHolidays)
+                 if testName not in noGraceDueDateAssignments:
+                     fscoreboard.write((checkDay+timedelta(days=-1)).strftime("%a %b %d") + '   ')
+                 else:
+                     fscoreboard.write("NONE      ")         
                  while schoolDaysLate <= 6:
                      i = i + 1
                      checkDay = dueDateObj+timedelta(days=i)
                      schoolDaysLate = busday_count(dueDateObj,checkDay,weekmask=[1,1,1,1,1,0,0],holidays=schoolHolidays)
-                 if testName not in hardDeadlineList:
+                 if testName not in no70PercentDueDateAssignments:
                      fscoreboard.write((checkDay+timedelta(days=-1)).strftime("%a %b %d"))       
                      fscoreboard.write('\n')
                  else:
