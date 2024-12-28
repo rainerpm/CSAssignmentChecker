@@ -222,7 +222,8 @@ def setup():
             assignments = {}
             assignmentGroups = {}
             listOfAssignments = [f.name for f in os.scandir(globalAssignmentGroupDir) if f.is_dir()]  # https://stackoverflow.com/questions/973473/getting-a-list-of-all-subdirectories-in-the-current-directory
-            listOfAssignments = [s for s in listOfAssignments if not s.startswith("IGNORE")]
+            # now using 'inactive' folder for assignments in an assignment group that I am not currently using
+            #listOfAssignments = [s for s in listOfAssignments if not s.startswith("IGNORE")]
             listOfAssignments.sort()
             assignmentGroup["listOfAssignments"] = listOfAssignments
             for assignment in listOfAssignments:
@@ -710,6 +711,7 @@ def processCurrentSubmission(currentSubmission, assignmentGroups, assignments,cl
          submission["submittedFileNameWithDate"] = submission["FileNameRoot"] + "_" + submission["submissionDateTime"] + submission["FileExtension"]
          submission["outFileName"] = submission["Assignment"] + "_out.txt"
          submission["outCheckFileName"] = submission["Assignment"] + "_check.txt"
+         submission["outFindFileName"] = submission["Assignment"] + "_find.txt"
          submission["outCorrectFileName"] = submission["Assignment"] + "_" + submission["submissionDateTime"] + "_out_CORRECT.txt"
          submission["outCorrectButLateFileName"] = submission["Assignment"] + "_" + submission["submissionDateTime"] + "_out_CORRECT_LATE.txt"
          submission["outCorrectBut2LateFileName"] = submission["Assignment"] + "_" + submission["submissionDateTime"] + "_out_CORRECT_2LATE.txt"
@@ -726,7 +728,9 @@ def processCurrentSubmission(currentSubmission, assignmentGroups, assignments,cl
          submission["goldenDir"] = assignmentGroup["goldenDir"]
          submission["goldenAssignmentDir"] = os.path.join(assignmentGroup["goldenDir"], submission["Assignment"])
          submission["goldFile"] = os.path.join(submission["goldenAssignmentDir"], "gold.txt")
+         submission["findGoldFile"] = os.path.join(submission["goldenAssignmentDir"], "findGold.txt")
          submission["goldCheckFile"] = os.path.join(submission["goldenAssignmentDir"], "checker.txt")
+         submission["stuffToFindFile"] = os.path.join(submission["goldenAssignmentDir"], "find.txt")
          submission["dataInputFileExists"] = os.path.exists(os.path.join(submission["goldenAssignmentDir"],submission["Assignment"]+".dat"))
          submission["dataInputFileName"] = os.path.join(submission["goldenAssignmentDir"],submission["Assignment"]+".dat")
          submission["timeoutFileName"] = os.path.join(submission["goldenAssignmentDir"],"timeout.txt")
@@ -905,6 +909,127 @@ def checkProgram(submission, classRootDir):
                    checked = False
     os.chdir(classRootDir)
     return checked
+
+def getJavaCodeToSearch(javaFile, toSearch):   # used by findInProgram()
+    """
+    Extracts the code of a specified method from a Java file.
+    - javaFile    The path to the Java file.
+    - toSearch
+      * the name of the method to extract
+      * "canBeAnywhere" returns the whole java file
+    """
+    
+    # Regular expression pattern to match the method definition and body    
+    method_pattern = re.compile(r'\s*(public|private|protected|\s)*\s*\w+\s+' + re.escape(toSearch) + r'\s*\(.*\)\s*' + r'(\{(?:[^{}]|\{(?:[^{}]|\{[^{}]*\})*\})*\})', re.MULTILINE)  # Match method body with nested braces
+
+    with open(javaFile, 'r') as java_file:
+        java_code = java_file.read()
+        
+    if toSearch == "canBeAnywhere":
+        return java_code
+    else:
+        method_match = method_pattern.search(java_code)
+        if method_match:
+            return method_match.group(0)  # Return the entire method definition and body
+    #otherwise returns None by default
+    
+def getPythonCodeToSearch(pythonFile, toSearch): # used by findInProgram()
+    """
+    Extracts the specified code , all the code outside any functions, or all the code in the file
+    toSearch can be
+      * function/method name  if code for the specific function is to be extracted
+      * "outsideAFunction"    if all the code outside any function is be extracted 
+      * "canBeAnywhere"       if all the code in the file is to be extracted
+    """
+    inTheFunction = False
+    outsideAFunction = False
+    lineNum = 0
+    with open(pythonFile, 'r') as file:
+        lineNum += 1
+        code = None
+        for line in file:
+            line = re.sub(r'\s*#.*', '', line)   # remove comments
+            if toSearch != 'canBeAnywhere':
+                functionStart = re.search(r'^def\s+(\w+)\s*\((.*?)\)\s*:', line)
+                outSideAFunctionStart = re.search(r'^(?!def\b)[a-zA-Z]+.*$', line)   # line on the left margin, starts with any alphabetic string except def
+                if toSearch != "outsideAFunction":
+                    if functionStart:
+                        outsideAFunction = False
+                        if inTheFunction:   # already processed the function and now found the start of another function or the code outside any functions
+                            break
+                        functionName = functionStart.group(1)
+                        if functionName == toSearch:   # found the specified function
+                            inTheFunction = True
+                else:
+                    if outSideAFunctionStart:
+                        outsideAFunction = True
+            if inTheFunction or outsideAFunction or toSearch == 'canBeAnywhere':
+                if code is None:
+                    code = line
+                else:
+                    code += line
+    return code
+
+def findInProgram(submission, classRootDir):
+    os.chdir(submission["studentPgmRunDir"])
+    miscompare = True
+    stuffToFindFile = submission["stuffToFindFile"]
+    outFindFile = submission["outFindFileName"]
+    findGoldFile = submission["findGoldFile"]
+    if submission["language"] == "python":
+        codeFile = submission["FileName"]
+    elif submission["language"] == "java":
+        codeFile = submission["assignmentFileName"]
+    if os.path.exists(stuffToFindFile):
+        ffind  = open(outFindFile,'w')
+
+        with open(stuffToFindFile, 'r') as file:
+            lines = file.readlines()
+        
+        for line in lines:   # go through all the lines of the find.txt file
+            # Split the line into toSearch and pattern
+            parts = line.strip().split(maxsplit=1)
+            if len(parts) != 2:
+                ffind.write(f"Skipping invalid line: {line.strip()}\n")
+                continue
+            toSearch, regex = parts
+            pattern = re.compile(regex.replace('\\\\', '\\'))
+            
+            # Check the pattern in the program file
+            if os.path.exists(codeFile):
+                if codeFile.endswith(".py"):
+                    code = getPythonCodeToSearch(codeFile, toSearch)
+                elif codeFile.endswith(".java"):
+                    code = getJavaCodeToSearch(codeFile, toSearch)
+                else:
+                    ffind.write("ERROR!!! Only .py and .java files are supported\n")
+                if code is None:
+                    ffind.write(f"'{toSearch}' NOT FOUND\n")
+                else:
+                    found = len(re.findall(pattern, code))                
+                    if found:
+                        ffind.write(f"{toSearch}: FOUND {found} times '{regex}'\n")
+                    else:
+                        ffind.write(f"{toSearch}: DID NOT FIND  '{regex}'\n")
+            else:
+                ffind.write(f"File '{codeFile}' does not exist.\n")
+        ffind.close()
+
+        # compare submission find output to gold find file
+        checkFilesMatches = filesMatch(outFindFile,findGoldFile)
+        if checkFilesMatches:
+           print('  ' + bcolors.BOLD + bcolors.BGGREEN + f'### FIND CORRECT ###' + bcolors.ENDC)
+           miscompare = True
+        else:
+           print('  ' + bcolors.BOLD + bcolors.BGRED+ "### miscompare find (opening diff) ###" + bcolors.ENDC,end=" ")
+           diffCmd = [diffPgm,outFindFile,findGoldFile]
+           process = subprocess.Popen(diffCmd, shell=True)     # run diff program
+           submission["processes"].append(process)
+           miscompare = True
+               
+    os.chdir(classRootDir)
+    return miscompare
+
 
 def runProgram(submission, classRootDir):
     autoJudgingCorrect = False
@@ -1324,6 +1449,7 @@ def main():
                       doItAgain = False
                    else:
                       copyFilesToProgramRunDirectory(submission, classRootDir)  ### copy files to student program run directory ###
+                   miscompareInFind = findInProgram(submission, classRootDir)   ### if there is a find.txt file, find code in submission
                    checked = checkProgram(submission, classRootDir)   ### check the program ###
                    goodToRun = True
                    if not checked:
