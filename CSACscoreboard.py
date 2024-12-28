@@ -1,7 +1,3 @@
-########################################################
-#### NO LONGER USED. USE CSACscoreboard.py INSTEAD #####
-########################################################
-
 import os
 import glob
 import subprocess
