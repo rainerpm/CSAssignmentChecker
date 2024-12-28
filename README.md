@@ -69,6 +69,7 @@ Student results for each assignment group are stored in two scoreboard files (on
          * **checker.txt** the teacher provided checker output for the assignment
          * **comments.txt** contains the assignment specific comments used in student emails or clipboard
          * **timeout.txt** contains the amount of seconds the test should be given before timing out (optional: overrides the TIMEOUT_DEFAULT set in CSACcustomize.py)
+         * **solutions** optional folder that contains possible solutions for the problem (CSACcheat.py will compare these files to all the students submissions). See **Detecting Cheating** section below for more information.
     * **commentsJAVA.txt** and **commentsPYTHON.txt** contain the global comments used in student emails or clipboard
   * **P1,P4,P5** (these are the class period folders to which student assignment files are either explicitly copied by the teacher or directly submitted  via something like [a Google Form](https://docs.google.com/document/d/1R93KHIYiwyKRqjzm3_vxHb4VJ6b_4BD-f0hwP55qVKw/edit?usp=sharing) or [a Dropbox File Request](https://fileinbox.com/articles/dropbox-file-requests-ultimate-guide#:~:text=Unfortunately%2C%20Dropbox%20File%20Requests%20don,to%20create%20a%20Dropbox%20account.](https://docs.google.com/document/d/1R93KHIYiwyKRqjzm3_vxHb4VJ6b_4BD-f0hwP55qVKw/edit?usp=drive_link)) by the students. Inside each folder you will find the REGISTER.txt file containing the students registered to this class (for each student: a unique ID, last name, first name, class period, email address). Also in this folder is a folder for each assignment group that contains folders for each of the students which contain folders for the student's program submissions. 
   * **sampleSubmissions** Two example student submissions.
@@ -152,6 +153,10 @@ The currently active assignment groups are listed in the javaAssignmentGroups an
  
 ### Group submission
 A group of 2 or more students can submit an assignment to **CSAC**. For example three students can submit an assignment by submitting a file named **Last1+Last2+Last3 First1+First2+First3 ?1+?2+?3_@.$** (where **Last1** **Last2** **Last3** are their last names, **First1** **First2** **First3** are their first names,  **?1**  **?2**  **?3** are their unique student numbers, **@** assignment name, **$** file extension: either py, java for individual files, or zip for multiple files).  For example, you can use the same Google Form you do for an individual student submission to also have a [group submit](https://docs.google.com/document/d/1WkCn_ozAQ22LSrUmLF2GLAzSpkTZwYIU6qMJVUXpM18/edit?usp=sharing).
+
+### Detecting Cheating
+[PYTHON only for now] The CSACcheat.py program makes it easy to submit CSAC submitted files to compare50 or moss for similarity checking. The program will submit all files that were judged to be correct and are in the assignments 00PLAGIARISM folder as well as any files that are in the **solutions** folder (this is were you can put common solutions to the problem that you suspect the students might be copying from).
+
 
 ### Batch Files
 The latestResults directory inside the class directory will contain a batch file for each student's last submission. If the submission compiled & ran the batch file will run diff and then offer to open the IDE and input data files. If the submission did not compile or run, instead of running diff, the batch file will open the error file.
