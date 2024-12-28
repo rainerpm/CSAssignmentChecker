@@ -367,6 +367,9 @@ def variableFrequency(assignment):
             diffFiles(variables[key])
 
 # MAIN PROGRAM
+
+print(f'\nCurrently only works for Python files!!!!\n')
+
 assignment = getAssignment()
 
 while True:
