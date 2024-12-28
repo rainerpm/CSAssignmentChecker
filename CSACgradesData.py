@@ -2,10 +2,11 @@ gradesDir = r'C:\Users\E151509\My Drive\My LASA\misc\tools\Grades2Teams'
 codingBatDir = r'C:\Users\E151509\My Drive (rainer.mueller@austinisd.org)\CSAC\StudentSubmissions\2024-25\scoreboard\CodingBat'
 
 # maps the class name from the classPeriodNames list in CSACcustomize.py to the class name used in ASSIGNMENTS dictionary below
-classPeriods = { 'P3' : 'Fundamentals',
-                 'P5' : 'Fundamentals',
-                 'P6' : 'Fundamentals',
-                 'P8' : 'Fundamentals'
+classPeriods = { 'P3'   : 'Fundamentals',
+                 'P5'   : 'Fundamentals',
+                 'P6'   : 'Fundamentals',
+                 'P8'   : 'Fundamentals',
+                 'Test' : 'Fundamentals'
                }
 
 latePenaltyPercentageDefault = 0.70   # programs flagged as late are worth this percentage of the points
@@ -31,17 +32,18 @@ ASSIGNMENTS = {
 #'Heat Index'               : ('Fundamentals','PYTHON_01_FirstAssignments',(10,('heat',100))),
 #'CodingBat Logic'          : ('Fundamentals','CodingBat',(0,1,2,3)),
 #'Calculator'               : ('Fundamentals','PYTHON_01_FirstAssignments',(10,('calculator',100))),
-'Fuel Economy'             : ('Fundamentals','PYTHON_01_FirstAssignments',(5,('fuel',100))),
+#'Fuel Economy'             : ('Fundamentals','PYTHON_01_FirstAssignments',(5,('fuel',100))),
 #'CodingBat Berlin Wall'    : ('Fundamentals','CodingBat',(0,1,2,3)),
-'Using Functions'          : ('Fundamentals','PYTHON_01_FirstAssignments',(10,('heat2',100))),
-'While loops'              : ('Fundamentals','PYTHON_01_FirstAssignments',(3,('while',100))),
-'For loops'                : ('Fundamentals','PYTHON_01_FirstAssignments',(4,('for',100,12.5))),  # deduct 1/2 point (12.5%) for every incorrect submission
-'Booleans decisions loops' : ('Fundamentals','PYTHON_01_FirstAssignments',(10,('bdl',100))),
-'Lets get loopy'           : ('Fundamentals','PYTHON_02_Lets_Get_Loopy',((0,9,15,21,24,25.5,27,27.9,28.8,29.4,30,31.5,33,34.5),('01sal',),('02fib',),('03days',),('04agtb',),('05pi',),('06collatz',),('07power',),('08triplet',),('09polter',),('10champ',),('11area',),('12flip',),('13coin',))),
-#'Strings'                  : ('Fundamentals','PYTHON_01_FirstAssignments',(5,('strings1',100,10),('strings2',40))),  # deduct 1/2 point (10%) for strings1, string2 is a bonus of 2 pts (or 40% of 5 points)
-# 'Ciphers'                  : ('Fundamentals','PYTHON_03_SecondAssignments',(15,('caesar',90),('vigenere',10))), 
-# 'Files'                    : ('Fundamentals','PYTHON_03_SecondAssignments',(4,('files1',70),('files2',10),('files3',10),('files4',10),('files5',25))), 
-#'Register & Login'         : ('Fundamentals','PYTHON_03_SecondAssignments',(15,('pw0',70),('pw1',15),('pw2',15),('pwbonus0',6.7),('pwbonus1',6.7))), 
+#'Using Functions'          : ('Fundamentals','PYTHON_01_FirstAssignments',(10,('heat2',100))),
+#'While loops'              : ('Fundamentals','PYTHON_01_FirstAssignments',(3,('while',100))),
+#'For loops'                : ('Fundamentals','PYTHON_01_FirstAssignments',(4,('for',100,12.5))),  # deduct 1/2 point (12.5%) for every incorrect submission
+#'Booleans decisions loops' : ('Fundamentals','PYTHON_01_FirstAssignments',(10,('bdl',100))),
+#'Lets get loopy'           : ('Fundamentals','PYTHON_02_Lets_Get_Loopy',((0,9,15,21,24,25.5,27,27.9,28.8,29.4,30,31.5,33,34.5),('01sal',),('02fib',),('03days',),('04agtb',),('05pi',),('06collatz',),('07power',),('08triplet',),('09polter',),('10champ',),('11area',),('12flip',),('13coin',))),
+#'Pgm Quiz 1'               : ('Fundamentals','PYTHON_PGM_QUIZ1',(10,('pq1a',100),('pq1b',100),('pq1c',100),('pq1d',100))),
+'Strings'                  : ('Fundamentals','PYTHON_01_FirstAssignments',(5,('strings1',100,10),('strings2',40))),  # deduct 1/2 point (10%) for strings1, string2 is a bonus of 2 pts (or 40% of 5 points)
+'Ciphers'                  : ('Fundamentals','PYTHON_03_SecondAssignments',(15,('caesar',90),('vigenere',10))), 
+'Files'                    : ('Fundamentals','PYTHON_03_SecondAssignments',(4,('files1',70),('files2',10),('files3',10),('files4',10),('files5',25))), 
+'Register & Login'         : ('Fundamentals','PYTHON_03_SecondAssignments',(15,('pw0',70),('pw1',15),('pw2',15),('pwbonus0',6.7),('pwbonus1',6.7))), 
 #'List Introduction'        : ('Fundamentals','PYTHON_03_SecondAssignments',(5,('list1',80,12.5),('musical',20))),   # deduct 1/2 point (12.5%) for every incorrect list1 submission
 #'Student Grades'           : ('Fundamentals','PYTHON_04_ThirdAssignments',(10,('grades1',90),('grades2',10),('letters',20))),
 #'First Challenges'         : ('Fundamentals','PYTHON_04_ThirdAssignments',((0,5,10,15,18,20,22),('aftest',),('artest',),('elevator',),('climb',),('microwave',),('tgencrypt',))),
