@@ -10,8 +10,8 @@ scoreboardDir = r'C:\Users\E151509\My Drive (rainer.mueller@austinisd.org)\CSAC\
 #mossDir = r'C:/Users/E151509/My Drive/My LASA/misc/tools/plagiarize checking'
 
 # java and python class periods
-classPeriodNames = ["P3","P5","P6","P8","Contests"]
-classPeriodNamesForMenu = ["3","5","6","8","c"]  # list of class names (shortened to make them easier to pick from the menu)
+classPeriodNames = ["P3","P5","P6","P8","Contests","Test"]
+classPeriodNamesForMenu = ["3","5","6","8","c","t"]  # list of class names (shortened to make them easier to pick from the menu)
 
 # automatically send an email to these class periods when problem judged correct (Y) or incorrect (N)
 classPeriodEmailYN = ["Contests"]
@@ -26,10 +26,12 @@ javaAssignmentGroups = [#"JAVA_01_WritingAndCallingMethods",
                         #"JAVA_08_FR_Practice3",
                         #"JAVA_09_Post_AP"
                        ]
-pythonAssignmentGroups = ["PYTHON_01_FirstAssignments"
-                          #"PYTHON_PGM_QUIZ"
-                          #"PYTHON_02_Lets_Get_Loopy",
-                          #"PYTHON_03_SecondAssignments",
+pythonAssignmentGroups = ["PYTHON_01_FirstAssignments",
+                          "PYTHON_PGM_QUIZ1",
+                          "PYTHON_02_Lets_Get_Loopy",
+                          "PYTHON_03_SecondAssignments",
+                          "SPOJ",
+                          "PYTHON_PGM_QUIZ2",
                           #"PYTHON_04_ThirdAssignments",
                           #"PYTHON_05_FourthAssignments",
                           #"PYTHON_06_SecondChallenges",
@@ -51,13 +53,14 @@ classAssignmentGroups["P3"] = pythonAssignmentGroups
 classAssignmentGroups["P5"] = pythonAssignmentGroups
 classAssignmentGroups["P6"] = pythonAssignmentGroups
 classAssignmentGroups["P8"] = pythonAssignmentGroups
+classAssignmentGroups["Test"] = pythonAssignmentGroups
 classAssignmentGroups["Contests"] = contestAssignmentGroups
 
 # email (email login is in login.py)
 emailSignature = "Mr. Mueller\n"
 emailAttachmentDir = r"C:/Users/E151509/Documents/"
 # if set to False all sent email will end up in the Outlook 'Sent Items' folder
-# Set to True only if you have created the folder 'CSAC' inside your 'Sent Items' folder
+# Set to True only if you have created the folder 'CSAC' inside your 'Sent Items' folder (CSAC will then put all emails it sends into the CSAC folder)
 emailUseClassPeriodSentFolders = True  
 
 # timeout (default time in seconds for student assignment to time out - protects against endless loops
