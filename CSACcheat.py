@@ -178,9 +178,11 @@ def compare50(assignment,compare50OutputDir,custom=False):
         compare50Files = ''
         for classPeriodName in classPeriodNames:
             assignmentDir = os.path.join(rootDir,classPeriodName,assignmentGroup,"00PLAGIARISM",assignmentName)
+            #print(f'DBG {assignmentDir =}')
             if os.path.isdir(assignmentDir):
                 #assignmentDir = f'"{assignmentDir}"'
                 compare50Files = compare50Files + f'"{assignmentDir}"/*.py '
+                #print(f'DBG {compare50Files =}')
     else:   # custom assignment
         compare50Files = ''
         for customFiles in customAssignments[assignmentName]:
@@ -204,8 +206,9 @@ def compare50(assignment,compare50OutputDir,custom=False):
     print('      structure   text        exact')
     for num in range(1,31):
         fileName =  Path(f'{outputDir}\match_{num}.html')
-        if not fileName.is_file(): 
-                print(f"Error!!! {fileName} not found")
+        if not fileName.is_file():
+            pass
+            #print(f"Error!!! {fileName} not found")
         else:
             with open(fileName, 'r', encoding='utf-8') as file:
                 # Read the content of the file
