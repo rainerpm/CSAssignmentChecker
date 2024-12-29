@@ -5,7 +5,7 @@
 The **CSAC.py** program verifies python or java assignments submitted by students. **CSAC** supports basic verification for Python programs and more advanced verification for JAVA programs. Student assignments are organized into assignment groups, each of which has a *scoreboard* file showing the results of all the students in a class. [Demo video](https://youtu.be/nl750S_3hOY).
 
 ### Requirements
-The **CSAC.py** requires several packages to be available. Make sure these packages are installed for your IDE (Like my students, I use [Thonny](https://thonny.org/).
+The **CSAC.py** requires several packages to be available. Make sure these packages are installed for your IDE. Like my students, I use [Thonny](https://thonny.org/), to install extra packages in Thonny use **Tools → Open system shell to** and run the following  
 * pip install numpy
 * pip install pywin32
   * only required if you want to use the option to email students directly from the program by having the program use the Windows Outlook app
