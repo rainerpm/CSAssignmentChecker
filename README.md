@@ -50,11 +50,15 @@ Student results for each assignment group are stored in two scoreboard files (on
     * NOTE: The program uses *-parameters* compile option to ensure that JAVA reflection reflects parameter types instead of just using arg0
   * set the **textEditorLoc** variable to the location of a text editor (e.g. Notepad++) executable.
   * set the **diffLoc** variable to the location of the diff program (e.g. winMerge) executable.
+* in **CSACgradesData.py**
+  * replace all occurences of *YourUserName* with your user name  
 * you are now ready to run the demo - see the Running the Demo section below.
 * if you look inside the demo folder you will find
   * **CSAC.py** the CSAC program
   * **CSACcustomize.py** file that customizes CSAC for your setup. 
   * **CSACscoreboard.py** generates the scoreboard (aka student results) output.
+  * **CSACgrades.py** Run separately to generate grades for assignments (reds in the assignment grading information from **CSACgradesData.py**)
+  * **CSACcheat.py** Run separately to detect similarities between programs submitted to **CSAC**.
   * **ASSIGNMENT_GROUPS** folder
     * **first6weeksAssignments, pythonAssignments** (these folders contain a group of related assignments, each of which will have it's own scoreboard file)
       * **GCD, encryption** (these are two of the assignment folders  - the name of the assignment folder **is** the **assignment name**, assignment names must be unique, @ = **assignment name**)
@@ -69,6 +73,7 @@ Student results for each assignment group are stored in two scoreboard files (on
          * **checker.txt** the teacher provided checker output for the assignment
          * **comments.txt** contains the assignment specific comments used in student emails or clipboard
          * **timeout.txt** contains the amount of seconds the test should be given before timing out (optional: overrides the TIMEOUT_DEFAULT set in CSACcustomize.py)
+         * **solutions** optional folder that contains possible solutions for the problem (CSACcheat.py will compare these files to all the students submissions). See **Detecting Cheating** section below for more information.
     * **commentsJAVA.txt** and **commentsPYTHON.txt** contain the global comments used in student emails or clipboard
   * **P1,P4,P5** (these are the class period folders to which student assignment files are either explicitly copied by the teacher or directly submitted  via something like [a Google Form](https://docs.google.com/document/d/1R93KHIYiwyKRqjzm3_vxHb4VJ6b_4BD-f0hwP55qVKw/edit?usp=sharing) or [a Dropbox File Request](https://fileinbox.com/articles/dropbox-file-requests-ultimate-guide#:~:text=Unfortunately%2C%20Dropbox%20File%20Requests%20don,to%20create%20a%20Dropbox%20account.](https://docs.google.com/document/d/1R93KHIYiwyKRqjzm3_vxHb4VJ6b_4BD-f0hwP55qVKw/edit?usp=drive_link)) by the students. Inside each folder you will find the REGISTER.txt file containing the students registered to this class (for each student: a unique ID, last name, first name, class period, email address). Also in this folder is a folder for each assignment group that contains folders for each of the students which contain folders for the student's program submissions. 
   * **sampleSubmissions** Two example student submissions.
@@ -78,7 +83,7 @@ Student results for each assignment group are stored in two scoreboard files (on
   
 ### Running the Demo
 The demo verifies two student assignments (1) [encryption](https://docs.google.com/document/d/1mr5FHL-cf3T1kRR0F10KCWwGGdjZC4Cj/edit?usp=sharing&ouid=117088614197672338242&rtpof=true&sd=true) (2) [GCD](https://docs.google.com/document/d/14nIXTUOr70_zRUZojzMZhbs9AmTWs5WxatsVtjNT_c4/edit?usp=sharing). Follow the below steps and/or watch the demo video (NOTE: CSAC & the demo has changed slightly since the video was made): [download](https://drive.google.com/file/d/1o7TA-ym4WC4xezXcMf3mqvpzbMRN7Awm/view?usp=sharing) or [YouTube](https://youtu.be/Nr0t-hp050Y) 
-* run CSAC.py  
+* run **CSAC.py**  
   * since this is the first time the program has been run, the program creates some required directories.
   * You should now see the Main Menu\
     **(1 4 5)judge (a)utojudge score(b)oard (l)og e(x)it (\<ENTER\>=check)?**\
@@ -102,7 +107,9 @@ The demo verifies two student assignments (1) [encryption](https://docs.google.c
   * CSAC runs the **GCDChecker.java** program and reports >>> CHECK CORRECT <<< since the programs output matches the expected output in **checker.txt**. This means that the student's **GCD.java** program contains all the correct instance variables and method signatures.
   * CSAC runs the **GCDTester.java** program and reports *** RUN CORRECT *** since the program's output matches the expected output in gold.txt. This means the student's **GCD.java** and **GCDRunner.java** produce the expected output to the teacher's testing stimulus.
   * Selecting **d** in the assignment menu shows the program and expected output in the diff program. This is the output from the runs of **GCDTester.java** and **GCDRunner.java** (with the **runnerUserInput&.txt** files providing the user input). Since everything in the student's code is correct there will be no differences.
-* The teacher would now answer y to judge the program as correct. 
+* The teacher would now answer y to judge the program as correct.
+* Run **CSACgrades.py** to create a grading file in the **Grades4Gradebook** directory. When prompted select **4** as the class period and then **1** to generate a file for the **python encrypt** grade.
+* Run **CSACcheat.py** then select **2** when prompted to select an assignment. If you want to try out **compare50** or **moss** see how to set things up in the **Detecting Cheating** section below.
   
 ### Main Menu  
 The program's Main Menu\
@@ -145,14 +152,20 @@ is displayed with the following options (NOTE: Be sure that you are done with th
 * **days2** number of calendar days until due date (negative is before the due date, positive is after) 
 
 ### Assignment Groups
-The currently active assignment groups are listed in the javaAssignmentGroups and pythonAssignmentGroups dictionaries in the CSACcustomize.py file. Folder names starting with the word IGNORE are inactive assignments in an assignment group.
+An assignment group is simply a grouping of assignments that use one scoreboard. The currently active assignment groups are listed in the javaAssignmentGroups and pythonAssignmentGroups dictionaries in the **CSACcustomize.py** file. 
 
 ### Sending Emails or using the Clipboard 
-**CSAC** currently uses the Windows Outlook app (see **emailWithOutlook** function) to email students. I've also used to use the Outlook web app (see **emailWithOutlookSMTP** function), but our school district blocked that functionality.  The **emailWithGmail** function is also provided. The information content of the **CSAC** email can also be accessed via the Windows clipboard (Windows 10 and Windows 11 have a [“Clipboard History” tool](https://www.popsci.com/diy/windows-clipboard-manager/) that allows the Clipboard to store multiple items). When sending an email or using the clipboard, you can choose to include a local (i.e. assignment specific) comment from the comments.txt file in the assignments folder or general comment from ASSIGNMENT_GROUPS/commentsLANGUAGE.txt. From the comment menu **Comment (g[#], l[#], (o)ne-time comment, (n)o comment)?** choose **g** or **l** to open the global or local comment file in the text editor.  Append the comment name to select one of the comments (e.g. **gabc** selects **comment abc** from the global comments file in the ASSIGNMENT_GROUPS directory or **lxyz** selects **comment xyz** from the local comments file in the assignment's folder).  
+**CSAC** currently uses the Windows Outlook app (see **emailWithOutlook** function) to email students. I've also used to use the Outlook web app (see **emailWithOutlookSMTP()** function) successfully from home, but our school district blocked that functionality on the school network.  The **emailWithGmail()** function is also provided but has not been tested much. The information content of a **CSAC** email can also be accessed via the Windows clipboard (Windows 10 and Windows 11 have a [“Clipboard History” tool](https://www.popsci.com/diy/windows-clipboard-manager/) that allows the Clipboard to store multiple items). When sending an email or using the clipboard, you can choose to include a local (i.e. assignment specific) comment from the **comments.txt** file in the assignment's folder or a general comment from **ASSIGNMENT_GROUPS/commentsLANGUAGE.txt**. From the comment menu **Comment (g[#], l[#], (o)ne-time comment, (n)o comment)?** choose **g** or **l** to open the global or local comment file in the text editor. Appending the comment name to the **g** selects the named comment from the global comments file in the ASSIGNMENT_GROUPS directory (e.g. **gabc** selects **comment abc**). Similarly **lxyz** selects **comment xyz** from the local comments file in the assignment's folder.  
  
 ### Group submission
 A group of 2 or more students can submit an assignment to **CSAC**. For example three students can submit an assignment by submitting a file named **Last1+Last2+Last3 First1+First2+First3 ?1+?2+?3_@.$** (where **Last1** **Last2** **Last3** are their last names, **First1** **First2** **First3** are their first names,  **?1**  **?2**  **?3** are their unique student numbers, **@** assignment name, **$** file extension: either py, java for individual files, or zip for multiple files).  For example, you can use the same Google Form you do for an individual student submission to also have a [group submit](https://docs.google.com/document/d/1WkCn_ozAQ22LSrUmLF2GLAzSpkTZwYIU6qMJVUXpM18/edit?usp=sharing).
 
+### Grading
+The **CSACgrades.py** program generates a file of grades that can be imported into your gradebook. Grading information is contained in the **CSACgradesData.py** file (see example in demo).  Multiple assignments can be combined into a single grade in a variety of ways.
+
+### Detecting Cheating
+[PYTHON only for now] The **CSACcheat.py** program makes it easy to check for similarities among files submitted to CSAC. The program can use compare50 or moss for similarity checking. The program can also search the submitted files for a provided regular expressions and analyse frequency of variable names. For compare50 & moss the program will submit all files that were judged to be correct and are thus in the assignment's **00PLAGIARISM** folder as well as any files that are in the assignment's **solutions** folder (where you can put common/online solutions that you suspect students may be copying from).  **CSACcheat.py** assumes you've set up [compare50](https://cs50.readthedocs.io/projects/compare50/en/latest/) to run in the Windows Subsystem for Linux (wsl) and/or that you have replaced 11111111 in the **CSAClogin.txt** with your [moss](https://theory.stanford.edu/~aiken/moss/) userid.
+
 ### Batch Files
-The latestResults directory inside the class directory will contain a batch file for each student's last submission. If the submission compiled & ran the batch file will run diff and then offer to open the IDE and input data files. If the submission did not compile or run, instead of running diff, the batch file will open the error file.
+The **latestResults** directory inside the class directory will contain a batch file for each student's last submission. If the submission compiled & ran the batch file will run diff and then offer to open the IDE and input data files. If the submission did not compile or run, instead of running diff, the batch file will open the error file.
  
