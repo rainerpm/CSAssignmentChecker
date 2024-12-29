@@ -17,26 +17,6 @@ The following programs are required to be installed on your computer (the progra
   * JAVA IDE (https://www.jgrasp.org/)
   * Text Editor (https://notepad-plus-plus.org/downloads/)
   * diff program (https://winmerge.org/?lang=en).
-
-### Student Registration
-Students are registered with **CSAC** via a REGISTER.txt file in each class period folder. Each line in the REGISTER.txt file contains 6 pieces of information for each student (each separated by one or more spaces) (1) secret code - used to annonymously identify a student's results (2) first name (3) last name (4) class period (5) email address (6) school student id (**CSAC** currently does not support spaces or hyphens in student's first or last names). You can create the REGISTER.txt file manually, or use a [Google Form](https://docs.google.com/document/d/1BaU-_KyqOs55-iTgqofZ8XuDYRqWC9_9-3l_4Etynp0/edit?usp=sharing).  
-
-### Assignment Submission
-To submit an assignment a student submits a single file using the naming convention **Last First ?_@.$** (where **Last** = student's last name, **First** = student's first name,  **?** = student secret code, **@** = assignment name, **$** = file extension: either py, java for individual files or zip for multiple files). For JAVA, the class in the **Last First ?_@.$** file must be named **@**.  An example of a valid filename is **Shotwell Gwynne 112233_encryption.py**.
-
-The student's assignment files can be explicitly copied by the teacher to the class period folder on the teacher's PC or 
-can be submitted directly to that folder in real time by the students (one way to do this is to have the students submit to an online folder that is automatically synched to the teacher's PC - e.g. [using a Google Form](https://docs.google.com/document/d/1R93KHIYiwyKRqjzm3_vxHb4VJ6b_4BD-f0hwP55qVKw/edit?usp=sharing) or [using a Dropbox File Request](https://fileinbox.com/articles/dropbox-file-requests-ultimate-guide#:~:text=Unfortunately%2C%20Dropbox%20File%20Requests%20don,to%20create%20a%20Dropbox%20account.](https://docs.google.com/document/d/1R93KHIYiwyKRqjzm3_vxHb4VJ6b_4BD-f0hwP55qVKw/edit?usp=drive_link))).
-
-### Assignment  Verification
-* **Basic Verification.**  For a Python or JAVA program that simply prints its output, **CSAC** runs the student's program and compares the program's generated output to a teacher provided "golden" output file named **gold.txt**.
-  * The student's program may optionally read test input data from a file named **@.dat** (as part of an assignment, student's are usually provided a **@.dat** file with a few basic test cases; typically a teacher will provide **CSAC** a **@.dat** file with more comprehensive test cases).
-  * The student's program may optionally prompt the user for input - e.g. Python: input() JAVA: scan.nextInt().  To provide this user input, the teacher provides **CSAC** with one or more **pgmUserInput&.txt** files (& is a unique identifier, usually 1,2,3, ...) - **CSAC** runs the submitted program once for each user input file.
-  * [OPTIONAL] The teacher may provide a **find.txt** file that specifies text to search for in the student's submission which CSAC then compares to the expected results in the **findGold.txt** file. Each line in **find.txt** specifies the name of a function/method and the text to search for in that function/method.  To search anywhere in the program submission use "canBeAnywhere" in place of the function/method name.  Or to search code that is outside any functions in Python use "outsideAFunction".  For example, this enables the teacher to see if the student did (or did not) use a print statment inside a function (instead of returning the value) or a while loop instead of a for loop.
-
-* **Advanced Verification (JAVA only).** **CSAC** does the **Basic Verification** above and then runs these OPTIONAL programs 
-  * **@Checker.java**  [provided by teacher] Code provided by the teacher to check the contents of the student's program (number and type of instance variables as well as details on the constructors and methods in the student's program). The output is compared to the **checker.txt** file provided by the teacher.
-  * **@Tester.java**  [provided by teacher] Code provided by the teacher that tests the program submitted by the student. The output is compared to the  **gold.txt** output file provided by the teacher.
-  * **@Runner.java**  [submitted by students] Code that the student wrote that uses the class(es) they wrote. The output is compared to the  **gold.txt** output file provided by the teacher. The **@Runner.java** program can optionally prompt the user for input. To provide this user input to **CSAC**, the teacher provides one or more **runnerUserInput&.txt** files (& is a unique identifier, usually 1,2,3, ...). The **@Runner.java** program will be run once for each user input file.  The output is compared to the **gold.txt** output file provided by the teacher. If both **@Tester.java** and **@Runner.java** are used for an assignment, **CSAC** runs **@Tester.java** first and thus its output should appear first in the **gold.txt** file.
  
 ### Program (and Demo) Setup
 * unzip **demo.zip** to a folder on your hard drive (e.g. C:/Users/*YourUserName*/Downloads)
@@ -107,6 +87,26 @@ The demo verifies two student assignments (1) [encryption](https://docs.google.c
 * The teacher would now answer y to judge the program as correct.
 * Run **CSACgrades.py** to create a grading file in the **Grades4Gradebook** directory. When prompted select **4** as the class period and then **1** to generate a file for the **python encrypt** grade.
 * Run **CSACcheat.py** then select **2** when prompted to select an assignment. If you want to try out **compare50** or **moss** see how to set things up in the **Detecting Cheating** section below.
+
+### Student Registration
+Students are registered with **CSAC** via a REGISTER.txt file in each class period folder. Each line in the REGISTER.txt file contains 6 pieces of information for each student (each separated by one or more spaces) (1) secret code - used to annonymously identify a student's results (2) first name (3) last name (4) class period (5) email address (6) school student id (**CSAC** currently does not support spaces or hyphens in student's first or last names). You can create the REGISTER.txt file manually, or use a [Google Form](https://docs.google.com/document/d/1BaU-_KyqOs55-iTgqofZ8XuDYRqWC9_9-3l_4Etynp0/edit?usp=sharing).  
+
+### Assignment Submission
+To submit an assignment a student submits a single file using the naming convention **Last First ?_@.$** (where **Last** = student's last name, **First** = student's first name,  **?** = student secret code, **@** = assignment name, **$** = file extension: either py, java for individual files or zip for multiple files). For JAVA, the class in the **Last First ?_@.$** file must be named **@**.  An example of a valid filename is **Shotwell Gwynne 112233_encryption.py**.
+
+The student's assignment files can be explicitly copied by the teacher to the class period folder on the teacher's PC or 
+can be submitted directly to that folder in real time by the students (one way to do this is to have the students submit to an online folder that is automatically synched to the teacher's PC - e.g. [using a Google Form](https://docs.google.com/document/d/1R93KHIYiwyKRqjzm3_vxHb4VJ6b_4BD-f0hwP55qVKw/edit?usp=sharing) or [using a Dropbox File Request](https://fileinbox.com/articles/dropbox-file-requests-ultimate-guide#:~:text=Unfortunately%2C%20Dropbox%20File%20Requests%20don,to%20create%20a%20Dropbox%20account.](https://docs.google.com/document/d/1R93KHIYiwyKRqjzm3_vxHb4VJ6b_4BD-f0hwP55qVKw/edit?usp=drive_link))).
+
+### Assignment  Verification
+* **Basic Verification.**  For a Python or JAVA program that simply prints its output, **CSAC** runs the student's program and compares the program's generated output to a teacher provided "golden" output file named **gold.txt**.
+  * The student's program may optionally read test input data from a file named **@.dat** (as part of an assignment, student's are usually provided a **@.dat** file with a few basic test cases; typically a teacher will provide **CSAC** a **@.dat** file with more comprehensive test cases).
+  * The student's program may optionally prompt the user for input - e.g. Python: input() JAVA: scan.nextInt().  To provide this user input, the teacher provides **CSAC** with one or more **pgmUserInput&.txt** files (& is a unique identifier, usually 1,2,3, ...) - **CSAC** runs the submitted program once for each user input file.
+  * [OPTIONAL] The teacher may provide a **find.txt** file that specifies text to search for in the student's submission which CSAC then compares to the expected results in the **findGold.txt** file. Each line in **find.txt** specifies the name of a function/method and the text to search for in that function/method.  To search anywhere in the program submission use "canBeAnywhere" in place of the function/method name.  Or to search code that is outside any functions in Python use "outsideAFunction".  For example, this enables the teacher to see if the student did (or did not) use a print statment inside a function (instead of returning the value) or a while loop instead of a for loop.
+
+* **Advanced Verification (JAVA only).** **CSAC** does the **Basic Verification** above and then runs these OPTIONAL programs 
+  * **@Checker.java**  [provided by teacher] Code provided by the teacher to check the contents of the student's program (number and type of instance variables as well as details on the constructors and methods in the student's program). The output is compared to the **checker.txt** file provided by the teacher.
+  * **@Tester.java**  [provided by teacher] Code provided by the teacher that tests the program submitted by the student. The output is compared to the  **gold.txt** output file provided by the teacher.
+  * **@Runner.java**  [submitted by students] Code that the student wrote that uses the class(es) they wrote. The output is compared to the  **gold.txt** output file provided by the teacher. The **@Runner.java** program can optionally prompt the user for input. To provide this user input to **CSAC**, the teacher provides one or more **runnerUserInput&.txt** files (& is a unique identifier, usually 1,2,3, ...). The **@Runner.java** program will be run once for each user input file.  The output is compared to the **gold.txt** output file provided by the teacher. If both **@Tester.java** and **@Runner.java** are used for an assignment, **CSAC** runs **@Tester.java** first and thus its output should appear first in the **gold.txt** file.
   
 ### Main Menu  
 The program's Main Menu\
