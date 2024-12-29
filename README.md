@@ -37,9 +37,6 @@ can be submitted directly to that folder in real time by the students (one way t
   * **@Checker.java**  [provided by teacher] Code provided by the teacher to check the contents of the student's program (number and type of instance variables as well as details on the constructors and methods in the student's program). The output is compared to the **checker.txt** file provided by the teacher.
   * **@Tester.java**  [provided by teacher] Code provided by the teacher that tests the program submitted by the student. The output is compared to the  **gold.txt** output file provided by the teacher.
   * **@Runner.java**  [submitted by students] Code that the student wrote that uses the class(es) they wrote. The output is compared to the  **gold.txt** output file provided by the teacher. The **@Runner.java** program can optionally prompt the user for input. To provide this user input to **CSAC**, the teacher provides one or more **runnerUserInput&.txt** files (& is a unique identifier, usually 1,2,3, ...). The **@Runner.java** program will be run once for each user input file.  The output is compared to the **gold.txt** output file provided by the teacher. If both **@Tester.java** and **@Runner.java** are used for an assignment, **CSAC** runs **@Tester.java** first and thus its output should appear first in the **gold.txt** file.
-
-### Scoreboard
-Student results for each assignment group are stored in two scoreboard files (one using the student's name, the other using the student's secret code for anonymity). The teacher can share the link to the scoreboard file to allow students to see the results. Sometimes I use Notepad++ to project the live scoreboard (see https://www.raymond.cc/blog/monitor-log-or-text-file-changes-in-real-time-with-notepad/ on how to make Notepad++ display live results).
  
 ### Program (and Demo) Setup
 * unzip **demo.zip** to a folder on your hard drive (e.g. C:/Users/*YourUserName*/Downloads)
@@ -150,6 +147,9 @@ is displayed with the following options (NOTE: Be sure that you are done with th
 * **#** number of submissions currently waiting to be run
 * **days1** number of school days until due date (negative is before the due date, positive is after). Program implements my current [Due Dates](https://docs.google.com/document/d/1FsaO3KNpjzn3G6qckAgyCPEAJk7UymidAZuEi5ZzSjs/edit#heading=h.ltopyeuk8xw6) policy.
 * **days2** number of calendar days until due date (negative is before the due date, positive is after) 
+
+### Scoreboard
+Student results for each assignment group are stored in two scoreboard files (one using the student's name, the other using the student's secret code for anonymity). The teacher can share the link to the scoreboard file to allow students to see the results. Sometimes I use Notepad++ to project the live scoreboard (see https://www.raymond.cc/blog/monitor-log-or-text-file-changes-in-real-time-with-notepad/ on how to make Notepad++ display live results).
 
 ### Assignment Groups
 An assignment group is simply a grouping of assignments that use one scoreboard. The currently active assignment groups are listed in the javaAssignmentGroups and pythonAssignmentGroups dictionaries in the **CSACcustomize.py** file. 
