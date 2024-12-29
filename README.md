@@ -14,11 +14,12 @@ The **CSAC.py** requires several packages to be available.
       * only required for providing a student feeback comment via email or the clipboard
     * pip install pillow (enables the program to "grab" an image from the most recent clipboard entry)
       * only required for providing a student feeback comment via email or the clipboard
+
 The following programs are required to be installed on your computer (the programs in parenthesis are what I use, but can be replaced with something equivalent by updating the variables at the top of the **CSACcustomize.py** file). NOTE: A 2nd Python IDE is used to by **CSAC** to enable the student program to be viewed and run separately from the **CSAC** program itself.
-  * Python IDE (https://www.python.org/downloads/)
-  * JAVA IDE (https://www.jgrasp.org/)
-  * Text Editor (https://notepad-plus-plus.org/downloads/)
-  * diff program (https://winmerge.org/?lang=en).
+* Python IDE (https://www.python.org/downloads/)
+* JAVA IDE (https://www.jgrasp.org/)
+* Text Editor (https://notepad-plus-plus.org/downloads/)
+* diff program (https://winmerge.org/?lang=en).
  
 ### Program (and Demo) Setup
 * unzip **demo.zip** to a folder on your hard drive (e.g. C:/Users/*YourUserName*/Downloads)
