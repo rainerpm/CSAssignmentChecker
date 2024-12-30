@@ -33,6 +33,7 @@ The following programs are required to be installed on your computer. The progra
   * replace all occurences of *YourUserName* with your user name  
 
 You are now ready to run the demo - see the Running the Demo section below.
+
 If you look inside the demo folder you will find
 * **CSAC.py** the CSAC program
 * **CSACcustomize.py** file that customizes CSAC for your setup. 
