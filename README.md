@@ -31,34 +31,34 @@ The following programs are required to be installed on your computer. The progra
   * set the **diffLoc** variable to the location of the diff program (e.g. winMerge) executable.
 * in **CSACgradesData.py**
   * replace all occurences of *YourUserName* with your user name  
-* you are now ready to run the demo - see the Running the Demo section below.
-* if you look inside the demo folder you will find
-  * **CSAC.py** the CSAC program
-  * **CSACcustomize.py** file that customizes CSAC for your setup. 
-  * **CSACscoreboard.py** generates the scoreboard (aka student results) output.
-  * **CSACgrades.py** Run separately to generate grades for assignments (reds in the assignment grading information from **CSACgradesData.py**)
-  * **CSACcheat.py** Run separately to detect similarities between programs submitted to **CSAC**.
-  * **ASSIGNMENT_GROUPS** folder
-    * **first6weeksAssignments, pythonAssignments** (these folders contain a group of related assignments, each of which will have it's own scoreboard file)
-      * **GCD, encryption** (these are two of the assignment folders  - the name of the assignment folder **is** the **assignment name**, assignment names must be unique, @ = **assignment name**)
-         * **@.dat** is the teacher provided input data file for the assignment. Typically this file contains more/harder test data then what's been given to the students.
-         * **@Tester.java** an optional test program (@ is the **assignment name**)
-         * **@Checker.java** an optional checker program (@ is the **assignment name**)
-         * **pgmUserInput&.txt** user input files if the student's program requires user input - e.g. Python: input() JAVA: scan.nextInt() 
-         * **runnerUserInput&.txt** user input files if the student also submits **@Runner.java** file
-         * **gold.txt** the teacher provided expected (aka golden) output for the assignment
-         * **find.txt** [OPTIONAL] the teacher provided file that contains text that is searched for in the student's submission.
-         * **findGold.txt** [OPTIONAL] the teacher provided file that contains the expected (aka golden) output for the searches specified in **find.txt**
-         * **checker.txt** the teacher provided checker output for the assignment
-         * **comments.txt** contains the assignment specific comments used in student emails or clipboard
-         * **timeout.txt** contains the amount of seconds the test should be given before timing out (optional: overrides the TIMEOUT_DEFAULT set in CSACcustomize.py)
-         * **solutions** optional folder that contains possible solutions for the problem (CSACcheat.py will compare these files to all the students submissions). See **Detecting Cheating** section below for more information.
-    * **commentsJAVA.txt** and **commentsPYTHON.txt** contain the global comments used in student emails or clipboard
-  * **P1,P4,P5** (these are the class period folders to which student assignment files are either explicitly copied by the teacher or directly submitted  via something like [a Google Form](https://docs.google.com/document/d/1-4K8yRds6PuprkSgZoZCg_ll3ykIpoFIFzKsf9gEwNE/edit?usp=sharing) or [a Dropbox File Request](https://fileinbox.com/articles/dropbox-file-requests-ultimate-guide#:~:text=Unfortunately%2C%20Dropbox%20File%20Requests%20don,to%20create%20a%20Dropbox%20account.](https://docs.google.com/document/d/1R93KHIYiwyKRqjzm3_vxHb4VJ6b_4BD-f0hwP55qVKw/edit?usp=drive_link)) by the students. Inside each folder you will find the REGISTER.txt file containing the students registered to this class (for each student: a unique ID, last name, first name, class period, email address). Also in this folder is a folder for each assignment group that contains folders for each of the students which contain folders for the student's program submissions. 
-  * **sampleSubmissions** Two example student submissions.
-  * **dueDates.txt** Optional file that contains the due date followed by 1 or more assignment names.
-  * **scoreboard_for_demo** This folder will contain the results for the student's assignments.
-  * **emailAttachmentDir** This folder temporarily stores the email attachment that is screen captured when running CSAC.
+You are now ready to run the demo - see the Running the Demo section below.
+If you look inside the demo folder you will find
+* **CSAC.py** the CSAC program
+* **CSACcustomize.py** file that customizes CSAC for your setup. 
+* **CSACscoreboard.py** generates the scoreboard (aka student results) output.
+* **CSACgrades.py** Run separately to generate grades for assignments (reds in the assignment grading information from **CSACgradesData.py**)
+* **CSACcheat.py** Run separately to detect similarities between programs submitted to **CSAC**.
+* **ASSIGNMENT_GROUPS** folder
+  * **first6weeksAssignments, pythonAssignments** (these folders contain a group of related assignments, each of which will have it's own scoreboard file)
+    * **GCD, encryption** (these are two of the assignment folders  - the name of the assignment folder **is** the **assignment name**, assignment names must be unique, @ = **assignment name**)
+       * **@.dat** is the teacher provided input data file for the assignment. Typically this file contains more/harder test data then what's been given to the students.
+       * **@Tester.java** an optional test program (@ is the **assignment name**)
+       * **@Checker.java** an optional checker program (@ is the **assignment name**)
+       * **pgmUserInput&.txt** user input files if the student's program requires user input - e.g. Python: input() JAVA: scan.nextInt() 
+       * **runnerUserInput&.txt** user input files if the student also submits **@Runner.java** file
+       * **gold.txt** the teacher provided expected (aka golden) output for the assignment
+       * **find.txt** [OPTIONAL] the teacher provided file that contains text that is searched for in the student's submission.
+       * **findGold.txt** [OPTIONAL] the teacher provided file that contains the expected (aka golden) output for the searches specified in **find.txt**
+       * **checker.txt** the teacher provided checker output for the assignment
+       * **comments.txt** contains the assignment specific comments used in student emails or clipboard
+       * **timeout.txt** contains the amount of seconds the test should be given before timing out (optional: overrides the TIMEOUT_DEFAULT set in CSACcustomize.py)
+       * **solutions** optional folder that contains possible solutions for the problem (CSACcheat.py will compare these files to all the students submissions). See **Detecting Cheating** section below for more information.
+  * **commentsJAVA.txt** and **commentsPYTHON.txt** contain the global comments used in student emails or clipboard
+* **P1,P4,P5** (these are the class period folders to which student assignment files are either explicitly copied by the teacher or directly submitted  via something like [a Google Form](https://docs.google.com/document/d/1-4K8yRds6PuprkSgZoZCg_ll3ykIpoFIFzKsf9gEwNE/edit?usp=sharing) or [a Dropbox File Request](https://fileinbox.com/articles/dropbox-file-requests-ultimate-guide#:~:text=Unfortunately%2C%20Dropbox%20File%20Requests%20don,to%20create%20a%20Dropbox%20account.](https://docs.google.com/document/d/1R93KHIYiwyKRqjzm3_vxHb4VJ6b_4BD-f0hwP55qVKw/edit?usp=drive_link)) by the students. Inside each folder you will find the REGISTER.txt file containing the students registered to this class (for each student: a unique ID, last name, first name, class period, email address). Also in this folder is a folder for each assignment group that contains folders for each of the students which contain folders for the student's program submissions. 
+* **sampleSubmissions** Two example student submissions.
+* **dueDates.txt** Optional file that contains the due date followed by 1 or more assignment names.
+* **scoreboard_for_demo** This folder will contain the results for the student's assignments.
+* **emailAttachmentDir** This folder temporarily stores the email attachment that is screen captured when running CSAC.
   
 ### Running the Demo
 The demo verifies two student assignments (1) [encryption](https://docs.google.com/document/d/1mr5FHL-cf3T1kRR0F10KCWwGGdjZC4Cj/edit?usp=sharing&ouid=117088614197672338242&rtpof=true&sd=true) (2) [GCD](https://docs.google.com/document/d/14nIXTUOr70_zRUZojzMZhbs9AmTWs5WxatsVtjNT_c4/edit?usp=sharing). Follow the below steps and/or watch the demo video (NOTE: CSAC & the demo has changed slightly since the video was made): [download](https://drive.google.com/file/d/1o7TA-ym4WC4xezXcMf3mqvpzbMRN7Awm/view?usp=sharing) or [YouTube](https://youtu.be/Nr0t-hp050Y) 
