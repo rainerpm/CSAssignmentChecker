@@ -222,7 +222,7 @@ def setup():
             assignments = {}
             assignmentGroups = {}
             listOfAssignments = [f.name for f in os.scandir(globalAssignmentGroupDir) if f.is_dir()]  # https://stackoverflow.com/questions/973473/getting-a-list-of-all-subdirectories-in-the-current-directory
-            # now using 'inactive' folder for assignments in an assignment group that I am not currently using
+            # now using 'INACTIVE' folder for assignments in an assignment group that I am not currently using
             #listOfAssignments = [s for s in listOfAssignments if not s.startswith("IGNORE")]
             listOfAssignments.sort()
             assignmentGroup["listOfAssignments"] = listOfAssignments
@@ -311,7 +311,7 @@ def emailStudent(submission, comment='',attach=True):
        updateLogFile(submission, "  email msg -> " + comment)
        emailHeader = f'The {submission["Assignment"]} was submitted on {submission["submissionDateTime"]}.'
        dueDateMsg = getDueDateInfo(submission,submission["Assignment"],submission["submissionDateTimeObj"])[1]
-       message = comment + '\n' + dueDateMsg + '\n\n'  + emailSignature
+       message = comment + '\n' + dueDateMsg + '\n'  + emailSignature
        for emailCode in emailCodes:
            emailSent = False
            if emailCode in submission["classRegistration"]:
@@ -881,8 +881,8 @@ def filesMatch(outputFile,goldenFile):
                 break
     return match
 
-def checkProgram(submission, classRootDir):
-    checked = True
+def runChecker(submission, classRootDir):
+    checkGood = True
     os.chdir(submission["studentPgmRunDir"])
     if os.path.exists(os.path.join(submission["Assignment"] + "Checker.java")):
        compileCmd = ["javac", "-parameters", submission["Assignment"] + "Checker.java"]
@@ -892,7 +892,7 @@ def checkProgram(submission, classRootDir):
        errorCompile = openErrorFile(submission,"compile")
 
        if errorCompile:
-           checked = False
+           checkGood = False
        else:
            runCmd = ["java", submission["Assignment"] + "Checker"]
            with open(submission["outCheckFileName"], 'w') as fout:
@@ -906,9 +906,9 @@ def checkProgram(submission, classRootDir):
                    diffCmd = [diffPgm,submission["outCheckFileName"],submission["goldCheckFile"]]
                    process = subprocess.Popen(diffCmd, shell=True)     # run diff program
                    submission["processes"].append(process)
-                   checked = False
+                   checkGood = False
     os.chdir(classRootDir)
-    return checked
+    return checkGood
 
 def getJavaCodeToSearch(javaFile, toSearch):   # used by findInProgram()
     """
@@ -972,7 +972,7 @@ def getPythonCodeToSearch(pythonFile, toSearch): # used by findInProgram()
 
 def findInProgram(submission, classRootDir):
     os.chdir(submission["studentPgmRunDir"])
-    miscompare = True
+    miscompare = False
     stuffToFindFile = submission["stuffToFindFile"]
     outFindFile = submission["outFindFileName"]
     findGoldFile = submission["findGoldFile"]
@@ -1019,9 +1019,9 @@ def findInProgram(submission, classRootDir):
         checkFilesMatches = filesMatch(outFindFile,findGoldFile)
         if checkFilesMatches:
            print('  ' + bcolors.BOLD + bcolors.BGGREEN + f'### FIND CORRECT ###' + bcolors.ENDC)
-           miscompare = True
+           miscompare = False
         else:
-           print('  ' + bcolors.BOLD + bcolors.BGRED+ "### miscompare find (opening diff) ###" + bcolors.ENDC,end=" ")
+           print('  ' + bcolors.BOLD + bcolors.BGRED+ "### miscompare find (opening diff) ###" + bcolors.ENDC)
            diffCmd = [diffPgm,outFindFile,findGoldFile]
            process = subprocess.Popen(diffCmd, shell=True)     # run diff program
            submission["processes"].append(process)
@@ -1450,14 +1450,22 @@ def main():
                    else:
                       copyFilesToProgramRunDirectory(submission, classRootDir)  ### copy files to student program run directory ###
                    miscompareInFind = findInProgram(submission, classRootDir)   ### if there is a find.txt file, find code in submission
-                   checked = checkProgram(submission, classRootDir)   ### check the program ###
-                   goodToRun = True
-                   if not checked:
-                     response = input("  Check failed. Run program anyways (y " + bcolors.BLUE + '<ENTER>=n' + bcolors.ENDC + ")? ")
+                   goodToRunCheck = True
+                   goodToRunProgram = True
+                   if miscompareInFind:
+                     response = input("  Find check failed. Continue with other checks & run program (y " + bcolors.BLUE + '<ENTER>=n' + bcolors.ENDC + ")? ")
                      if response != 'y':
-                        goodToRun = False
-                   if goodToRun:
-                     autoJudgingCorrect = runProgram(submission, classRootDir)   ### run the program ###
+                        goodToRunCheck = False
+                        goodToRunProgram = False
+                   checkGood = True
+                   if goodToRunCheck:
+                       checkGood = runChecker(submission, classRootDir)   ### check the program ###
+                   if not checkGood:
+                     response = input("  Checker failed. Run program anyways (y " + bcolors.BLUE + '<ENTER>=n' + bcolors.ENDC + ")? ")
+                     if response != 'y':
+                        goodToRunProgram = False
+                   if goodToRunProgram:
+                       autoJudgingCorrect = runProgram(submission, classRootDir)   ### run the program ###
                    lCount = 0
                    if autoJudging:
                        if autoJudgingCorrect:
@@ -1644,4 +1652,3 @@ def main():
                 break
 
 main()
-8
