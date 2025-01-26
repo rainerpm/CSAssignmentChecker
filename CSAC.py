@@ -574,7 +574,7 @@ def getDueDateInfo(submission,assignment,submissionDateTimeObj):
        schoolDaysLate = busday_count(dueDateObj,submittedDateObj,weekmask=[1,1,1,1,1,0,0],holidays=schoolHolidays)
        if schoolDaysLate > 0:
            if schoolDaysLate > 6:
-               lateInfoStr = bcolors.BOLD + bcolors.RED + f'2late {schoolDaysLate-6} school day{"s"[:(schoolDaysLate-6)^1]} since last grace day' + bcolors.ENDC + bcolors.RED + f' 0%' + bcolors.ENDC
+               lateInfoStr = bcolors.BOLD + bcolors.RED + f'2late {schoolDaysLate-6} school day{"s"[:(schoolDaysLate-6)^1]} since last 70% day' + bcolors.ENDC + bcolors.RED + f' 0%' + bcolors.ENDC
            elif schoolDaysLate > 3:
                lateInfoStr = bcolors.BOLD + bcolors.RED + f'late {schoolDaysLate}' + bcolors.ENDC + f':{calendarDaysLate}' + bcolors.RED + f' 70%' + bcolors.ENDC
            elif schoolDaysLate > 0:
@@ -951,6 +951,8 @@ def getPythonCodeToSearch(pythonFile, toSearch): # used by findInProgram()
             line = re.sub(r'\s*#.*', '', line)   # remove comments
             if toSearch != 'canBeAnywhere':
                 functionStart = re.search(r'^def\s+(\w+)\s*\((.*?)\)\s*:', line)
+                if functionStart:
+                    outsideAFunction = False
                 outSideAFunctionStart = re.search(r'^(?!def\b)[a-zA-Z]+.*$', line)   # line on the left margin, starts with any alphabetic string except def
                 if toSearch != "outsideAFunction":
                     if functionStart:
@@ -963,6 +965,7 @@ def getPythonCodeToSearch(pythonFile, toSearch): # used by findInProgram()
                 else:
                     if outSideAFunctionStart:
                         outsideAFunction = True
+            #print(inTheFunction,outsideAFunction)
             if inTheFunction or outsideAFunction or toSearch == 'canBeAnywhere':
                 if code is None:
                     code = line
@@ -993,7 +996,7 @@ def findInProgram(submission, classRootDir):
                 ffind.write(f"Skipping invalid line: {line.strip()}\n")
                 continue
             toSearch, regex = parts
-            pattern = re.compile(regex.replace('\\\\', '\\'))
+            pattern = re.compile(regex.replace('\\\\', '\\'),re.M)
             
             # Check the pattern in the program file
             if os.path.exists(codeFile):
