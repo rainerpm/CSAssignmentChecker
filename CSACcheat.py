@@ -181,7 +181,8 @@ def compare50(assignment,compare50OutputDir,custom=False):
             #print(f'DBG {assignmentDir =}')
             if os.path.isdir(assignmentDir):
                 #assignmentDir = f'"{assignmentDir}"'
-                compare50Files = compare50Files + f'"{assignmentDir}"/*.py '
+                if any(file.endswith('.py') for file in os.listdir(assignmentDir)):  # check to see if there are actually python files in the directory
+                    compare50Files = compare50Files + f'"{assignmentDir}"/*.py '
                 #print(f'DBG {compare50Files =}')
     else:   # custom assignment
         compare50Files = ''
