@@ -570,6 +570,11 @@ def getDueDateInfo(submission,assignment,submissionDateTimeObj):
    if assignment in assignmentDueDateGlobal:
        dueDateObj = datetime.strptime(assignmentDueDateGlobal[assignment],'%m/%d/%y').date()
        submittedDateObj = submissionDateTimeObj
+       submittedDateString = submittedDateObj.strftime("%Y-%m-%d")
+       submittedOnWeekendOrHoliday = (submittedDateObj.isoweekday() == 6) or (submittedDateObj.isoweekday() == 7) or (submittedDateString in schoolHolidays)
+       lateMsg = 'this is the last day'
+       if submittedOnWeekendOrHoliday:
+           lateMsg = 'the next school day is the last day'
        calendarDaysLate = (submittedDateObj - dueDateObj).days
        schoolDaysLate = busday_count(dueDateObj,submittedDateObj,weekmask=[1,1,1,1,1,0,0],holidays=schoolHolidays)
        if schoolDaysLate > 0:
@@ -589,11 +594,11 @@ def getDueDateInfo(submission,assignment,submissionDateTimeObj):
        elif schoolDaysLate <  3:
            dueDateMsg = f'The assignment was due on {assignmentDueDateGlobal[assignment]}. You submitted on {submission["submissionDateTime"]} (you still have {3-schoolDaysLate} school day{"s"[:(3-schoolDaysLate)^1]} left from this date to receive full credit).'
        elif schoolDaysLate == 3:
-           dueDateMsg = f'The assignment was due on {assignmentDueDateGlobal[assignment]}. You submitted on {submission["submissionDateTime"]} (which is the last date to still receive full credit for the assignment).'
+           dueDateMsg = f'The assignment was due on {assignmentDueDateGlobal[assignment]}. You submitted on {submission["submissionDateTime"]} ({lateMsg} to still receive full credit for the assignment).'
        elif schoolDaysLate < 6:
            dueDateMsg = f'The assignment was due on {assignmentDueDateGlobal[assignment]}. You submitted on {submission["submissionDateTime"]} (the assignment can still be submitted for partial credit for {6-schoolDaysLate} more school day{"s"[:(6-schoolDaysLate)^1]} from this date).'
        elif schoolDaysLate == 6:
-           dueDateMsg = f'The assignment was due on {assignmentDueDateGlobal[assignment]}. You submitted on {submission["submissionDateTime"]} (this is the last date to still receive partial credit for the assignment).'
+           dueDateMsg = f'The assignment was due on {assignmentDueDateGlobal[assignment]}. You submitted on {submission["submissionDateTime"]} ({lateMsg} to still receive partial credit for the assignment).'
        elif schoolDaysLate > 6:
            dueDateMsg = f'You submitted on {submission["submissionDateTime"]}. It is now too late to submit this assignment for credit. The last partial credit day was {schoolDaysLate-6} school days ago. The assignment was due on {assignmentDueDateGlobal[assignment]} which was {schoolDaysLate} school days or {calendarDaysLate} calendar days ago.'
    else:
@@ -1188,7 +1193,11 @@ def runProgram(submission, classRootDir):
 def getSubmissions(extensions):
     listOfSubmissions = []
     for extension in extensions:
-        listOfSubmissions = listOfSubmissions + glob.glob(r"*" + extension)
+        listOfSubmissions = listOfSubmissions + glob.glob(r"*" + extension)  
+    allFiles = [f for f in glob.glob("*") if os.path.isfile(f)]
+    notValidFiles = list(set(allFiles).difference(listOfSubmissions))
+    if notValidFiles:
+        print('Found invalid file(s)',notValidFiles)
     #if "REGISTER.txt" in listOfSubmissions:
     #  listOfSubmissions.remove("REGISTER.txt")
     listOfSubmissions.remove('REGISTER.txt')
