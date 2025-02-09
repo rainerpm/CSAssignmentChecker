@@ -4,7 +4,7 @@
 
 from   pathlib  import Path
 from datetime import datetime
-from CSACgradesData import ASSIGNMENTS,codingBatDir,gradesDir,classPeriods,latePenaltyPercentageDefault
+from CSACgradesData import ASSIGNMENTS,OVERRIDES,codingBatDir,gradesDir,classPeriods,latePenaltyPercentageDefault
 from CSACcustomize import rootDir,scoreboardDir,classPeriodNames,classPeriodNamesForMenu
 from math import ceil
 import os                   # module is in python standard library
@@ -26,7 +26,7 @@ class bcolors:
     BLACK = '\033[30m'
     
    
-def calcPointsForStudent(gradingTuple,results):
+def calcPointsForStudent(gradingTuple,results,DEBUG):
     #print(f'{gradingTuple=} {results=}')
     pointsPossible = gradingTuple[0]
     poinstForHowManyCorrect = type(pointsPossible) is tuple
@@ -40,10 +40,10 @@ def calcPointsForStudent(gradingTuple,results):
     if not poinstForHowManyCorrect: # grade is based on the specific assignments in an assignment group that were completed.
         skippedOptionalParts = False
         for result in results:
-            if result == '0x':
-                continue
             assignmentTuple = assignmentTuples[idx]
             idx = idx + 1
+            if result == '0x':
+                continue
             assignmentName = assignmentTuple[0]
             assignmentPercentage = assignmentTuple[1]
             #print(f'  {result=} {assignmentTuple=} {assignmentPercentage=}')
@@ -59,7 +59,8 @@ def calcPointsForStudent(gradingTuple,results):
             latePenaltyPercentage = 1.00  # assignments start at a 100%
             if result.startswith('L'):
                 latePenaltyPercentage = latePenaltyPercentageDefault   # late assignments are worth this percentage
-            points4assignment = ((pointsPossible * assignmentPercentage/100) - pointDeductionForIncorrectAttemts) * latePenaltyPercentage          
+            points4assignment = ((pointsPossible * assignmentPercentage/100) - pointDeductionForIncorrectAttemts) * latePenaltyPercentage
+            if DEBUG: print(f'{result=} {points4assignment=}')
             if result.startswith('C') or result.startswith('L'):
                 if result.startswith('L') and skippedOptionalParts:
                     points4gradeOptionalAssignments = points4gradeOptionalAssignments * 0.70
@@ -69,7 +70,7 @@ def calcPointsForStudent(gradingTuple,results):
             elif re.search(r"(^\d+(\.\d+)?)$",result):
                 x = re.search(r"(^\d+(\.\d+)?)$",result)
                 points4grade = float(x.group(1))
-                print(f'  {points4grade=}')  
+                #print(f'  {points4grade=}')  
                 points4gradeOptionalAssignments = 0  # reset to 0 so if student completes multiple optional parts a previous optional part's points is not added multiple times
             else:    
                 if assignmentName.startswith('(opt)'):
@@ -259,9 +260,15 @@ while True:
                         studentResult = []
                         for assignmentNum in assignmentNums:
                             studentResult.append(student[assignmentNum])
-                        gradeStr,gradeStrColor = calcPointsForStudent(gradingTuple,studentResult)
+                        DEBUG = false  # studentCode == '690878'
+                        gradeStr,gradeStrColor = calcPointsForStudent(gradingTuple,studentResult,DEBUG)
                         #print(f'{studentResult=}')
                         if studentCode in code2ID:
+                            #OVERRIDES
+                            overrideKey = f'{period} {studentCode} {assignmentName}'
+                            if overrideKey in OVERRIDES:
+                                gradeStr = OVERRIDES[overrideKey][1]
+                                gradeStrColor = bcolors.BOLD + bcolors.RED + f'OVER' + bcolors.ENDC
                             gradesDic[studentCode] = (code2ID[studentCode],gradeStr,gradeStrColor,studentResult)
                         else:
                             foundWarnings = True
