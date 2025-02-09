@@ -32,10 +32,13 @@ from   pathlib  import Path      # module is in python standard library
 
 from bs4 import BeautifulSoup   # Thonny (import beautifulsoup4)
 
+MATCHES = 200  # -n MATCHES compare50 parameter indicates number of matches to output for web results
+TOP_MATCHES = 50 # matches that I extract from web results and print on the screen (has to be less than MATCHES above)
 
 # Assignments that are not in CSAC
 #    name : list of files
-customAssignments = {'FunMidterm' : ['C:/Users/E151509/Desktop/Midterm/submissions/*.jsc']}
+# customAssignments = {'FunMidterm' : ['C:/Users/E151509/Desktop/Midterm/submissions/*.jsc']}
+customAssignments = {}
 
 # print list in columns
 def printInColumns(listN,columns,textWidth,listElementIndex=-1):
@@ -76,8 +79,12 @@ def getAssignment():
     return assignment
 
 # searches for patterns in a directory and returns files that match the pattern
-def search_patterns_in_directory(classPeriod,directory, patterns):   
-    compiled_patterns = [re.compile(pattern) for pattern in patterns] # Compile the patterns to avoid recompiling them for every file
+def search_patterns_in_directory(classPeriod,directory, patterns):
+    #compiled_patterns = [re.compile(pattern) for pattern in patterns] # Compile the patterns to avoid recompiling them for every file
+    #print(f'{patterns = }')
+    #print(patterns[0],patterns[0].replace('\\\\', '\\'))
+    # from CSAC.py pattern = re.compile(regex.replace('\\\\', '\\'),re.M)
+    compiled_patterns = [re.compile(pattern.replace('\\\\', '\\'),re.M) for pattern in patterns] # Compile the patterns to avoid recompiling them for every file
     filesMatched = []
     fileCount = 0
     prevName = ''
@@ -129,15 +136,21 @@ def diffFiles(filesList):
             process = subprocess.Popen(diffCmd, shell=True)     # run diff program
 
 
-def findPatterns(assignment):
+def findPatterns(assignment,isRegEx):
     response = input('Enter string or a list of regex patterns to search for: ')
     if response.startswith('['):
         initialList = eval(response)
         patterns = []
         for item in InitialList:
-            patterns.append(re.escape(item))
+            if isRegEx:
+               patterns.append(item) 
+            else:
+               patterns.append(re.escape(item))
     else:
-        patterns = [re.escape(response)]
+        if isRegEx:
+           patterns = [response]
+        else:
+           patterns = [re.escape(response)]
     print(f'Searching with {patterns =}')
     assignmentName = assignment[1]
     assignmentGroup = assignment[2]
@@ -195,7 +208,7 @@ def compare50(assignment,compare50OutputDir,custom=False):
     compare50FilesWsl = compare50Files.replace('\\','/').replace('C:','/mnt/c')
     outputDir = f'{compare50OutputDir}/{assignmentName}'
     outputDirWsl = outputDir.replace('C:','/mnt/c')
-    compare50Cmd = f'compare50 -n 100 -o {outputDirWsl} {compare50FilesWsl}'
+    compare50Cmd = f'compare50 -n {MATCHES} -o {outputDirWsl} {compare50FilesWsl}'
     if os.path.isdir(outputDir):
         print(f'\nRemoving previous output directory {outputDir}')
         rmtree(outputDir) # remove compare50 output directory for assignment
@@ -205,7 +218,7 @@ def compare50(assignment,compare50OutputDir,custom=False):
     # Open and read the local HTML file
     print('Top matches')
     print('      structure   text        exact')
-    for num in range(1,31):
+    for num in range(1,TOP_MATCHES+1):
         fileName =  Path(f'{outputDir}\match_{num}.html')
         if not fileName.is_file():
             pass
@@ -383,6 +396,7 @@ while True:
     print('  3 moss (plagcheck) useful???')
     print('  4 variable frequency')
     print('  5 find regex(s)')
+    print('  6 find string')
     response = input("select ('x' to exit)? ")
     if response == '1':
         print('Assumes compare50 is setup in Windows Subsystem for Linux (WSL)')
@@ -394,7 +408,9 @@ while True:
     elif response == '4':
         variableFrequency(assignment)
     if response == '5':
-        findPatterns(assignment)
+        findPatterns(assignment,True)
+    if response == '6':
+        findPatterns(assignment,False)
     elif response == 'x':
         break
 
