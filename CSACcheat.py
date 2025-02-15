@@ -1,16 +1,20 @@
 # This program checks all the files for an assignment to see if students cheated.
 # For each assignment user can select to run these cheating detection tools
-#   1) compare50 (https://cs50.readthedocs.io/projects/compare50/en/latest/)
-#         assumption is that compare50 has been setup in the Windows Subsystem for Linux
-#   2) moss      (https://theory.stanford.edu/~aiken/moss/)
+#   compare50 (https://cs50.readthedocs.io/projects/compare50/en/latest/)
+#         * assumption is that compare50 has been setup in the Windows Subsystem for Linux
+#         * compare50 inital run is to compare all students against each other, listing
+#           out top TOP_MATCHES results
+#         * after initial run it's possible to run it again by specifying the number of
+#            the top result followed by 'a' for the left student/pgm or 'b' for the right.
+#   moss      (https://theory.stanford.edu/~aiken/moss/)
 #         requires the CSAClogin.txt file which has a line that has the word 'moss' followed
 #         by 1 or more spaces followed by your moss id.
-#   3) plagcheck (https://plagcheck.readthedocs.io/en/latest/?badge=latest)
-#         runs and analysis moss results (haven't checked how useful this analysis is)
-#   4) variable frequency
+#   variable frequency
 #         function in this program that checks (python programs only for now) how often the same
 #         variable name is used by different student's programs.
-#   5) find regex(s)
+#   find strings
+#         finds strings/text in student programs.
+#   find regex(s)
 #         finds all the files that match 1 or more provided regular expressions
 # Assignments can be in the CSAC directory structure or in the customAssignments dictionary.
 
@@ -28,12 +32,13 @@ import mosspy  # Tools -> Open System Shell and then pip install mossypy;  https
 from plagcheck.plagcheck import check, insights, share_scores
 import pprint
 from   pathlib  import Path      # module is in python standard library
-
+from datetime import datetime
 
 from bs4 import BeautifulSoup   # Thonny (import beautifulsoup4)
 
-MATCHES = 200  # -n MATCHES compare50 parameter indicates number of matches to output for web results
-TOP_MATCHES = 50 # matches that I extract from web results and print on the screen (has to be less than MATCHES above)
+MATCHES = 100  # -n MATCHES compare50 parameter indicates number of matches to output for web results
+TOP_MATCHES = 30 # matches that I extract from web results and print on the screen (has to be less than MATCHES above)
+HIDE_NAMES = False
 
 # Assignments that are not in CSAC
 #    name : list of files
@@ -58,9 +63,9 @@ def printInColumns(listN,columns,textWidth,listElementIndex=-1):
 def getAssignment():
     assignmentNames = []
     for assignment in ASSIGNMENTS:    # ASSIGNMENTS is dictionary defined in grades4ACdata.py
-        value = ASSIGNMENTS[assignment]
-        assignmentGroup = value[1]
-        gradingTuple = value[2]
+        assignmentData = ASSIGNMENTS[assignment]
+        assignmentGroup = assignmentData[1]
+        gradingTuple = assignmentData[2]
         assignmentTuples = gradingTuple[1:]
         if assignmentGroup == 'CodingBat':
             assignmentNames = 'various'
@@ -72,11 +77,18 @@ def getAssignment():
         assignmentNames.append((key,"Custom"))
     for i in range(len(assignmentNames)):
         assignmentNames[i] = (i+1,assignmentNames[i][0],assignmentNames[i][1])
-    printInColumns(assignmentNames,5,10,1)
+    printInColumns(assignmentNames,5,14,1)
     response = input(f'Select an assignment 1-{len(assignmentNames)}: ')
 
     assignment = assignmentNames[int(response)-1]
     return assignment
+
+def getDistroFile(assignment):
+    assignmentName = assignment[1]
+    assignmentGroup = assignment[2]
+    assignmentFile = os.path.join(rootDir.replace('/','\\'), "ASSIGNMENT_GROUPS",assignmentGroup,assignmentName,"solutions","compare50_distro.py").replace('\\','/').replace('C:','/mnt/c')
+    if Path(assignmentFile).is_file():    # if compare50_distro file exists for this assignment
+        return assignmentFile
 
 # searches for patterns in a directory and returns files that match the pattern
 def search_patterns_in_directory(classPeriod,directory, patterns):
@@ -105,8 +117,11 @@ def search_patterns_in_directory(classPeriod,directory, patterns):
                             if file_path not in filesMatched:
                                 filesMatched.append(file_path)
                             name = ' '.join(filename.split()[:2])
+                            printName = name
+                            if HIDE_NAMES:
+                                printName = f'Student {fileCount}'
                             if name != prevName:
-                                print(f"{classPeriod:3s} {name:25s} {line.strip()}")
+                                print(f"{classPeriod:3s} {printName:25s} {line.strip()}")
                             else:    
                                 print(f"{'':3s} {'':25s} {line.strip()}")
                             prevName = name
@@ -136,10 +151,9 @@ def diffFiles(filesList):
             process = subprocess.Popen(diffCmd, shell=True)     # run diff program
 
 
-def findPatterns(assignment,isRegEx):
-    response = input('Enter string or a list of regex patterns to search for: ')
-    if response.startswith('['):
-        initialList = eval(response)
+def findPatterns(patternOrListOfPatterns,assignment,isRegEx):
+    if patternOrListOfPatterns.startswith('['):
+        initialList = eval(patternOrListOfPatterns)
         patterns = []
         for item in InitialList:
             if isRegEx:
@@ -148,9 +162,9 @@ def findPatterns(assignment,isRegEx):
                patterns.append(re.escape(item))
     else:
         if isRegEx:
-           patterns = [response]
+           patterns = [patternOrListOfPatterns]
         else:
-           patterns = [re.escape(response)]
+           patterns = [re.escape(patternOrListOfPatterns)]
     print(f'Searching with {patterns =}')
     assignmentName = assignment[1]
     assignmentGroup = assignment[2]
@@ -184,7 +198,7 @@ def findPatterns(assignment,isRegEx):
 # exact 
 #     Removes nothing, not even whitespace, then uses the winnowing algorithm to
 #     compare submissions.                
-def compare50(assignment,compare50OutputDir,custom=False):
+def compare50(assignment,compare50OutputDir,individual=None):
     assignmentName = assignment[1]
     assignmentGroup = assignment[2]    
     if assignmentName not in customAssignments:   # regular CSAC assignment
@@ -208,7 +222,14 @@ def compare50(assignment,compare50OutputDir,custom=False):
     compare50FilesWsl = compare50Files.replace('\\','/').replace('C:','/mnt/c')
     outputDir = f'{compare50OutputDir}/{assignmentName}'
     outputDirWsl = outputDir.replace('C:','/mnt/c')
-    compare50Cmd = f'compare50 -n {MATCHES} -o {outputDirWsl} {compare50FilesWsl}'
+    idv = ' '
+    if individual:
+       idv = f' "{individual}" -a '
+    distro = ' '
+    distroFile = getDistroFile(assignment)
+    if distroFile:
+        distro = f' -d "{distroFile}"'
+    compare50Cmd = f'compare50 -n {MATCHES} -o {outputDirWsl}{idv}{compare50FilesWsl}{distro}'
     if os.path.isdir(outputDir):
         print(f'\nRemoving previous output directory {outputDir}')
         rmtree(outputDir) # remove compare50 output directory for assignment
@@ -216,8 +237,9 @@ def compare50(assignment,compare50OutputDir,custom=False):
     result = subprocess.run('wsl ' + compare50Cmd)
     # print out data from the top 10 match_*.html files
     # Open and read the local HTML file
-    print('Top matches')
+    print('Top matches',datetime.today().strftime('%Y-%m-%d'))
     print('      structure   text        exact')
+    topMatchFiles = []
     for num in range(1,TOP_MATCHES+1):
         fileName =  Path(f'{outputDir}\match_{num}.html')
         if not fileName.is_file():
@@ -231,30 +253,59 @@ def compare50(assignment,compare50OutputDir,custom=False):
                 # Parse the HTML content with BeautifulSoup
                 soup = BeautifulSoup(html_content, 'html.parser')
 
-                # Find the div with id="structureleft"
+                # Get period name from stuff at top of page
+                topOfPageDiv = soup.find('div', id='structuresub_names')
+                if topOfPageDiv:
+                    pathNameDiv = topOfPageDiv.find('h5')
+                    windowsPathNameLeft = pathNameDiv.get_text()
+                    windowsPathNameLeft = windowsPathNameLeft[:windowsPathNameLeft.rfind(' ')]  # remove everything after last space
+                    classPeriodLeft = pathNameDiv.get_text().split('/')[9]
+                topOfPageDiv = soup.find('div', id='structuresub_names')
+                if topOfPageDiv:
+                    pathNameDivs = topOfPageDiv.find_all('h5')
+                    pathNameDiv = pathNameDivs[1]
+                    windowsPathNameRight = pathNameDiv.get_text()
+                    windowsPathNameRight = windowsPathNameRight[:windowsPathNameRight.rfind(' ')]  # remove everything after last space
+                    classPeriodRight = pathNameDivs[1].get_text().split('/')[9]
+                    
+                # Get percentages for structure, text, and exact matches as well as the file name (from which I extract the student name)
                 percents = ''
                 for structure in ['structureleft','structureright','textleft','textright','exactleft','exactright']:
-                    structureDiv = soup.find('div', id=f'{structure}')
+                    divWithInfo = soup.find('div', id=f'{structure}')
                     
-                    if structureDiv:
+                    if divWithInfo:
                         # Find all <h4> elements with class="file_name" within the structureleft div
-                        file_names = structureDiv.find_all('h4', class_='file_name')
+                        file_names = divWithInfo.find_all('h4', class_='file_name')
                         
                         # Print the contents of each <h4> element
                         for file_name in file_names:
                             name = file_name.get_text().split('_')[0]
+                            fileName = file_name.get_text()[:file_name.get_text().find('(')].rstrip()
                             percent = file_name.get_text().split()[-1].replace('(','').replace(')','')
                             percents = percents + f'{percent:>5s} '
                             if structure == 'structureleft':
                                 nameLeft = name
+                                if HIDE_NAMES:
+                                    nameLeft = f'student{num}a'
+                                filePathLeft = windowsPathNameLeft + '/' + fileName
                             if structure == 'structureright':
                                 nameRight = name
+                                if HIDE_NAMES:
+                                    nameRight = f'student{num}b'
+                                filePathRight = windowsPathNameRight + '/' + fileName
                     else:
                         print('No div with id="structureleft" found.')
-                print(f'  {num:2d} {percents} {nameLeft:20s} {nameRight:20s}')
-               
-    response = input("Open results in browser (x=exit)? ")
-    if response != 'x':
+                topMatchFiles.append(((classPeriodLeft,nameLeft,filePathLeft),(classPeriodRight,nameRight,filePathRight)))
+                print(f'  {num:2d} {percents} ({classPeriodLeft}) {nameLeft:20s}  ({classPeriodRight}) {nameRight:20s}')
+    #print(topMatchFiles)
+    response = input("#(a|b) run compare50 for individual, <Enter> to open results in browser, x=exit? ")
+    if response.endswith('a'):
+        num = int(response[:-1])-1
+        compare50(assignment,compare50OutputDir,topMatchFiles[num][0][2])
+    elif response.endswith('b'):
+        num = int(response[:-1])-1
+        compare50(assignment,compare50OutputDir,topMatchFiles[num][1][2])
+    elif response != 'x':
         webbrowser.open(outputDir + '/index.html')
 
 def moss(assignment):
@@ -281,47 +332,48 @@ def moss(assignment):
     print("Opening results in browser")
     webbrowser.open(url)
    
-# https://plagcheck.readthedocs.io/en/latest/?badge=latest   
-def plagcheck(assignment):
-    with open('CSAClogin.txt') as login:
-        for line in login:
-            if line.startswith('moss'):
-                userid = int(line.split()[1])
-    moss = check("python",userid)
-
-    assignmentName = assignment[1]
-    assignmentGroup = assignment[2]    
-    if assignmentName not in customAssignments:   # regular CSAC assignment
-        for classPeriodName in classPeriodNames:
-            assignmentDir = os.path.join(rootDir,classPeriodName,assignmentGroup,"00PLAGIARISM",assignmentName)
-            if os.path.isdir(assignmentDir):
-                #assignmentDir = f'"{assignmentDir}"'
-                print(f'{assignmentDir=}')
-                moss.addFilesByWildCard(f'{assignmentDir}/*.py' )
-    else:   # custom assignment
-        for customFiles in customAssignments[assignmentName]:
-            moss.addFilesByWildCard(customFiles)
-    print("Submitting files to moss")
-    moss.submit()
-    result = moss.getResults()
-
-    response = input("print results (enter=y)? ")
-    if response == '':
-        pprint.pprint(result)
-        
-    # print potential distributor-culprit relationships
-    response = input("print potential distributor-culprit relationships (enter=y)? ")
-    if response == '':
-        pprint.pprint(insights(result))
-
-    # print frequency of each shared solution
-    response = input("print frequency of each shared solution (enter=y)? ")
-    if response == '':
-        pprint.pprint(share_scores(result))
-
-    response = input("Open moss results in browser (enter=y)? ")
-    if response == '':
-        webbrowser.open(moss.getHomePage()) 
+# https://plagcheck.readthedocs.io/en/latest/?badge=latest
+# is this useful????
+# def plagcheck(assignment):
+#     with open('CSAClogin.txt') as login:
+#         for line in login:
+#             if line.startswith('moss'):
+#                 userid = int(line.split()[1])
+#     moss = check("python",userid)
+# 
+#     assignmentName = assignment[1]
+#     assignmentGroup = assignment[2]    
+#     if assignmentName not in customAssignments:   # regular CSAC assignment
+#         for classPeriodName in classPeriodNames:
+#             assignmentDir = os.path.join(rootDir,classPeriodName,assignmentGroup,"00PLAGIARISM",assignmentName)
+#             if os.path.isdir(assignmentDir):
+#                 #assignmentDir = f'"{assignmentDir}"'
+#                 print(f'{assignmentDir=}')
+#                 moss.addFilesByWildCard(f'{assignmentDir}/*.py' )
+#     else:   # custom assignment
+#         for customFiles in customAssignments[assignmentName]:
+#             moss.addFilesByWildCard(customFiles)
+#     print("Submitting files to moss")
+#     moss.submit()
+#     result = moss.getResults()
+# 
+#     response = input("print results (enter=y)? ")
+#     if response == '':
+#         pprint.pprint(result)
+#         
+#     # print potential distributor-culprit relationships
+#     response = input("print potential distributor-culprit relationships (enter=y)? ")
+#     if response == '':
+#         pprint.pprint(insights(result))
+# 
+#     # print frequency of each shared solution
+#     response = input("print frequency of each shared solution (enter=y)? ")
+#     if response == '':
+#         pprint.pprint(share_scores(result))
+# 
+#     response = input("Open moss results in browser (enter=y)? ")
+#     if response == '':
+#         webbrowser.open(moss.getHomePage()) 
 
 def variableFrequency(assignment):
     variableNames = {}
@@ -393,27 +445,31 @@ while True:
     print(f'\nAssignment {assignment[1]}')
     print('  1 compare50')
     print('  2 moss')
-    print('  3 moss (plagcheck) useful???')
-    print('  4 variable frequency')
+    print('  3 variable frequency')
+    print('  4 find string(s)')
     print('  5 find regex(s)')
-    print('  6 find string')
+    print('  6 find join(')
     response = input("select ('x' to exit)? ")
     if response == '1':
         print('Assumes compare50 is setup in Windows Subsystem for Linux (WSL)')
         compare50(assignment,'C:/Users/E151509/Desktop/compare50')
     elif response == '2':
-        moss(assignment)
+        moss(assignment)   
     elif response == '3':
-        plagcheck(assignment)    
-    elif response == '4':
         variableFrequency(assignment)
+    elif response == '4':
+        response = input('Enter string or a list of strings: ')
+        findPatterns(response,assignment,False)
     if response == '5':
-        findPatterns(assignment,True)
-    if response == '6':
-        findPatterns(assignment,False)
+        response = input('Enter regex or a list of regexs: ')
+        findPatterns(response,assignment,True)
+    elif response == '6':
+        response = 'join\('
+        findPatterns(response,assignment,True)
     elif response == 'x':
         break
 
 
     
+
 
