@@ -55,6 +55,8 @@ If you look inside the demo folder you will find
        * **comments.txt** contains the assignment specific comments used in student emails or clipboard
        * **timeout.txt** contains the amount of seconds the test should be given before timing out (optional: overrides the TIMEOUT_DEFAULT set in CSACcustomize.py)
        * **solutions** optional folder that contains possible solutions for the problem (CSACcheat.py will compare these files to all the students submissions). See **Detecting Cheating** section below for more information.
+       * **INACTIVE** optional folder for assignments that are currently not active.
+
   * **commentsJAVA.txt** and **commentsPYTHON.txt** contain the global comments used in student emails or clipboard
 * **P1,P4,P5** (these are the class period folders to which student assignment files are either explicitly copied by the teacher or directly submitted  via something like [a Google Form](https://docs.google.com/document/d/1-4K8yRds6PuprkSgZoZCg_ll3ykIpoFIFzKsf9gEwNE/edit?usp=sharing) or [a Dropbox File Request](https://fileinbox.com/articles/dropbox-file-requests-ultimate-guide#:~:text=Unfortunately%2C%20Dropbox%20File%20Requests%20don,to%20create%20a%20Dropbox%20account.](https://docs.google.com/document/d/1R93KHIYiwyKRqjzm3_vxHb4VJ6b_4BD-f0hwP55qVKw/edit?usp=drive_link)) by the students. Inside each folder you will find the **REGISTER.txt** file (see **Student Registration** section below). Also in this folder is a folder for each assignment group that contains folders for each of the students which contain folders for the student's program submissions. 
 * **sampleSubmissions** Two example student submissions.
