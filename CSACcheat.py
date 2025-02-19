@@ -229,12 +229,12 @@ def compare50(assignment,compare50OutputDir,individual=None):
     distroFile = getDistroFile(assignment)
     if distroFile:
         distro = f' -d "{distroFile}"'
-    compare50Cmd = f'compare50 -n {MATCHES} -o {outputDirWsl}{idv}{compare50FilesWsl}{distro}'
+    compare50Cmd = f'wsl compare50 -n {MATCHES} -o {outputDirWsl}{idv}{compare50FilesWsl}{distro}'
     if os.path.isdir(outputDir):
         print(f'\nRemoving previous output directory {outputDir}')
         rmtree(outputDir) # remove compare50 output directory for assignment
-    print('\nRunning compare50 command from within Python program\n'+compare50Cmd)
-    result = subprocess.run('wsl ' + compare50Cmd)
+    print('\nInvoking wsl to run compare50\n'+compare50Cmd)
+    result = subprocess.run(compare50Cmd)
     # print out data from the top 10 match_*.html files
     # Open and read the local HTML file
     print('Top matches',datetime.today().strftime('%Y-%m-%d'))
@@ -448,7 +448,7 @@ while True:
     print('  3 variable frequency')
     print('  4 find string(s)')
     print('  5 find regex(s)')
-    print('  6 find join(')
+    print('  6 predefined regex(s)')
     response = input("select ('x' to exit)? ")
     if response == '1':
         print('Assumes compare50 is setup in Windows Subsystem for Linux (WSL)')
@@ -464,8 +464,14 @@ while True:
         response = input('Enter regex or a list of regexs: ')
         findPatterns(response,assignment,True)
     elif response == '6':
-        response = 'join\('
-        findPatterns(response,assignment,True)
+        options = [('join method or map function',r'\b(join|map)\s*\('),
+                   ('list comprehension',r'\[.+\bfor\b.+\]'),
+                   ('comments at end of line',r'^(?!\s*#).*(?=\s*#)')]
+        for i, option in enumerate(options, 1):
+           print(f"    {i} {option[0]}")
+        choice = int(input("    Enter the number of your choice: "))
+        if 1 <= choice <= len(options):
+            findPatterns(options[choice-1][1],assignment,True)
     elif response == 'x':
         break
 
