@@ -260,7 +260,7 @@ while True:
                         studentResult = []
                         for assignmentNum in assignmentNums:
                             studentResult.append(student[assignmentNum])
-                        DEBUG = false  # studentCode == '690878'
+                        DEBUG = False  # studentCode == '690878'
                         gradeStr,gradeStrColor = calcPointsForStudent(gradingTuple,studentResult,DEBUG)
                         #print(f'{studentResult=}')
                         if studentCode in code2ID:
@@ -268,7 +268,7 @@ while True:
                             overrideKey = f'{period} {studentCode} {assignmentName}'
                             if overrideKey in OVERRIDES:
                                 gradeStr = OVERRIDES[overrideKey][1]
-                                gradeStrColor = bcolors.BOLD + bcolors.RED + f'OVER' + bcolors.ENDC
+                                gradeStrColor = gradeStrColor.replace(bcolors.ENDC,bcolors.BOLD + bcolors.RED + ' *** OVERRIDE *** ' + bcolors.ENDC)
                             gradesDic[studentCode] = (code2ID[studentCode],gradeStr,gradeStrColor,studentResult)
                         else:
                             foundWarnings = True
