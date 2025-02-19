@@ -5,7 +5,7 @@
 
 import CSACscoreboard  # import the associated CSACscoreboard.py which creates the scoreboard files
 from CSACscoreboard import assignmentResults    
-from CSACcustomize import classPeriodNames,classPeriodNamesForMenu,classPeriodEmailYN,classAssignmentGroups,rootDir,scoreboardDir,pythonIde,javaIde,schoolHolidays,diffPgm,textEditor,emailSignature,emailAttachmentDir, emailUseClassPeriodSentFolders, TIMEOUT_DEFAULT
+from CSACcustomize import classPeriodNames,classPeriodNamesForMenu,classPeriodEmailYN,classAssignmentGroups,rootDir,scoreboardDir,pythonIde,javaIde,schoolHolidays,diffPgm,textEditor,emailSignature,emailAttachmentDir, emailUseClassPeriodSentFolders, TIMEOUT_DEFAULT,filesToRemoveAfterRun
 
 minimizeFilesCreated = True
 
@@ -222,6 +222,8 @@ def setup():
             assignments = {}
             assignmentGroups = {}
             listOfAssignments = [f.name for f in os.scandir(globalAssignmentGroupDir) if f.is_dir()]  # https://stackoverflow.com/questions/973473/getting-a-list-of-all-subdirectories-in-the-current-directory
+            if "INACTIVE" in listOfAssignments:
+                listOfAssignments.remove("INACTIVE")
             # now using 'INACTIVE' folder for assignments in an assignment group that I am not currently using
             #listOfAssignments = [s for s in listOfAssignments if not s.startswith("IGNORE")]
             listOfAssignments.sort()
@@ -1080,7 +1082,6 @@ def runProgram(submission, classRootDir):
     latestResultsDir = os.path.join(classRootDir,"00LatestResults")
     if submission["dataInputFileExists"]:
         bringUpIDEorDataFile += '\nset /P c=Bring up input data file [y]? \nif /I "%c%" EQU "Y" goto :idf\ngoto :end\n:idf\n' + '"' + textEditor + '"' + " -multiInst -nosession " + '"' + submission["dataInputFileName"] + '"' + '\n:end'
-    # compile error
     if errorCompile:
         copyfile(submission["compileErrorFileName"], os.path.join(latestResultsDir,submission["nameForLatestDir"] + "_compileError.txt"))  # copy compile error file to class directory
         copyfile(submission["compileErrorFileName"], os.path.join(submission["studentDir"],submission["compileErrFileName"]))  # copy output file to data directory
@@ -1088,8 +1089,7 @@ def runProgram(submission, classRootDir):
            for partnerDir in submission["partnersDirs"]:
               copyfile(submission["compileErrorFileName"],os.path.join(partnerDir,submission["compileErrFileName"]))  # copy output file to all partners data directories        
         updateLogFile(submission, f"{bcolors.RED}Error!!!{bcolors.ENDC} " + submission["FileName"] + " had a compile time error.",False)
-    # no compile error
-    else:   
+    else:     # not errorCompile
         if os.path.exists(os.path.join(latestResultsDir,submission["nameForLatestDir"] + "_compileError.txt")):
             os.remove(os.path.join(latestResultsDir,submission["nameForLatestDir"] + "_compileError.txt"))
         writeOrAppend = "w"
@@ -1232,6 +1232,7 @@ def gradeSubmission(submission):
     submission["processes"].append(process)
 
 def submissionCorrect(submission,reason=""):
+    global classRootDir
     # update CORRECT.txt file
     with open(os.path.join(rootDir,"CORRECT.txt"), "a") as fcorr:
        assignmentGroup = os.path.basename(os.path.normpath(submission["assignmentGroup"]["assignmentGroupDir"]))
@@ -1274,6 +1275,7 @@ def submissionCorrect(submission,reason=""):
              copyfile(os.path.join(submission["goldFile"]), os.path.join(partnerDir,correctFileName))  # copy output file to all partners data directories
     CSACscoreboard.updateScoreboard(scoreboardDir,submission["assignmentGroupDir"],submission["assignmentGroupId"],submission["classPeriod"],submission["listOfAssignments"])
     updateLogFile(submission, bcolors.BOLD + bcolors.GREEN + f'  *** CORRECT *** ' + bcolors.ENDC)
+    removeLargeFilesAfterRun(submission)
 
 def submissionIncorrect(submission,reason=""):
     global autoJudging, moveTo00ManualCheck, classRootDir
@@ -1298,6 +1300,17 @@ def submissionIncorrect(submission,reason=""):
     else:
         updateLogFile(submission, "  >>> INVALID SUBMISSION <<< ")
     os.remove(submission["FileName"])
+    removeLargeFilesAfterRun(submission)
+
+def removeLargeFilesAfterRun(submission):
+    global classRootDir
+    os.chdir(submission["studentPgmRunDir"])
+    # filesToRemoveAfterRun list is defined CSACcustomize.py
+    for fileToRemoveAfterRun in filesToRemoveAfterRun:
+        if Path(fileToRemoveAfterRun).is_file():
+            os.remove(fileToRemoveAfterRun)
+    os.chdir(classRootDir)
+
 
 def generateIdeCommands(submission):
     global pythonIde,javaIde
@@ -1333,7 +1346,7 @@ def killProcesses(submission):
 
 ### MAIN PROGRAM ###
 def main():
-    global interrupted, autoJudging, autoJudgingPeriods, autoJudgingSleepTime, moveTo00ManualCheck
+    global interrupted, autoJudging, autoJudgingPeriods, autoJudgingSleepTime, moveTo00ManualCheck, classRootDir
 
     allAssignmentGroups, allAssignments = setup()
     autoJudging = False
