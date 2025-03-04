@@ -27,7 +27,6 @@ class bcolors:
     
    
 def calcPointsForStudent(gradingTuple,results,DEBUG):
-    #print(f'{gradingTuple=} {results=}')
     pointsPossible = gradingTuple[0]
     poinstForHowManyCorrect = type(pointsPossible) is tuple
     if poinstForHowManyCorrect:
@@ -42,11 +41,8 @@ def calcPointsForStudent(gradingTuple,results,DEBUG):
         for result in results:
             assignmentTuple = assignmentTuples[idx]
             idx = idx + 1
-            if result == '0x':
-                continue
             assignmentName = assignmentTuple[0]
             assignmentPercentage = assignmentTuple[1]
-            #print(f'  {result=} {assignmentTuple=} {assignmentPercentage=}')
             # possible deduction for incorrect attempts (only happens if percentDeductionForIncorrectSubmission is specified in assignmentTuple)
             pointDeductionForIncorrectAttemts = 0
             if len(assignmentTuple) == 3 and len(result) >= 2:
@@ -64,18 +60,17 @@ def calcPointsForStudent(gradingTuple,results,DEBUG):
             if result.startswith('C') or result.startswith('L'):
                 if result.startswith('L') and skippedOptionalParts:
                     points4gradeOptionalAssignments = points4gradeOptionalAssignments * 0.70
-                #print(f'DBG2 {points4grade = } {points4assignment = } {points4gradeOptionalAssignments = }')
+                if DEBUG: print(f'DBG2 {points4grade = } {points4assignment = } {points4gradeOptionalAssignments = }')
                 points4grade = points4grade + points4assignment + points4gradeOptionalAssignments
                 points4gradeOptionalAssignments = 0  # reset to 0 so if student completes multiple optional parts a previous optional part's points is not added multiple times
-            elif re.search(r"(^\d+(\.\d+)?)$",result):
+            elif re.search(r"(^-?\d+(\.\d+)?)$",result):  # numeric grades
                 x = re.search(r"(^\d+(\.\d+)?)$",result)
                 points4grade = float(x.group(1))
-                #print(f'  {points4grade=}')  
                 points4gradeOptionalAssignments = 0  # reset to 0 so if student completes multiple optional parts a previous optional part's points is not added multiple times
             else:    
                 if assignmentName.startswith('(opt)'):
                     skippedOptionalParts = True
-                    #print(f'DBG2 {points4gradeOptionalAssignments = } {points4assignment = }')
+                    if DEBUG: print(f'DBG2 {points4gradeOptionalAssignments = } {points4assignment = }')
                     points4gradeOptionalAssignments = points4gradeOptionalAssignments + points4assignment
     else:    # grade is based on how MANY assignments in an assignment group are done (not which specific ones)
         numCorrect = 0
