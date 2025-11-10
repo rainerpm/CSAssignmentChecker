@@ -80,7 +80,7 @@ def updateScoreboard(scoreboardDir,contestDataDir,assignmentGroupId,classId,list
      
    footer = """
 C#  = test ran successfully (was submitted incorrectly # of times)
-L#  = test ran successfully (was submitted incorrectly # of times) but was LATE
+L#  = test ran successfully (was submitted incorrectly # of times) but was LATE (70%)
 T#  = test ran successfully (was submitted incorrectly # of times) but was TOO LATE for a grade.
 #x  = test never ran successfully, submitted # times.
 Ea  = latest submission was not 100% correct when using automatic judging (submission will be checked manually later)
@@ -210,7 +210,7 @@ The POINTS column indicates your UIL programming competition score (60 pts/probl
              dueDateObj = datetime.strptime(dueDates[testName],'%m/%d/%y').date()
              daysDiff = (datetime.today().date() - dueDateObj).days
              if daysDiff < 200:     
-                 fscoreboard.write(f'({j:2}) {testName:14} {dueDateObj.strftime("%a %b %d")}   ')
+                 fscoreboard.write(f'({j:2}) {testName:14} {dueDateObj.strftime("%a %b %d")}   ')    # due date
                  schoolDaysLate = 0
                  i = 0 
                  while schoolDaysLate <= 3:
@@ -218,7 +218,7 @@ The POINTS column indicates your UIL programming competition score (60 pts/probl
                      checkDay = dueDateObj+timedelta(days=i)
                      schoolDaysLate = busday_count(dueDateObj,checkDay,weekmask=[1,1,1,1,1,0,0],holidays=schoolHolidays)
                  if testName not in noGraceDueDateAssignments:
-                     fscoreboard.write((checkDay+timedelta(days=-1)).strftime("%a %b %d") + '   ')
+                     fscoreboard.write((checkDay+timedelta(days=-1)).strftime("%a %b %d") + '   ')   # last grace date
                  else:
                      fscoreboard.write("NONE      ")         
                  while schoolDaysLate <= 6:
@@ -226,8 +226,8 @@ The POINTS column indicates your UIL programming competition score (60 pts/probl
                      checkDay = dueDateObj+timedelta(days=i)
                      schoolDaysLate = busday_count(dueDateObj,checkDay,weekmask=[1,1,1,1,1,0,0],holidays=schoolHolidays)
                  if testName not in no70PercentDueDateAssignments:
-                     fscoreboard.write((checkDay+timedelta(days=-1)).strftime("%a %b %d"))       
-                     fscoreboard.write('\n')
+                     fscoreboard.write((checkDay+timedelta(days=-1)).strftime("%a %b %d"))      # last 70% date      
+                     fscoreboard.write('(*)\n')
                  else:
                      fscoreboard.write("NONE")       
                      fscoreboard.write('\n')                     
@@ -236,7 +236,7 @@ The POINTS column indicates your UIL programming competition score (60 pts/probl
          else:
              fscoreboard.write(f'({j:2}) {testName:14} due date has not been entered in CSAC yet (check website).\n')
         
-        
+      fscoreboard.write("     (*) not valid if after the end of the 9 weeks")  
       if includeNames:
          fscoreboard.write('\n' + footer)
          fscoreboard.close()
