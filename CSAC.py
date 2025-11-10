@@ -17,7 +17,7 @@ import re               # module is in python standard library
 import time             # module is in python standard library
 import sys              # module is in python standard library
 import signal           # module is in python standard library
-import json             # module is in python standard libraryy
+import json             # module is in python standard library
 
 import zipfile
 from   datetime import datetime  # module is in python standard library
@@ -34,6 +34,8 @@ from   email.mime.text      import MIMEText      # module is in python standard 
 from   email.mime.multipart import MIMEMultipart # module is in python standard library
 from   email.mime.base      import MIMEBase      # module is in python standard library
 from   email                import encoders      # module is in python standard library
+from email.message import EmailMessage  # for emailWithGmailHTML
+import mimetypes        # for emailWithGmailHTML to send attachments
 from   PIL      import ImageGrab                 # pip install pillow  (Thonny install pillow package)
 import win32com.client  # pip install pywin32 (close and reopen Python after install) [for email using Outlook Windows 10 app (https://github.com/mhammond/pywin32)] (Thonny install pywin32 package)          
 import pyperclip        # pip insall pyperclip (allows python to add things to the clipboard (so it can be quickly pasted)  (Thonny install pyperclip package)
@@ -54,7 +56,7 @@ else:
 
 validFileExtensions = [".py",".java",".zip",".txt"] # .py for python, .java/.zip for java, .txt for counting submissions (i.e. *_CORRECT.txt)
 
-# Check variables set in customize.py
+#  variables set in customize.py
 initError = False
 
 if not Path(rootDir).is_dir():
@@ -314,11 +316,13 @@ def emailStudent(submission, comment='',attach=True):
        emailHeader = f'The {submission["Assignment"]} was submitted on {submission["submissionDateTime"]}.'
        dueDateMsg = getDueDateInfo(submission,submission["Assignment"],submission["submissionDateTimeObj"])[1]
        message = comment + '\n' + dueDateMsg + '\n'  + emailSignature
+       messageHTML = '<p>' + comment + '</p>' + '<p>' + dueDateMsg + '</p>' + '<p>' + emailSignature + '</p>'
        for emailCode in emailCodes:
            emailSent = False
            if emailCode in submission["classRegistration"]:
              receiverEmailAddress = receiverEmailAddress + submission["classRegistration"][emailCode][2] + ";"
-             emailSent = emailWithOutlook(receiverEmailAddress,subject,message,attachment)
+             # emailSent = emailWithOutlook(receiverEmailAddress,subject,message,attachment)
+             emailSent = emailWithGmailHTML("lasacsAutomated@gmail.com", "aryc kvke zwrl xoli", receiverEmailAddress,subject,messageHTML,attachment)
            else: 
              print(f'  Do not have an email address to send to.')
              input(f'  <Enter> to continue and remove file {submission["FileName"]} from {submission["classPeriodDir"]}.')
@@ -336,6 +340,40 @@ def emailWithGmail(senderEmailAddress, senderPassword, receiverEmailAddress, sub
     with smtplib.SMTP_SSL("smtp.gmail.com", port, context=context) as server:
         server.login(senderEmailAddress, senderPassword)
         server.sendmail(senderEmailAddress, receiverEmailAddress, msgToSend)
+
+# uses an app password
+def emailWithGmailHTML(senderEmailAddress, senderPassword, receiverEmailAddress, subject, message,attachment):
+    msg = EmailMessage()
+    msg["Subject"] = subject
+    msg["From"] = senderEmailAddress
+    msg["To"] = receiverEmailAddress
+    msg.add_alternative(message,subtype = "html")
+    port = 465  # For SSL
+    # port = 587 # Port for starttls (587) or SSL (465)
+    
+    if attachment != "":   
+        # Determine the file type  (guess_type returns a tuple like ('application/pdf', None))
+        mime_type, _ = mimetypes.guess_type(attachment)
+        main_type, sub_type = mime_type.split('/')
+        # Add the attachment
+        file_path = Path(attachment)
+        # Open the file in binary mode
+        with open(file_path, 'rb') as fp:
+            msg.add_attachment(
+                fp.read(),
+                maintype=main_type,
+                subtype=sub_type,
+                filename=file_path.name # Use the filename as it appears in the email
+            )
+        
+
+    context = ssl.create_default_context()  # Create a secure SSL context
+    try:
+        with smtplib.SMTP_SSL("smtp.gmail.com", port, context=context) as server:
+            server.login(senderEmailAddress, senderPassword)
+            server.sendmail(senderEmailAddress, receiverEmailAddress, msg.as_string())
+    except:
+        update_status(f"Unable to login into gmail. Please update credentials using the 'update email credentials' button.",COLOR_RED)
 
 # This function makes sure we wait until the sent email is in 'Sent Items' folder before moving it to 'Sent Items/CSAC'
 def wait_for_email_in_sent_items(outlook, sent_email_subject, timeout_seconds=10, poll_interval=0.3):
@@ -594,7 +632,7 @@ def getDueDateInfo(submission,assignment,submissionDateTimeObj):
        elif schoolDaysLate == 0:
            dueDateMsg = f'You submitted on {submission["submissionDateTime"]} which is the assignments due date. You still have 3 "grace" school days to receive full credit.'
        elif schoolDaysLate <  3:
-           dueDateMsg = f'The assignment was due on {assignmentDueDateGlobal[assignment]}. You submitted on {submission["submissionDateTime"]} (you still have {3-schoolDaysLate} school day{"s"[:(3-schoolDaysLate)^1]} left from this date to receive full credit).'
+           dueDateMsg = f'The assignment was due on {assignmentDueDateGlobal[assignment]}. You submitted on {submission["submissionDateTime"]} (you still have {3-schoolDaysLate} school day{"s"[:(3-schoolDaysLate)^1]} left to receive full credit).'
        elif schoolDaysLate == 3:
            dueDateMsg = f'The assignment was due on {assignmentDueDateGlobal[assignment]}. You submitted on {submission["submissionDateTime"]} ({lateMsg} to still receive full credit for the assignment).'
        elif schoolDaysLate < 6:
@@ -1028,10 +1066,10 @@ def findInProgram(submission, classRootDir):
         # compare submission find output to gold find file
         checkFilesMatches = filesMatch(outFindFile,findGoldFile)
         if checkFilesMatches:
-           print('  ' + bcolors.BOLD + bcolors.BGGREEN + f'### FIND CORRECT ###' + bcolors.ENDC)
+           print('  ' + bcolors.BOLD + bcolors.BLUE + f'### FIND CORRECT ###' + bcolors.ENDC)
            miscompare = False
         else:
-           print('  ' + bcolors.BOLD + bcolors.BGRED+ "### miscompare find (opening diff) ###" + bcolors.ENDC)
+           print('  ' + bcolors.BOLD + bcolors.RED+ "### miscompare find (opening diff) ###" + bcolors.ENDC)
            diffCmd = [diffPgm,outFindFile,findGoldFile]
            process = subprocess.Popen(diffCmd, shell=True)     # run diff program
            submission["processes"].append(process)
@@ -1099,8 +1137,10 @@ def runProgram(submission, classRootDir):
             if not runCmd[1].endswith("Tester"):
                if runCmd[1].endswith("Runner"):
                   inputFileList = glob.glob(r"runnerUserInput*.txt")
+                  inputFileList.sort()
                else:
                   inputFileList = glob.glob(r"pgmUserInput*.txt")
+                  inputFileList.sort()
                if len(inputFileList) > 0:
                   for inputFile in inputFileList:
                      with open(inputFile) as runStdin:
@@ -1200,7 +1240,8 @@ def getSubmissions(extensions):
         print('Found invalid file(s)',notValidFiles)
     #if "REGISTER.txt" in listOfSubmissions:
     #  listOfSubmissions.remove("REGISTER.txt")
-    listOfSubmissions.remove('REGISTER.txt')
+    if 'REGISTER.txt' in listOfSubmissions:
+        listOfSubmissions.remove('REGISTER.txt')
     return listOfSubmissions
 
 def updateLogFile(submission, logMessage, alsoPrint = False, indent=True):
