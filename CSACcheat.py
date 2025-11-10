@@ -1,3 +1,7 @@
+
+# sudo mount -t drvfs d: /mnt/d
+#
+#
 # This program checks all the files for an assignment to see if students cheated.
 # For each assignment user can select to run these cheating detection tools
 #   compare50 (https://cs50.readthedocs.io/projects/compare50/en/latest/)
@@ -40,10 +44,19 @@ MATCHES = 100  # -n MATCHES compare50 parameter indicates number of matches to o
 TOP_MATCHES = 30 # matches that I extract from web results and print on the screen (has to be less than MATCHES above)
 HIDE_NAMES = False
 
+# Drive names for files
+drives4WSL = ["C","D"]
+
 # Assignments that are not in CSAC
 #    name : list of files
 # customAssignments = {'FunMidterm' : ['C:/Users/E151509/Desktop/Midterm/submissions/*.jsc']}
-customAssignments = {}
+customAssignments = {'CodingBat' : [r'"C:/Users/E151509/My Drive/My LASA/CodingBat/CodingBat Plagiarism/PYTHON/onlineSolutions/Logic-2/close_far/*.py"',
+                                    r'"C:/Users/E151509/Desktop/misc/CodingBatResults/CodingBat (Various)/close_far/2025_Feb_25/*.py"']}
+#customAssignments = {'CodingBat' : [r'"C:\Users\E151509\My Drive\My LASA\CodingBat\CodingBat Plagiarism\PYTHON\onlineSolutions\Logic-2\make_bricks\*.py"',
+#                                    r'"C:/Users/E151509/Desktop/misc/CodingBatResults/CodingBat-Various/make_bricks/2025_Feb_25/*.py"']}
+
+
+#customAssignments = {}
 
 # print list in columns
 def printInColumns(listN,columns,textWidth,listElementIndex=-1):
@@ -71,7 +84,7 @@ def getAssignment():
             assignmentNames = 'various'
         else:
             for assignmentTuple in assignmentTuples:
-                assignmentNames.append((assignmentTuple[0],assignmentGroup))
+                assignmentNames.append((assignmentTuple[0].replace('(opt)',''),assignmentGroup))
     assignmentNames.sort()
     for key in customAssignments:
         assignmentNames.append((key,"Custom"))
@@ -219,7 +232,10 @@ def compare50(assignment,compare50OutputDir,individual=None):
     if os.path.isdir(solutionsDir):
         compare50Files = compare50Files + f'"{solutionsDir}"/*.py '        
     # run compare50    
-    compare50FilesWsl = compare50Files.replace('\\','/').replace('C:','/mnt/c')
+    compare50FilesWsl = compare50Files.replace('\\','/')
+    # replace 'C:' with '/mnt/c' for WSL use (do this for all drives specified in drives4WSL
+    for drive in drives4WSL:
+        compare50FilesWsl = compare50FilesWsl.replace(drive + ':','/mnt/' + drive.lower())
     outputDir = f'{compare50OutputDir}/{assignmentName}'
     outputDirWsl = outputDir.replace('C:','/mnt/c')
     idv = ' '
