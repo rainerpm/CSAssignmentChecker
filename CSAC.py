@@ -5,7 +5,7 @@
 
 import CSACscoreboard  # import the associated CSACscoreboard.py which creates the scoreboard files
 from CSACscoreboard import assignmentResults    
-from CSACcustomize import classPeriodNames,classPeriodNamesForMenu,classPeriodEmailYN,classAssignmentGroups,rootDir,scoreboardDir,pythonIde,javaIde,schoolHolidays,diffPgm,textEditor,emailSignature,emailAttachmentDir, emailUseClassPeriodSentFolders, TIMEOUT_DEFAULT,filesToRemoveAfterRun
+from CSACcustomize import classPeriodNames,classPeriodNamesForMenu,classPeriodEmailYN,classAssignmentGroups,rootDir,scoreboardDir,pythonIde,javaIde,schoolHolidays,diffPgm,textEditor,emailSignature,emailAttachmentDir, emailUseClassPeriodSentFolders, TIMEOUT_DEFAULT,filesToRemoveAfterRun, no70PercentDueDateAssignments,noGraceDueDateAssignments
 
 minimizeFilesCreated = True
 
@@ -38,7 +38,7 @@ from email.message import EmailMessage  # for emailWithGmailHTML
 import mimetypes        # for emailWithGmailHTML to send attachments
 from   PIL      import ImageGrab                 # pip install pillow  (Thonny install pillow package)
 import win32com.client  # pip install pywin32 (close and reopen Python after install) [for email using Outlook Windows 10 app (https://github.com/mhammond/pywin32)] (Thonny install pywin32 package)          
-import pyperclip        # pip insall pyperclip (allows python to add things to the clipboard (so it can be quickly pasted)  (Thonny install pyperclip package)
+import pyperclip        # pip install pyperclip (allows python to add things to the clipboard (so it can be quickly pasted)  (Thonny install pyperclip package)
 #from icecream import ic
 import webbrowser           # module is in python standard library
 import os                   # module is in python standard library
@@ -139,8 +139,9 @@ def check4Activity():
     for classPeriodName in validClassPeriodDirs:
         files = []
         print(f'{bcolors.BOLD}({classPeriodNamesForMenu[classPeriodNames.index(classPeriodName)]}) Submissions for {classPeriodName}{bcolors.ENDC}')
-        files =[p for p in Path(rootDir,classPeriodName).iterdir() if p.is_file()]
-        for file in files:
+        files = [p for p in Path(rootDir,classPeriodName).iterdir() if p.is_file()]
+        filesSorted = sorted(files, key=lambda p: p.stat().st_ctime)  # 2. Sort the list by creation time (oldest to newest)
+        for file in filesSorted:
            if file.name != "REGISTER.txt":
               if file.suffix not in validFileExtensions:
                  print(" ","File with incorrect extension",">" + file.name + "<")
@@ -315,14 +316,15 @@ def emailStudent(submission, comment='',attach=True):
        updateLogFile(submission, "  email msg -> " + comment)
        emailHeader = f'The {submission["Assignment"]} was submitted on {submission["submissionDateTime"]}.'
        dueDateMsg = getDueDateInfo(submission,submission["Assignment"],submission["submissionDateTimeObj"])[1]
-       message = comment + '\n' + dueDateMsg + '\n'  + emailSignature
-       messageHTML = '<p>' + comment + '</p>' + '<p>' + dueDateMsg + '</p>' + '<p>' + emailSignature + '</p>'
+       doNotReply = f'P.S. Do not reply to this email.  I do not monitor the Inbox of lasacsAutomated@gmail.com'
+       message = comment + '\n' + dueDateMsg + '\n'  + emailSignature + '\n' + doNotReply
+       messageHTML = '<p>' + comment + '</p>' + '<p>' + dueDateMsg + '</p>' + '<p>' + emailSignature + '</p>' + '<p>' + doNotReply + '</p>'
        for emailCode in emailCodes:
            emailSent = False
            if emailCode in submission["classRegistration"]:
              receiverEmailAddress = receiverEmailAddress + submission["classRegistration"][emailCode][2] + ";"
              # emailSent = emailWithOutlook(receiverEmailAddress,subject,message,attachment)
-             emailSent = emailWithGmailHTML("lasacsAutomated@gmail.com", "aryc kvke zwrl xoli", receiverEmailAddress,subject,messageHTML,attachment)
+             emailSent = emailWithGmailHTML("lasacsAutomated@gmail.com", "nyhw uabu txsm rmfl", receiverEmailAddress,subject,messageHTML,attachment)
            else: 
              print(f'  Do not have an email address to send to.')
              input(f'  <Enter> to continue and remove file {submission["FileName"]} from {submission["classPeriodDir"]}.')
@@ -628,19 +630,19 @@ def getDueDateInfo(submission,assignment,submissionDateTimeObj):
            lateInfoStr = bcolors.GREEN + f'{schoolDaysLate}' + bcolors.ENDC + f':{calendarDaysLate}'
 
        if schoolDaysLate < 0:
-           dueDateMsg = f'The assignment is due on {assignmentDueDateGlobal[assignment]} which is in {-calendarDaysLate} calendar days ({-schoolDaysLate} school days). After that you still have 3 "grace" days to receive full credit.'
+           dueDateMsg = f'The assignment is due on {assignmentDueDateGlobal[assignment]} which is in {-calendarDaysLate} calendar days ({-schoolDaysLate} school days).' + ('' if assignment in noGraceDueDateAssignments else f'After that you still have 3 "grace" days to receive full credit.')
        elif schoolDaysLate == 0:
-           dueDateMsg = f'You submitted on {submission["submissionDateTime"]} which is the assignments due date. You still have 3 "grace" school days to receive full credit.'
+           dueDateMsg = f'You submitted on {submission["submissionDateTime"]} which is the assignments due date.' + ('' if assignment in noGraceDueDateAssignments else ' You still have 3 "grace" school days to receive full credit.')
        elif schoolDaysLate <  3:
-           dueDateMsg = f'The assignment was due on {assignmentDueDateGlobal[assignment]}. You submitted on {submission["submissionDateTime"]} (you still have {3-schoolDaysLate} school day{"s"[:(3-schoolDaysLate)^1]} left to receive full credit).'
+           dueDateMsg = f'The assignment was due on {assignmentDueDateGlobal[assignment]}. You submitted on {submission["submissionDateTime"]}' + ('' if assignment in noGraceDueDateAssignments else f' (Due to the 3 grace days, you still have {3-schoolDaysLate} school day{"s"[:(3-schoolDaysLate)^1]} left to receive full credit).')
        elif schoolDaysLate == 3:
-           dueDateMsg = f'The assignment was due on {assignmentDueDateGlobal[assignment]}. You submitted on {submission["submissionDateTime"]} ({lateMsg} to still receive full credit for the assignment).'
+           dueDateMsg = f'The assignment was due on {assignmentDueDateGlobal[assignment]}. You submitted on {submission["submissionDateTime"]}' + ('' if assignment in noGraceDueDateAssignments else f' ({lateMsg} to still receive full credit for the assignment).')
        elif schoolDaysLate < 6:
-           dueDateMsg = f'The assignment was due on {assignmentDueDateGlobal[assignment]}. You submitted on {submission["submissionDateTime"]} (the assignment can still be submitted for partial credit for {6-schoolDaysLate} more school day{"s"[:(6-schoolDaysLate)^1]} from this date).'
+           dueDateMsg = f'The assignment was due on {assignmentDueDateGlobal[assignment]}. You submitted on {submission["submissionDateTime"]}' + ('' if assignment in no70PercentDueDateAssignments else f' (the assignment can still be submitted for partial credit for {6-schoolDaysLate} more school day{"s"[:(6-schoolDaysLate)^1]} from this date).')
        elif schoolDaysLate == 6:
-           dueDateMsg = f'The assignment was due on {assignmentDueDateGlobal[assignment]}. You submitted on {submission["submissionDateTime"]} ({lateMsg} to still receive partial credit for the assignment).'
+           dueDateMsg = f'The assignment was due on {assignmentDueDateGlobal[assignment]}. You submitted on {submission["submissionDateTime"]}' + ('' if assignment in no70PercentDueDateAssignments else f' ({lateMsg} to still receive partial credit for the assignment).')
        elif schoolDaysLate > 6:
-           dueDateMsg = f'You submitted on {submission["submissionDateTime"]}. It is now too late to submit this assignment for credit. The last partial credit day was {schoolDaysLate-6} school days ago. The assignment was due on {assignmentDueDateGlobal[assignment]} which was {schoolDaysLate} school days or {calendarDaysLate} calendar days ago.'
+           dueDateMsg = f'You submitted on {submission["submissionDateTime"]}. It is now too late to submit this assignment for credit.' + ('' if assignment in no70PercentDueDateAssignments else f' The last partial credit day was {schoolDaysLate-6} school days ago. The assignment was due on {assignmentDueDateGlobal[assignment]} which was {schoolDaysLate} school days or {calendarDaysLate} calendar days ago.')
    else:
        lateInfoStr = "NoDueDate"
        
@@ -726,7 +728,7 @@ def processCurrentSubmission(currentSubmission, assignmentGroups, assignments,cl
       print('\n' + bcolors.RED + f'  Invalid Assignment Name: >{assignment}< for submission: {submission["FileName"]}' + bcolors.ENDC)
       
    if validFileSubmission and ((assignment in assignments) or submission["registration"]) and registrationOK and (submission["registration"] or (assignment in submission["listOfAssignments"])):
-      submission["nameForLatestDir"] = submission["studentName"]
+      submission["nameForLatestDir"] = submission["studentName"] + "_" + assignment
 
       if submission["registration"]:   
          if submission["studentCode"] in submission["classRegistration"]:
@@ -756,7 +758,6 @@ def processCurrentSubmission(currentSubmission, assignmentGroups, assignments,cl
          submission["submittedFileNameWithDate"] = submission["FileNameRoot"] + "_" + submission["submissionDateTime"] + submission["FileExtension"]
          submission["outFileName"] = submission["Assignment"] + "_out.txt"
          submission["outCheckFileName"] = submission["Assignment"] + "_check.txt"
-         submission["outFindFileName"] = submission["Assignment"] + "_find.txt"
          submission["outCorrectFileName"] = submission["Assignment"] + "_" + submission["submissionDateTime"] + "_out_CORRECT.txt"
          submission["outCorrectButLateFileName"] = submission["Assignment"] + "_" + submission["submissionDateTime"] + "_out_CORRECT_LATE.txt"
          submission["outCorrectBut2LateFileName"] = submission["Assignment"] + "_" + submission["submissionDateTime"] + "_out_CORRECT_2LATE.txt"
@@ -773,9 +774,16 @@ def processCurrentSubmission(currentSubmission, assignmentGroups, assignments,cl
          submission["goldenDir"] = assignmentGroup["goldenDir"]
          submission["goldenAssignmentDir"] = os.path.join(assignmentGroup["goldenDir"], submission["Assignment"])
          submission["goldFile"] = os.path.join(submission["goldenAssignmentDir"], "gold.txt")
-         submission["findGoldFile"] = os.path.join(submission["goldenAssignmentDir"], "findGold.txt")
          submission["goldCheckFile"] = os.path.join(submission["goldenAssignmentDir"], "checker.txt")
-         submission["stuffToFindFile"] = os.path.join(submission["goldenAssignmentDir"], "find.txt")
+         
+         submission["findFileName"] = os.path.join(submission["goldenAssignmentDir"], "find.txt")
+         submission["outFindFileName"] = submission["Assignment"] + "_find.txt"
+         submission["findGoldFile"] = os.path.join(submission["goldenAssignmentDir"], "findGold.txt")
+         
+         submission["findGlobalFileName"] = os.path.join(rootDir,"ASSIGNMENT_GROUPS", "findGlobal.txt")
+         submission["outFindGlobalFileName"] = submission["Assignment"] + "_findGlobal.txt"
+         submission["findGlobalGoldFile"] = os.path.join(rootDir,"ASSIGNMENT_GROUPS", "findGlobalGold.txt")
+         
          submission["dataInputFileExists"] = os.path.exists(os.path.join(submission["goldenAssignmentDir"],submission["Assignment"]+".dat"))
          submission["dataInputFileName"] = os.path.join(submission["goldenAssignmentDir"],submission["Assignment"]+".dat")
          submission["timeoutFileName"] = os.path.join(submission["goldenAssignmentDir"],"timeout.txt")
@@ -879,8 +887,6 @@ def copyFilesToProgramRunDirectory(submission, classRootDir):
         copyfile(os.path.join(classRootDir,submission["FileName"]),os.path.join(submission["studentPgmRunDir"],submission["FileName"]))
     os.chdir(submission["studentPgmRunDir"])
     if submission["FileExtension"] == ".zip":
-        
-        
        with zipfile.ZipFile(submission["FileName"]) as zFile:
            fileList = []
            for filename in zFile.namelist():
@@ -1018,20 +1024,25 @@ def getPythonCodeToSearch(pythonFile, toSearch): # used by findInProgram()
                     code += line
     return code
 
-def findInProgram(submission, classRootDir):
+def findInProgram(submission, classRootDir, glbl=False):
     os.chdir(submission["studentPgmRunDir"])
-    miscompare = False
-    stuffToFindFile = submission["stuffToFindFile"]
-    outFindFile = submission["outFindFileName"]
-    findGoldFile = submission["findGoldFile"]
+    checkFilesMatches = False
+    if glbl:
+        findFileName = submission["findGlobalFileName"]
+        outFindFile = submission["outFindGlobalFileName"]
+        findGoldFile = submission["findGlobalGoldFile"]
+    else:
+        findFileName = submission["findFileName"]
+        outFindFile = submission["outFindFileName"]
+        findGoldFile = submission["findGoldFile"]       
     if submission["language"] == "python":
         codeFile = submission["FileName"]
     elif submission["language"] == "java":
         codeFile = submission["assignmentFileName"]
-    if os.path.exists(stuffToFindFile):
-        ffind  = open(outFindFile,'w')
+    if os.path.exists(findFileName):
+        ffind = open(outFindFile,'w')
 
-        with open(stuffToFindFile, 'r') as file:
+        with open(findFileName, 'r') as file:
             lines = file.readlines()
         
         for line in lines:   # go through all the lines of the find.txt file
@@ -1065,18 +1076,8 @@ def findInProgram(submission, classRootDir):
 
         # compare submission find output to gold find file
         checkFilesMatches = filesMatch(outFindFile,findGoldFile)
-        if checkFilesMatches:
-           print('  ' + bcolors.BOLD + bcolors.BLUE + f'### FIND CORRECT ###' + bcolors.ENDC)
-           miscompare = False
-        else:
-           print('  ' + bcolors.BOLD + bcolors.RED+ "### miscompare find (opening diff) ###" + bcolors.ENDC)
-           diffCmd = [diffPgm,outFindFile,findGoldFile]
-           process = subprocess.Popen(diffCmd, shell=True)     # run diff program
-           submission["processes"].append(process)
-           miscompare = True
-               
     os.chdir(classRootDir)
-    return miscompare
+    return checkFilesMatches
 
 
 def runProgram(submission, classRootDir):
@@ -1515,14 +1516,37 @@ def main():
                       doItAgain = False
                    else:
                       copyFilesToProgramRunDirectory(submission, classRootDir)  ### copy files to student program run directory ###
-                   miscompareInFind = findInProgram(submission, classRootDir)   ### if there is a find.txt file, find code in submission
+
+                   # process findGlobal.txt   
+                   findGlobalMatches = findInProgram(submission, classRootDir, glbl=True)   ### if there is a find.txt file, find code in submission
+                   if findGlobalMatches:
+                      print('  ' + bcolors.BOLD + bcolors.BLUE + f'### FIND GLOBAL CORRECT ###' + bcolors.ENDC)
+                      goodToRunCheck = True
+                      goodToRunProgram = True
+                   else:
+                      print('  ' + bcolors.RED+ "### miscompare find GLOBAL (opening diff) ###" + bcolors.ENDC)
+                      diffCmd = [diffPgm,os.path.join(submission["studentPgmRunDir"],submission["outFindGlobalFileName"]),os.path.join(submission["studentPgmRunDir"],submission["findGlobalGoldFile"])]
+                      process = subprocess.Popen(diffCmd, shell=True)     # run diff program
+                      submission["processes"].append(process)
+                      response = input("  Find GLOBAL check failed. " + bcolors.BLUE + '(<ENTER>=continue' + bcolors.ENDC + ")? ")
+
+                   # process find.txt
                    goodToRunCheck = True
                    goodToRunProgram = True
-                   if miscompareInFind:
-                     response = input("  Find check failed. Continue with other checks & run program (y " + bcolors.BLUE + '<ENTER>=n' + bcolors.ENDC + ")? ")
-                     if response != 'y':
-                        goodToRunCheck = False
-                        goodToRunProgram = False
+                   if os.path.exists(submission["findFileName"]):
+                       findMatches = findInProgram(submission, classRootDir, glbl=False)   ### if there is a find.txt file, find code in submission
+                       if findMatches:
+                          print('  ' + bcolors.BOLD + bcolors.BLUE + f'### FIND CORRECT ###' + bcolors.ENDC)
+                       else:
+                          print('  ' + bcolors.RED+ "### miscompare find (opening diff) ###" + bcolors.ENDC)
+                          diffCmd = [diffPgm,os.path.join(submission["studentPgmRunDir"],submission["outFindFileName"]),os.path.join(submission["studentPgmRunDir"],submission["findGoldFile"])]
+                          process = subprocess.Popen(diffCmd, shell=True)     # run diff program
+                          submission["processes"].append(process)
+                          response = input("  Find check failed. Continue with other checks & run program (y " + bcolors.BLUE + '<ENTER>=n' + bcolors.ENDC + ")? ")
+                          if response != 'y':
+                             goodToRunCheck = False
+                             goodToRunProgram = False
+                         
                    checkGood = True
                    if goodToRunCheck:
                        checkGood = runChecker(submission, classRootDir)   ### check the program ###
@@ -1541,7 +1565,7 @@ def main():
                    while not autoJudging:    # loop until a valid response
                        currentSubmissions = getSubmissions(validFileExtensions)
                        if submission["studentName"] != "TestTest":
-                          answer = input("  " + bcolors.BOLD + bcolors.BGYELLOW + "y/late/2late/n/p/###" + bcolors.ENDC + " [s d a b h i o g e c m f k t ?](r){x}(" + str(len(currentSubmissions)-1) + ") " + submission["lateInfo"] + "? ")
+                          answer = input("  " + bcolors.BOLD + bcolors.BGYELLOW + "y/late/2late/n/p/###" + bcolors.ENDC + " [s d a b h i o g e c m f k t ?](r){x}(" + str(len(currentSubmissions)-1) + ") " + submission["lateInfo"] + bcolors.BOLD + "??? "+ bcolors.ENDC)
                        elif submission["studentName"] == "TestTest":
                          print("   *** THIS WAS JUST A TEST RUN ***")
                          response = input("  Confirm removing of file submission & student directory (y " + bcolors.BLUE + '<ENTER>=n' + bcolors.ENDC + ")? ")
@@ -1718,3 +1742,7 @@ def main():
                 break
 
 main()
+
+
+
+
