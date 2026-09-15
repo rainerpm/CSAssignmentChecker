@@ -1,6 +1,3 @@
-
-# sudo mount -t drvfs d: /mnt/d
-# Dec 2025 instead of d: it is now at /mnt/c/users/E151509/My Drive (rainer.mueller@austinisd.org)
 #
 # This program checks all the files for an assignment to see if students cheated.
 # For each assignment user can select to run these cheating detection tools
@@ -51,11 +48,6 @@ drives4WSL = ["C","D"]
 #    name : list of files
 # customAssignments = {'FunMidterm' : ['C:/Users/E151509/Desktop/Midterm/submissions/*.jsc']}
 customAssignments = {'CodingBat' : [r'"C:\Users\E151509\Desktop\Jeroo Midterm\*.py"',
-                                    r'"C:/Users/E151509/Desktop/misc/CodingBatResults/CodingBat (Various)/close_far/2025_Feb_25/*.py"']}
-#customAssignments = {'CodingBat' : [r'"C:\Users\E151509\My Drive\My LASA\CodingBat\CodingBat Plagiarism\PYTHON\onlineSolutions\Logic-2\make_bricks\*.py"',
-#                                    r'"C:/Users/E151509/Desktop/misc/CodingBatResults/CodingBat-Various/make_bricks/2025_Feb_25/*.py"']}
-
-
 #customAssignments = {}
 
 # print list in columns
@@ -85,7 +77,6 @@ def getAssignment():
             #assignmentNames = [('various')]
         else:
             for assignmentTuple in assignmentTuples:
-                #print(f'DBG {assignmentNames=}')
                 assignmentNames.append((assignmentTuple[0].replace('(opt)',''),assignmentGroup))
     assignmentNames.sort()
     for key in customAssignments:
@@ -268,7 +259,6 @@ def compare50(assignment,compare50OutputDir,individual=None):
 
     # run compare50    
     compare50FilesWsl = compare50Files.replace('\\','/')
-    #print("DBG 2:", compare50FilesWsl)
     # replace 'C:' with '/mnt/c' for WSL use (do this for all drives specified in drives4WSL
     for drive in drives4WSL:
         compare50FilesWsl = compare50FilesWsl.replace(drive + ':','/mnt/' + drive.lower())
