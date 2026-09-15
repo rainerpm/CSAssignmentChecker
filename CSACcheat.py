@@ -1,3 +1,7 @@
+
+# sudo mount -t drvfs d: /mnt/d
+# Dec 2025 instead of d: it is now at /mnt/c/users/E151509/My Drive (rainer.mueller@austinisd.org)
+#
 # This program checks all the files for an assignment to see if students cheated.
 # For each assignment user can select to run these cheating detection tools
 #   compare50 (https://cs50.readthedocs.io/projects/compare50/en/latest/)
@@ -23,7 +27,7 @@ import os
 import glob
 import re
 from CSACgradesData import ASSIGNMENTS
-from CSACcustomize import rootDir,classPeriodNames,diffPgm
+from CSACcustomize import rootDir,lastYearRootDir,classPeriodNames,lastYearClassPeriodNames,diffPgm
 from math import ceil
 import subprocess       # module is in python standard library
 from   shutil   import rmtree    # module is in python standard library
@@ -40,10 +44,19 @@ MATCHES = 100  # -n MATCHES compare50 parameter indicates number of matches to o
 TOP_MATCHES = 30 # matches that I extract from web results and print on the screen (has to be less than MATCHES above)
 HIDE_NAMES = False
 
+# Drive names for files
+drives4WSL = ["C","D"]
+
 # Assignments that are not in CSAC
 #    name : list of files
 # customAssignments = {'FunMidterm' : ['C:/Users/E151509/Desktop/Midterm/submissions/*.jsc']}
-customAssignments = {}
+customAssignments = {'CodingBat' : [r'"C:\Users\E151509\Desktop\Jeroo Midterm\*.py"',
+                                    r'"C:/Users/E151509/Desktop/misc/CodingBatResults/CodingBat (Various)/close_far/2025_Feb_25/*.py"']}
+#customAssignments = {'CodingBat' : [r'"C:\Users\E151509\My Drive\My LASA\CodingBat\CodingBat Plagiarism\PYTHON\onlineSolutions\Logic-2\make_bricks\*.py"',
+#                                    r'"C:/Users/E151509/Desktop/misc/CodingBatResults/CodingBat-Various/make_bricks/2025_Feb_25/*.py"']}
+
+
+#customAssignments = {}
 
 # print list in columns
 def printInColumns(listN,columns,textWidth,listElementIndex=-1):
@@ -68,10 +81,12 @@ def getAssignment():
         gradingTuple = assignmentData[2]
         assignmentTuples = gradingTuple[1:]
         if assignmentGroup == 'CodingBat':
-            assignmentNames = 'various'
+            pass
+            #assignmentNames = [('various')]
         else:
             for assignmentTuple in assignmentTuples:
-                assignmentNames.append((assignmentTuple[0],assignmentGroup))
+                #print(f'DBG {assignmentNames=}')
+                assignmentNames.append((assignmentTuple[0].replace('(opt)',''),assignmentGroup))
     assignmentNames.sort()
     for key in customAssignments:
         assignmentNames.append((key,"Custom"))
@@ -187,6 +202,28 @@ def findPatterns(patternOrListOfPatterns,assignment,isRegEx):
     if response == 'd':
         diffFiles(allMatchedFiles)
 
+def gatherFiles(assignmenFt,curRootDir,curClassPeriodNames):
+    assignmentName = assignment[1]
+    assignmentGroup = assignment[2]    
+    if assignmentName not in customAssignments:   # regular CSAC assignment
+        compare50Files = ''
+        for classPeriodName in curClassPeriodNames:
+            assignmentDir = os.path.join(curRootDir,classPeriodName,assignmentGroup,"00PLAGIARISM",assignmentName)
+            #print(f'DBG {assignmentDir =}')
+            if os.path.isdir(assignmentDir):
+                #assignmentDir = f'"{assignmentDir}"'
+                if any(file.endswith('.py') for file in os.listdir(assignmentDir)):  # check to see if there are actually python files in the directory
+                    compare50Files = compare50Files + f'"{assignmentDir}"/*.py '
+                #print(f'DBG {compare50Files =}')
+    else:   # custom assignment
+        compare50Files = ''
+        for customFiles in customAssignments[assignmentName]:
+            compare50Files = compare50Files + f'{customFiles} '
+    solutionsDir = os.path.join(curRootDir,"ASSIGNMENT_GROUPS",assignmentGroup,assignmentName,"solutions")
+    if os.path.isdir(solutionsDir):
+        compare50Files = compare50Files + f'"{solutionsDir}"/*.py '
+    return compare50Files
+
 ## https://cs50.readthedocs.io/projects/compare50/en/latest/
 # structure
 #     Compares code structure by removing whitespace and comments; normalizing
@@ -199,31 +236,47 @@ def findPatterns(patternOrListOfPatterns,assignment,isRegEx):
 #     Removes nothing, not even whitespace, then uses the winnowing algorithm to
 #     compare submissions.                
 def compare50(assignment,compare50OutputDir,individual=None):
+    compare50Files = gatherFiles(assignment,rootDir,classPeriodNames)
+  
+    # Split the string by spaces, but handle the quotes
+    raw_patterns = compare50Files.split(' ')
+    total_count = 0  
+    
+    #Uncomment below to include last years submissions
+    #compare50Files += gatherFiles(assignment,lastYearRootDir,lastYearClassPeriodNames)
     assignmentName = assignment[1]
-    assignmentGroup = assignment[2]    
-    if assignmentName not in customAssignments:   # regular CSAC assignment
-        compare50Files = ''
-        for classPeriodName in classPeriodNames:
-            assignmentDir = os.path.join(rootDir,classPeriodName,assignmentGroup,"00PLAGIARISM",assignmentName)
-            #print(f'DBG {assignmentDir =}')
-            if os.path.isdir(assignmentDir):
-                #assignmentDir = f'"{assignmentDir}"'
-                if any(file.endswith('.py') for file in os.listdir(assignmentDir)):  # check to see if there are actually python files in the directory
-                    compare50Files = compare50Files + f'"{assignmentDir}"/*.py '
-                #print(f'DBG {compare50Files =}')
-    else:   # custom assignment
-        compare50Files = ''
-        for customFiles in customAssignments[assignmentName]:
-            compare50Files = compare50Files + f'{customFiles} '
-    solutionsDir = os.path.join(rootDir,"ASSIGNMENT_GROUPS",assignmentGroup,assignmentName,"solutions")
-    if os.path.isdir(solutionsDir):
-        compare50Files = compare50Files + f'"{solutionsDir}"/*.py '        
+    
+# moved to gatherFiles()
+#     assignmentGroup = assignment[2]    
+#     if assignmentName not in customAssignments:   # regular CSAC assignment
+#         compare50Files = ''
+#         for classPeriodName in classPeriodNames:
+#             assignmentDir = os.path.join(rootDir,classPeriodName,assignmentGroup,"00PLAGIARISM",assignmentName)
+#             #print(f'DBG {assignmentDir =}')
+#             if os.path.isdir(assignmentDir):
+#                 #assignmentDir = f'"{assignmentDir}"'
+#                 if any(file.endswith('.py') for file in os.listdir(assignmentDir)):  # check to see if there are actually python files in the directory
+#                     compare50Files = compare50Files + f'"{assignmentDir}"/*.py '
+#                 #print(f'DBG {compare50Files =}')
+#     else:   # custom assignment
+#         compare50Files = ''
+#         for customFiles in customAssignments[assignmentName]:
+#             compare50Files = compare50Files + f'{customFiles} '
+#     solutionsDir = os.path.join(rootDir,"ASSIGNMENT_GROUPS",assignmentGroup,assignmentName,"solutions")
+#     if os.path.isdir(solutionsDir):
+#         compare50Files = compare50Files + f'"{solutionsDir}"/*.py '
+
     # run compare50    
-    compare50FilesWsl = compare50Files.replace('\\','/').replace('C:','/mnt/c')
+    compare50FilesWsl = compare50Files.replace('\\','/')
+    #print("DBG 2:", compare50FilesWsl)
+    # replace 'C:' with '/mnt/c' for WSL use (do this for all drives specified in drives4WSL
+    for drive in drives4WSL:
+        compare50FilesWsl = compare50FilesWsl.replace(drive + ':','/mnt/' + drive.lower())
     outputDir = f'{compare50OutputDir}/{assignmentName}'
     outputDirWsl = outputDir.replace('C:','/mnt/c')
     idv = ' '
     if individual:
+       print(f'{individual = }')
        idv = f' "{individual}" -a '
     distro = ' '
     distroFile = getDistroFile(assignment)
