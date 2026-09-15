@@ -8,7 +8,7 @@ from shutil import copyfile
 import ctypes
 import time
 import random
-from CSACcustomize import rootDir,schoolHolidays
+from CSACcustomize import rootDir,schoolHolidays,no70PercentDueDateAssignments,noGraceDueDateAssignments
 from numpy import busday_count   # pip install numpy (Thonny install numpy package)
 
 # This file is imported into checkStudentPgmSubmissions.py
@@ -196,14 +196,12 @@ The POINTS column indicates your UIL programming competition score (60 pts/probl
       if includeNames:
          fscoreboard.write('TOTALS                    ' + f'{sumTotals:>4d}' + '     ' + totals)
       else:
-         fscoreboard.write('TOTALS  ' + totals + f'{sumTotals:>4d}')
+         fscoreboard.write('TOTALS  ' + totals.rstrip() + f' {sumTotals:>4d}')
          
       fscoreboard.write('\n\n                    due date     last grace   last 70%\n')
       
       dueDates = getDueDates()
       j = 0
-      no70PercentDueDateAssignments = ['01sal', '02fib', '03days', '04agtb', '05year', '05pi', '06collatz', '07power', '08triplet', '09polter', '10champ', '11area', '12flip', '13coin']
-      noGraceDueDateAssignments = []
       for testName in listOfTestNames:
          j += 1
          if testName in dueDates:
@@ -220,14 +218,14 @@ The POINTS column indicates your UIL programming competition score (60 pts/probl
                  if testName not in noGraceDueDateAssignments:
                      fscoreboard.write((checkDay+timedelta(days=-1)).strftime("%a %b %d") + '   ')   # last grace date
                  else:
-                     fscoreboard.write("NONE      ")         
+                     fscoreboard.write("NONE         ")         
                  while schoolDaysLate <= 6:
                      i = i + 1
                      checkDay = dueDateObj+timedelta(days=i)
                      schoolDaysLate = busday_count(dueDateObj,checkDay,weekmask=[1,1,1,1,1,0,0],holidays=schoolHolidays)
                  if testName not in no70PercentDueDateAssignments:
                      fscoreboard.write((checkDay+timedelta(days=-1)).strftime("%a %b %d"))      # last 70% date      
-                     fscoreboard.write('(*)\n')
+                     fscoreboard.write('\n')
                  else:
                      fscoreboard.write("NONE")       
                      fscoreboard.write('\n')                     
@@ -235,8 +233,6 @@ The POINTS column indicates your UIL programming competition score (60 pts/probl
                  fscoreboard.write(f'({j:2}) {testName:14} CSAC still has last years due date.\n')
          else:
              fscoreboard.write(f'({j:2}) {testName:14} due date has not been entered in CSAC yet (check website).\n')
-        
-      fscoreboard.write("     (*) not valid if after the end of the 9 weeks")  
       if includeNames:
          fscoreboard.write('\n' + footer)
          fscoreboard.close()
