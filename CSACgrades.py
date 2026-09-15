@@ -2,7 +2,7 @@
 # and writes out a file with a grade for each student.
 # It will likely have to be customized but should be a good starting point.
 
-from   pathlib  import Path
+from pathlib  import Path
 from datetime import datetime
 from CSACgradesData import ASSIGNMENTS,OVERRIDES,codingBatDir,gradesDir,classPeriods,latePenaltyPercentageDefault
 from CSACcustomize import rootDir,scoreboardDir,classPeriodNames,classPeriodNamesForMenu
@@ -219,6 +219,9 @@ while True:
                     for line in cb:
                         correct = int(line.split()[2])
                         name = line.split()[-3:-1]
+                        if correct > len(gradingTuple):
+                            print(f'{correct = } is greater than {len(gradingTuple)=}')
+                            print(gradingTuple)
                         grade = gradingTuple[correct]
                         studentId = line.split()[-1]
                         with open(Path(gradesDir,period + ' - ' + assignmentName + '_' + dateTime + '.txt'), "a") as gf:
@@ -263,7 +266,7 @@ while True:
                             overrideKey = f'{period} {studentCode} {assignmentName}'
                             if overrideKey in OVERRIDES:
                                 gradeStr = OVERRIDES[overrideKey][1]
-                                gradeStrColor = gradeStrColor.replace(bcolors.ENDC,bcolors.BOLD + bcolors.RED + ' *** OVERRIDE *** ' + bcolors.ENDC)
+                                gradeStrColor = gradeStrColor.replace(bcolors.ENDC,bcolors.BOLD + bcolors.RED + ' *** OVERRIDE with ' + gradeStr + ' *** ' + bcolors.ENDC)
                             gradesDic[studentCode] = (code2ID[studentCode],gradeStr,gradeStrColor,studentResult)
                         else:
                             foundWarnings = True
@@ -291,9 +294,9 @@ while True:
                                 attempts += f'{attempt:<3s}'                            
                             if pickSingleStudent:
                                 if singleStudentName == name:
-                                    print(f'{gradesDic[code][2]} ({attempts[:-1]}) {name}')
+                                    print(f'{gradesDic[code][2]} ({attempts[:-1]}) {code} {name}')
                             else:
-                                print(f'{gradesDic[code][2]} ({attempts[:-1]}) {name}')
+                                print(f'{gradesDic[code][2]} ({attempts[:-1]}) {code} {name}')
                         else:
                             print(f'WARNING!!! No result found in scoreboard for {code} in REGISTER.txt ({name = })')
                     print("^^^^^^^ Period " + period + ' ' + assignmentName + " (" + assignmentNames + ") ^^^^^^^")
